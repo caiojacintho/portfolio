@@ -37,13 +37,13 @@
     .ttcl__list { list-style: none; margin: 0; padding: 0; max-width: 900px; }
     .ttcl__row {
       display: flex; align-items: baseline; gap: 16px;
-      padding: 3px 0; cursor: pointer; user-select: none;
+      padding: 0; cursor: pointer; user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
     .ttcl__num {
       font-family: "DM Sans", sans-serif; font-size: 11px; font-weight: 500;
       color: rgba(0,0,0,.3); width: 34px; flex: 0 0 auto; text-align: right;
-      align-self: flex-start; margin-top: 7px;
+      align-self: flex-start;
       transition: color .3s ease;
     }
     .ttcl__name {
@@ -116,17 +116,54 @@
     .navigation .w-nav-link { background: #fff; border-radius: 0; opacity: 1; }
     .navigation .heading-8, .navigation .heading { background: #fff; border-radius: 0; padding: 6px 12px; }
 
+    /* category filter (Mentions only) */
+    .mfilter {
+      display: flex; align-items: center; gap: 6px;
+      overflow-x: auto; max-width: 48vw; scrollbar-width: none;
+    }
+    .mfilter::-webkit-scrollbar { display: none; }
+    /* same UI as the WORK / ABOUT nav buttons */
+    .mfilter-chip {
+      font-family: "DM Sans", sans-serif; font-size: 1.2rem; font-weight: 700;
+      line-height: 20px; letter-spacing: 0;
+      color: #919191; background: #fff; border: 0; border-radius: 0;
+      padding: 9px 10px; white-space: nowrap; cursor: pointer;
+      text-transform: uppercase; transition: color .15s ease;
+    }
+    .mfilter-chip.is-on { color: #111; }
+    .ttcl__row.is-hidden { display: none; }
+
     @media (max-width: 860px) {
-      /* card pinned at the top (below the header), auto height — never scrolls;
-         list flows right beneath it (offset set in JS) */
-      .ttcl { padding: 74px 5vw 45vh; }
-      .ttcl__detail {
-        top: 74px; bottom: auto; right: 0; left: 0; width: 100%;
-        transform: none; border-radius: 0;
-        height: auto; max-height: none; overflow: visible;
-        box-shadow: 0 14px 30px rgba(0,0,0,.18);
+      /* app layout: fixed area below the header; the list scrolls, the card sits at the
+         bottom in normal flow (no overlap, so every item is reachable). card never scrolls. */
+      /* filter is a transparent horizontal carousel floating over the colored area */
+      .mfilter {
+        position: fixed; top: 92px; left: 0; right: 0; z-index: 50;
+        max-width: none; height: 44px; box-sizing: border-box;
+        padding: 0 5vw; gap: 6px; background: transparent;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
-      .ttcl__list { max-width: none; }
+      .ttcl {
+        position: fixed; top: 74px; left: 0; right: 0; bottom: 0;
+        min-height: 0; padding: 0; overflow: hidden;
+        display: flex; flex-direction: column;
+      }
+      .ttcl__list {
+        order: 1; flex: 1 1 auto; min-height: 0; overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: none; margin: 0; padding: 70px 5vw 24px;
+      }
+      .ttcl__detail {
+        order: 2; position: static; flex: 0 0 auto;
+        width: auto; transform: none; border-radius: 0;
+        height: auto; max-height: none; overflow: visible;
+        box-shadow: 0 -14px 30px rgba(0,0,0,.16);
+        padding: 20px 5vw 22px;
+      }
+      /* links side by side on mobile */
+      .ttcl__d-links { flex-direction: row; flex-wrap: wrap; gap: 12px 22px; margin-top: 12px; }
+      .ttcl__lnk { border: 0; padding: 0; }
+      .ttcl__lnk:last-child { border: 0; }
     }
   </style>
 </head>
@@ -137,6 +174,7 @@
         <nav role="navigation" class="navigation-items-1 w-nav-menu"><h1 class="heading-8">CAIO JACINTHO</h1></nav>
         <div class="menu-button w-nav-button"><h1 class="heading">CAIO JACINTHO</h1></div>
       </div>
+      <div class="mfilter" id="mFilter" role="group" aria-label="Filtrar categorias"></div>
       <div class="navigation-wrap">
         <nav role="navigation" class="navigation-items w-nav-menu"><a href="index.html" class="navigation-item w-nav-link">WORK</a><a href="about.html" class="navigation-item w-nav-link">ABOUT</a><a href="mentions.html" aria-current="page" class="navigation-item w-nav-link w--current">MENTIONS</a><div class="div-block-6"><a href="mailto:caio.rodrigues.jacintho@gmail.com" class="navigation-item w-nav-link">MAIL</a><a href="https://www.linkedin.com/in/caio-jacintho/" target="_blank" class="navigation-item w-nav-link">IN</a><a href="https://www.instagram.com/caio.jacintho/" target="_blank" class="navigation-item w-nav-link">IG</a><a href="https://drive.google.com/file/d/17kBs4ou5qcnZKqhi3j-edUTuy_ofp7_l/view?usp=sharing" target="_blank" class="navigation-item w-nav-link">CV</a></div></nav>
         <div class="menu-button w-nav-button">
@@ -162,7 +200,7 @@
 
   <script>
     // ==== conteúdo importado de carabetta.xyz (edite / remova itens à vontade) ====
-    const MENTIONS = [{"date":"2025-10","type":"lançamento","title":"Histórico Clínico Integrado — SMS Rio","desc":"um histórico clínico para ~7M de pacientes entre atenção primária e emergência — sobre o data lake da saúde que a SMS fez com a iplanrio / escritório de dados.","links":[{"t":"HCI (SMS)","h":"https://saude.prefeitura.rio/hci/","cap":"página oficial"},{"t":"nota SMS","h":"https://saude.prefeitura.rio/noticias/historico-clinico-integrado-saude-mais-eficiente-e-personalizada/","cap":"lançamento"},{"t":"O Globo","h":"https://oglobo.globo.com/rio/noticia/2025/10/09/secretaria-municipal-de-saude-do-rio-desenvolve-plataforma-que-reune-historico-clinico-de-7-milhoes-de-pacientes.ghtml","cap":"imprensa"}]},{"date":"2025-02","type":"lançamento","title":"Mulher.Rio","desc":"plataforma anônima para mulheres em situação de violência — Secretaria da Mulher com CIVITAS e iplanrio na tecnologia. depois divulgada no Taxi.Rio no Agosto Lilás.","links":[{"t":"mulher.rio","h":"https://www.mulher.rio/","cap":"a plataforma"},{"t":"Diário do Rio","h":"https://diariodorio.com/prefeitura-do-rio-lanca-site-para-apoiar-mulheres-em-situacao-de-violencia/","cap":"cobertura do lançamento"},{"t":"Agosto Lilás × Taxi.Rio","h":"https://prefeitura.rio/cidade/secretaria-da-mulher-e-taxi-rio-se-unem-em-campanha-de-combate-a-violencia-contra-as-mulheres/","cap":"campanha"}]},{"date":"2024-11","type":"dataviz","title":"G20 em Dados — especial","desc":"publicamos um especial interativo sobre o que sediar o G20 significou para o Rio — dinheiro, gente e o palco global da cidade.","links":[{"t":"G20 em Dados","h":"https://prefeitura-rio.github.io/viz_G20/","cap":"especial"}]},{"date":"2024","type":"dataviz","title":"Destino: Rio de Janeiro — megaeventos","desc":"mapeamos por que a cidade gasta recurso público para receber o mundo — não só pela foto.","links":[{"t":"Destino: Rio","h":"https://viz.dados.rio/#/megaeventos","cap":"especial"}]},{"date":"2024-06","type":"dataviz","title":"Estamos de olho! — dataviz da CIVITAS","desc":"uma narrativa pública sobre como a central de inteligência observa a cidade 24h — câmeras, radares e os canos por trás da segurança.","links":[{"t":"Estamos de olho!","h":"https://viz-staging.dados.rio/#/civitas","cap":"especial"},{"t":"especiais","h":"https://www.dados.rio/especiais","cap":"dados.rio"}]},{"date":"2024-06","type":"lançamento","title":"CIVITAS — central de inteligência do Rio","desc":"central de inteligência da cidade para segurança pública — câmeras, radares, 1746 e o datalake municipal. a iplanrio / escritório de dados alimentava os canos; a google depois citou 6M+ leituras de placa/dia.","links":[{"t":"civitas.rio","h":"https://civitas.rio/","cap":"site oficial"},{"t":"nota de lançamento","h":"https://prefeitura.rio/casa-civil/prefeitura-lanca-central-de-inteligencia-vigilancia-e-tecnologia-de-apoio-a-seguranca-publica-civitas-e-anuncia-parceria-com-disque-denuncia/","cap":"prefeitura"},{"t":"Estamos de olho!","h":"https://viz-staging.dados.rio/#/civitas","cap":"dataviz"}]},{"date":"2024-05","type":"dataviz","title":"O Rio nunca teve tanta gente trabalhando","desc":"contamos a recuperação do emprego por três cariocas que acharam trabalho — e os números por trás da retomada.","links":[{"t":"especial","h":"https://prefeitura-rio.github.io/riodeempregos/","cap":"dataviz"}]},{"date":"2024","type":"dataviz","title":"obras & CEP — onde a cidade investe","desc":"dois especiais: infraestrutura priorizada para Zona Norte e Oeste, e o CEP — o programa de rua contra a violência.","links":[{"t":"A gente prioriza…","h":"https://viz.dados.rio/#/obras","cap":"obras"},{"t":"Seu Rio, Sua Rua","h":"https://viz.dados.rio/#/especial-seop/cep","cap":"CEP"}]},{"date":"2024","type":"projeto","title":"chatbot do 1746 — Dialogflow / Escritório de Dados","desc":"chatbot da prefeitura para zeladoria no 1746 — Dialogflow com webhooks no GKE pelo escritório de dados, depois sob a iplanrio. tempo médio de resposta de 30 para 5 minutos, com 30 mil+ conversas/mês; case global google cloud, mai/2025.","links":[{"t":"nota iplanrio","h":"https://iplanrio.prefeitura.rio/noticias/prefeitura-do-rio-e-reconhecida-pela-google-cloud-por-uso-inovador-de-dados-para-politicas-publicas/","cap":"reconhecimento Google Cloud"},{"t":"case Google Cloud","h":"https://cloud.google.com/customers/intl/pt-br/escritorio-de-dados-da-cidade-do-rio-de-janeiro?hl=pt-BR","cap":"Dialogflow e métricas"},{"t":"1746","h":"https://www.1746.rio/","cap":"atendimento ao cidadão"}]},{"date":"2024-03","type":"dataviz","title":"legado olímpico — dois especiais","desc":"perguntamos o que seria do Rio sem os Jogos, e como a arquitetura nômade tentou evitar elefantes brancos.","links":[{"t":"sem as Olimpíadas","h":"https://prefeitura-rio.github.io/LegadoOlimpico2/","cap":"especial"},{"t":"sem elefantes brancos","h":"https://prefeitura-rio.github.io/LegadoOlimpico/","cap":"especial"}]},{"date":"2023-12","type":"dataviz","title":"Rio Capital do Mundo","desc":"uma viagem no tempo em dataviz sobre a aposta longa da cidade em receber o mundo — na temporada do G20.","links":[{"t":"Rio Capital do Mundo","h":"https://prefeitura-rio.github.io/G20Dataviz/","cap":"especial"}]},{"date":"2023-10","type":"dataviz","title":"segundo inverno mais quente em 20 anos","desc":"mostramos um inverno atípico — setembro o mais quente da série, com a Zona Norte no pior calor.","links":[{"t":"post","h":"https://www.dados.rio/post/setembro-deste-ano-foi-o-mais-quente-na-serie-historica","cap":"visualização"}]},{"date":"2023-09","type":"dataviz","title":"1746 — encerramentos no prazo em alta","desc":"publicamos os números da central de atendimento no melhor nível de encerramentos no prazo desde 2021.","links":[{"t":"post","h":"https://www.dados.rio/post/chamadas-do-1746-alcancam-maior-nivel-de-encerramento-no-prazo-desde-2021","cap":"visualização"}]},{"date":"2023","type":"projeto","title":"Dashboard integrado de monitoramento de eventos hidrológicos","desc":"dashboard integrado de monitoramento de eventos hidrológicos — listado em Projetos no dados.rio.","links":[{"t":"projeto","h":"https://www.dados.rio/projetos/dashboard-integrado-de-monitoramento-de-eventos-hidrologicos","cap":"dados.rio"}]},{"date":"2023","type":"projeto","title":"Monitoramento de aposentadorias e vacâncias","desc":"dashboard de monitoramento de aposentadorias e vacâncias — Projetos no dados.rio.","links":[{"t":"projeto","h":"https://www.dados.rio/projetos/dashboard-de-monitoramento-de-aposentadorias-e-vacancias","cap":"dados.rio"}]},{"date":"2023","type":"dataviz","title":"BRT Rio — construção e reconstrução","desc":"um especial atualizado sobre a reconstrução do BRT — frota nova, Transbrasil, Terminal Gentileza e a história dos corredores em números.","links":[{"t":"reconstrução BRT","h":"https://www.dados.rio/especiais/reconstrucao-brt","cap":"especial"}]},{"date":"2023-03","type":"dataviz","title":"BRT — o dono é você / cuide do que é nosso","desc":"dois textos curtos transformando dados abertos do BRT em apelo ao cidadão — o sistema é seu; cuide dele.","links":[{"t":"o dono é você","h":"https://www.dados.rio/post/brt-o-dono-e-voce","cap":"mar/2023"},{"t":"cuide do que é nosso","h":"https://www.dados.rio/post/brt-cuide-do-que-e-nosso","cap":"fev/2023"}]},{"date":"2023-02","type":"dataviz","title":"Carnaval de Dados","desc":"colocamos a economia do Carnaval em gráficos — ISS, turistas, escolas, blocos e a estimativa de R$ 4,5 bi para 2023.","links":[{"t":"Carnaval de Dados","h":"https://www.dados.rio/especiais/carnaval-de-dados","cap":"especial"}]},{"date":"2022-11","type":"dataviz","title":"Álbum da Copa do Mundo Carioca","desc":"nosso álbum da Copa — jogadores cariocas em todas as Copas, num especial brincalhão.","links":[{"t":"álbum","h":"https://www.dados.rio/especiais/copa-do-mundo-carioca","cap":"especial"}]},{"date":"2022","type":"dataviz","title":"visualizações dados.rio — fim de 2022","desc":"uma sequência de peças curtas: obras do Plano Verão, fluxos da escravidão no Dia da Consciência Negra, voos do Galeão pós-covid, samba no centro no sábado, Rock in Rio com a prefeitura e as águas de março.","links":[{"t":"Plano Verão","h":"https://www.dados.rio/post/obras-do-plano-verao","cap":"nov/2022"},{"t":"Fluxo desumano","h":"https://www.dados.rio/post/dia-da-consciencia-negra","cap":"nov/2022"},{"t":"Galeão","h":"https://www.dados.rio/post/apos-pandemia-galeao-nao-recupera-volume-de-voos","cap":"nov/2022"},{"t":"sambinha","h":"https://www.dados.rio/post/sambinha-no-centro-no-sabado","cap":"out/2022"},{"t":"Rock in Rio","h":"https://www.dados.rio/post/prefeitura-e-rock-in-rio-em-numeros","cap":"set/2022"},{"t":"águas de março","h":"https://www.dados.rio/post/o-rio-das-aguas-de-marco","cap":"ago/2022"}]},{"date":"2022","type":"dataviz","title":"mais de 1.300 construções irregulares a menos","desc":"um especial sobre demolições — prejuízo ao crime organizado, áreas verdes preservadas e mais segurança para moradores.","links":[{"t":"demolições","h":"https://share.dados.rio/demolicoes"}]},{"date":"2022-07","type":"dataviz","title":"o Rio no combate à fome — em números","desc":"mostramos cozinhas comunitárias, Hortas Cariocas e restaurantes populares — a rede de segurança alimentar da cidade numa peça só.","links":[{"t":"post","h":"https://www.dados.rio/post/o-rio-de-janeiro-no-combate-a-fome","cap":"visualização"}]},{"date":"2022-06","type":"dataviz","title":"bairro mais novo & São João na cidade do Carnaval","desc":"duas peças de junho: qual é o bairro mais novo da cidade, e como o São João pede licença na cidade do Carnaval.","links":[{"t":"bairro mais novo","h":"https://www.dados.rio/post/voce-sabe-qual-e-o-bairro-mais-novo-da-cidade","cap":"jun/2022"},{"t":"São João","h":"https://www.dados.rio/post/na-cidade-do-carnaval-sao-joao-pede-licenca","cap":"jun/2022"}]},{"date":"2022-06","type":"lançamento","title":"datalake público municipal do Rio","desc":"lançamos o que chamamos de primeiro datalake público municipal do mundo — em tempo real, consultável, entre secretarias.","links":[{"t":"post de lançamento","h":"https://www.dados.rio/post/o-primeiro-datalake-publico-municipal-do-mundo","cap":"dados.rio"}]},{"date":"2022-05","type":"dataviz","title":"quanto custa um frangão no seu bairro?","desc":"nosso maior sucesso daquele ano — um índice à la Big Mac do frango em 160 bairros; dezenas de milhares de impressões e eco na imprensa.","links":[{"t":"frangão","h":"https://www.dados.rio/post/quanto-custa-um-frangao-no-seu-bairro","cap":"visualização"}]},{"date":"2022-05","type":"dataviz","title":"os dias mais frios do Rio","desc":"ranqueamos os dias mais frios da série histórica — uma peça de clima antes das matérias de calor.","links":[{"t":"post","h":"https://www.dados.rio/post/os-dias-mais-frios-da-cidade-do-rio-de-janeiro","cap":"visualização"}]},{"date":"2022-04","type":"dataviz","title":"visualizações dados.rio — início de 2022","desc":"peças iniciais do escritório: escola de samba é carnaval da elite?, ranking das chuvas e desigualdade da imigração no Rio.","links":[{"t":"escolas de samba","h":"https://www.dados.rio/post/escola-de-samba-e-carnaval-da-elite","cap":"abr/2022"},{"t":"chuvas","h":"https://www.dados.rio/post/ranking-das-chuvas-no-rio-de-janeiro","cap":"abr/2022"},{"t":"imigração","h":"https://www.dados.rio/post/desigualdade-da-imigracao-no-rio-de-janeiro","cap":"abr/2022"}]},{"date":"2022","type":"dataviz","title":"BRT em fatos & Do batente ao batuque","desc":"dois especiais iniciais: corredores do BRT passado e futuro em números, e o retorno do Carnaval para todo carioca — até quem foge do samba.","links":[{"t":"BRT passado e futuro","h":"https://www.dados.rio/especiais/brt","cap":"especial"},{"t":"Do batente ao batuque","h":"https://www.dados.rio/especiais/do-batente-ao-batuque","cap":"especial"}]}];
+    const MENTIONS = [{"date":"2025-10","type":"projeto","title":"Histórico Clínico Integrado — SMS Rio","desc":"um histórico clínico para ~7M de pacientes entre atenção primária e emergência — sobre o data lake da saúde que a SMS fez com a iplanrio / escritório de dados.","links":[{"t":"HCI (SMS)","h":"https://saude.prefeitura.rio/hci/","cap":"página oficial"},{"t":"nota SMS","h":"https://saude.prefeitura.rio/noticias/historico-clinico-integrado-saude-mais-eficiente-e-personalizada/","cap":"lançamento"},{"t":"O Globo","h":"https://oglobo.globo.com/rio/noticia/2025/10/09/secretaria-municipal-de-saude-do-rio-desenvolve-plataforma-que-reune-historico-clinico-de-7-milhoes-de-pacientes.ghtml","cap":"imprensa"}]},{"date":"2025-02","type":"projeto","title":"Mulher.Rio","desc":"plataforma anônima para mulheres em situação de violência — Secretaria da Mulher com CIVITAS e iplanrio na tecnologia. depois divulgada no Taxi.Rio no Agosto Lilás.","links":[{"t":"mulher.rio","h":"https://www.mulher.rio/","cap":"a plataforma"},{"t":"Diário do Rio","h":"https://diariodorio.com/prefeitura-do-rio-lanca-site-para-apoiar-mulheres-em-situacao-de-violencia/","cap":"cobertura do lançamento"},{"t":"Agosto Lilás × Taxi.Rio","h":"https://prefeitura.rio/cidade/secretaria-da-mulher-e-taxi-rio-se-unem-em-campanha-de-combate-a-violencia-contra-as-mulheres/","cap":"campanha"}]},{"date":"2024-11","type":"dataviz","title":"G20 em Dados — especial","desc":"publicamos um especial interativo sobre o que sediar o G20 significou para o Rio — dinheiro, gente e o palco global da cidade.","links":[{"t":"G20 em Dados","h":"https://prefeitura-rio.github.io/viz_G20/","cap":"especial"}]},{"date":"2024","type":"dataviz","title":"Destino: Rio de Janeiro — megaeventos","desc":"mapeamos por que a cidade gasta recurso público para receber o mundo — não só pela foto.","links":[{"t":"Destino: Rio","h":"https://viz.dados.rio/#/megaeventos","cap":"especial"}]},{"date":"2024-06","type":"dataviz","title":"Estamos de olho! — dataviz da CIVITAS","desc":"uma narrativa pública sobre como a central de inteligência observa a cidade 24h — câmeras, radares e os canos por trás da segurança.","links":[{"t":"Estamos de olho!","h":"https://viz-staging.dados.rio/#/civitas","cap":"especial"},{"t":"especiais","h":"https://www.dados.rio/especiais","cap":"dados.rio"}]},{"date":"2024-06","type":"projeto","title":"CIVITAS — central de inteligência do Rio","desc":"central de inteligência da cidade para segurança pública — câmeras, radares, 1746 e o datalake municipal. a iplanrio / escritório de dados alimentava os canos; a google depois citou 6M+ leituras de placa/dia.","links":[{"t":"civitas.rio","h":"https://civitas.rio/","cap":"site oficial"},{"t":"nota de lançamento","h":"https://prefeitura.rio/casa-civil/prefeitura-lanca-central-de-inteligencia-vigilancia-e-tecnologia-de-apoio-a-seguranca-publica-civitas-e-anuncia-parceria-com-disque-denuncia/","cap":"prefeitura"},{"t":"Estamos de olho!","h":"https://viz-staging.dados.rio/#/civitas","cap":"dataviz"}]},{"date":"2024-05","type":"dataviz","title":"O Rio nunca teve tanta gente trabalhando","desc":"contamos a recuperação do emprego por três cariocas que acharam trabalho — e os números por trás da retomada.","links":[{"t":"especial","h":"https://prefeitura-rio.github.io/riodeempregos/","cap":"dataviz"}]},{"date":"2024","type":"dataviz","title":"obras & CEP — onde a cidade investe","desc":"dois especiais: infraestrutura priorizada para Zona Norte e Oeste, e o CEP — o programa de rua contra a violência.","links":[{"t":"A gente prioriza…","h":"https://viz.dados.rio/#/obras","cap":"obras"},{"t":"Seu Rio, Sua Rua","h":"https://viz.dados.rio/#/especial-seop/cep","cap":"CEP"}]},{"date":"2024","type":"projeto","title":"chatbot do 1746 — Dialogflow / Escritório de Dados","desc":"chatbot da prefeitura para zeladoria no 1746 — Dialogflow com webhooks no GKE pelo escritório de dados, depois sob a iplanrio. tempo médio de resposta de 30 para 5 minutos, com 30 mil+ conversas/mês; case global google cloud, mai/2025.","links":[{"t":"nota iplanrio","h":"https://iplanrio.prefeitura.rio/noticias/prefeitura-do-rio-e-reconhecida-pela-google-cloud-por-uso-inovador-de-dados-para-politicas-publicas/","cap":"reconhecimento Google Cloud"},{"t":"case Google Cloud","h":"https://cloud.google.com/customers/intl/pt-br/escritorio-de-dados-da-cidade-do-rio-de-janeiro?hl=pt-BR","cap":"Dialogflow e métricas"},{"t":"1746","h":"https://www.1746.rio/","cap":"atendimento ao cidadão"}]},{"date":"2024-03","type":"dataviz","title":"legado olímpico — dois especiais","desc":"perguntamos o que seria do Rio sem os Jogos, e como a arquitetura nômade tentou evitar elefantes brancos.","links":[{"t":"sem as Olimpíadas","h":"https://prefeitura-rio.github.io/LegadoOlimpico2/","cap":"especial"},{"t":"sem elefantes brancos","h":"https://prefeitura-rio.github.io/LegadoOlimpico/","cap":"especial"}]},{"date":"2023-12","type":"dataviz","title":"Rio Capital do Mundo","desc":"uma viagem no tempo em dataviz sobre a aposta longa da cidade em receber o mundo — na temporada do G20.","links":[{"t":"Rio Capital do Mundo","h":"https://prefeitura-rio.github.io/G20Dataviz/","cap":"especial"}]},{"date":"2023-10","type":"dataviz","title":"segundo inverno mais quente em 20 anos","desc":"mostramos um inverno atípico — setembro o mais quente da série, com a Zona Norte no pior calor.","links":[{"t":"post","h":"https://www.dados.rio/post/setembro-deste-ano-foi-o-mais-quente-na-serie-historica","cap":"visualização"}]},{"date":"2023-09","type":"dataviz","title":"1746 — encerramentos no prazo em alta","desc":"publicamos os números da central de atendimento no melhor nível de encerramentos no prazo desde 2021.","links":[{"t":"post","h":"https://www.dados.rio/post/chamadas-do-1746-alcancam-maior-nivel-de-encerramento-no-prazo-desde-2021","cap":"visualização"}]},{"date":"2023","type":"projeto","title":"Dashboard integrado de monitoramento de eventos hidrológicos","desc":"dashboard integrado de monitoramento de eventos hidrológicos — listado em Projetos no dados.rio.","links":[{"t":"projeto","h":"https://www.dados.rio/projetos/dashboard-integrado-de-monitoramento-de-eventos-hidrologicos","cap":"dados.rio"}]},{"date":"2023","type":"projeto","title":"Monitoramento de aposentadorias e vacâncias","desc":"dashboard de monitoramento de aposentadorias e vacâncias — Projetos no dados.rio.","links":[{"t":"projeto","h":"https://www.dados.rio/projetos/dashboard-de-monitoramento-de-aposentadorias-e-vacancias","cap":"dados.rio"}]},{"date":"2023","type":"dataviz","title":"BRT Rio — construção e reconstrução","desc":"um especial atualizado sobre a reconstrução do BRT — frota nova, Transbrasil, Terminal Gentileza e a história dos corredores em números.","links":[{"t":"reconstrução BRT","h":"https://www.dados.rio/especiais/reconstrucao-brt","cap":"especial"}]},{"date":"2023-03","type":"dataviz","title":"BRT — o dono é você / cuide do que é nosso","desc":"dois textos curtos transformando dados abertos do BRT em apelo ao cidadão — o sistema é seu; cuide dele.","links":[{"t":"o dono é você","h":"https://www.dados.rio/post/brt-o-dono-e-voce","cap":"mar/2023"},{"t":"cuide do que é nosso","h":"https://www.dados.rio/post/brt-cuide-do-que-e-nosso","cap":"fev/2023"}]},{"date":"2023-02","type":"dataviz","title":"Carnaval de Dados","desc":"colocamos a economia do Carnaval em gráficos — ISS, turistas, escolas, blocos e a estimativa de R$ 4,5 bi para 2023.","links":[{"t":"Carnaval de Dados","h":"https://www.dados.rio/especiais/carnaval-de-dados","cap":"especial"}]},{"date":"2022-11","type":"dataviz","title":"Álbum da Copa do Mundo Carioca","desc":"nosso álbum da Copa — jogadores cariocas em todas as Copas, num especial brincalhão.","links":[{"t":"álbum","h":"https://www.dados.rio/especiais/copa-do-mundo-carioca","cap":"especial"}]},{"date":"2022","type":"dataviz","title":"visualizações dados.rio — fim de 2022","desc":"uma sequência de peças curtas: obras do Plano Verão, fluxos da escravidão no Dia da Consciência Negra, voos do Galeão pós-covid, samba no centro no sábado, Rock in Rio com a prefeitura e as águas de março.","links":[{"t":"Plano Verão","h":"https://www.dados.rio/post/obras-do-plano-verao","cap":"nov/2022"},{"t":"Fluxo desumano","h":"https://www.dados.rio/post/dia-da-consciencia-negra","cap":"nov/2022"},{"t":"Galeão","h":"https://www.dados.rio/post/apos-pandemia-galeao-nao-recupera-volume-de-voos","cap":"nov/2022"},{"t":"sambinha","h":"https://www.dados.rio/post/sambinha-no-centro-no-sabado","cap":"out/2022"},{"t":"Rock in Rio","h":"https://www.dados.rio/post/prefeitura-e-rock-in-rio-em-numeros","cap":"set/2022"},{"t":"águas de março","h":"https://www.dados.rio/post/o-rio-das-aguas-de-marco","cap":"ago/2022"}]},{"date":"2022","type":"dataviz","title":"mais de 1.300 construções irregulares a menos","desc":"um especial sobre demolições — prejuízo ao crime organizado, áreas verdes preservadas e mais segurança para moradores.","links":[{"t":"demolições","h":"https://share.dados.rio/demolicoes"}]},{"date":"2022-07","type":"dataviz","title":"o Rio no combate à fome — em números","desc":"mostramos cozinhas comunitárias, Hortas Cariocas e restaurantes populares — a rede de segurança alimentar da cidade numa peça só.","links":[{"t":"post","h":"https://www.dados.rio/post/o-rio-de-janeiro-no-combate-a-fome","cap":"visualização"}]},{"date":"2022-06","type":"dataviz","title":"bairro mais novo & São João na cidade do Carnaval","desc":"duas peças de junho: qual é o bairro mais novo da cidade, e como o São João pede licença na cidade do Carnaval.","links":[{"t":"bairro mais novo","h":"https://www.dados.rio/post/voce-sabe-qual-e-o-bairro-mais-novo-da-cidade","cap":"jun/2022"},{"t":"São João","h":"https://www.dados.rio/post/na-cidade-do-carnaval-sao-joao-pede-licenca","cap":"jun/2022"}]},{"date":"2022-06","type":"projeto","title":"datalake público municipal do Rio","desc":"lançamos o que chamamos de primeiro datalake público municipal do mundo — em tempo real, consultável, entre secretarias.","links":[{"t":"post de lançamento","h":"https://www.dados.rio/post/o-primeiro-datalake-publico-municipal-do-mundo","cap":"dados.rio"}]},{"date":"2022-05","type":"dataviz","title":"quanto custa um frangão no seu bairro?","desc":"nosso maior sucesso daquele ano — um índice à la Big Mac do frango em 160 bairros; dezenas de milhares de impressões e eco na imprensa.","links":[{"t":"frangão","h":"https://www.dados.rio/post/quanto-custa-um-frangao-no-seu-bairro","cap":"visualização"}]},{"date":"2022-05","type":"dataviz","title":"os dias mais frios do Rio","desc":"ranqueamos os dias mais frios da série histórica — uma peça de clima antes das matérias de calor.","links":[{"t":"post","h":"https://www.dados.rio/post/os-dias-mais-frios-da-cidade-do-rio-de-janeiro","cap":"visualização"}]},{"date":"2022-04","type":"dataviz","title":"visualizações dados.rio — início de 2022","desc":"peças iniciais do escritório: escola de samba é carnaval da elite?, ranking das chuvas e desigualdade da imigração no Rio.","links":[{"t":"escolas de samba","h":"https://www.dados.rio/post/escola-de-samba-e-carnaval-da-elite","cap":"abr/2022"},{"t":"chuvas","h":"https://www.dados.rio/post/ranking-das-chuvas-no-rio-de-janeiro","cap":"abr/2022"},{"t":"imigração","h":"https://www.dados.rio/post/desigualdade-da-imigracao-no-rio-de-janeiro","cap":"abr/2022"}]},{"date":"2022","type":"dataviz","title":"BRT em fatos & Do batente ao batuque","desc":"dois especiais iniciais: corredores do BRT passado e futuro em números, e o retorno do Carnaval para todo carioca — até quem foge do samba.","links":[{"t":"BRT passado e futuro","h":"https://www.dados.rio/especiais/brt","cap":"especial"},{"t":"Do batente ao batuque","h":"https://www.dados.rio/especiais/do-batente-ao-batuque","cap":"especial"}]}];
     // até 10 cores, atribuídas por posição — cicla de modo que
     // duas linhas vizinhas nunca compartilhem a mesma cor
     const PALETTE = ["#22c55e","#f59e0b","#38bdf8","#a3e635","#f472b6","#c4b5fd","#fbbf24","#67e8f9","#fca5a5","#fdba74"];
@@ -184,9 +222,8 @@
         const li = document.createElement("li");
         li.className = "ttcl__row";
         li.dataset.idx = i;
-        const num = String(i + 1).padStart(2, "0");
+        li.dataset.type = m.type;
         li.innerHTML =
-          '<span class="ttcl__num">' + num + '</span>' +
           '<span class="ttcl__name">' + cap(m.title) + '</span>' +
           '<span class="ttcl__badge">' + cap(m.type) + '</span>';
         listEl.appendChild(li);
@@ -203,7 +240,7 @@
         const m = MENTIONS[idx];
         const color = PALETTE[idx % PALETTE.length];
         section.style.setProperty("--bg", color);
-        dMeta.textContent = m.date || "";
+        dMeta.textContent = (m.date || "").slice(0, 4);
         dTitle.textContent = cap(m.title);
         dDesc.textContent = cap(m.desc || "");
         dLinks.innerHTML = (m.links || []).map(function (l) {
@@ -218,27 +255,26 @@
 
       // on mobile the card is fixed at the top with auto height (no internal scroll);
       // push the list down so it starts right below the card
-      function syncMobile() {
-        if (window.matchMedia("(max-width: 860px)").matches) {
-          listEl.style.marginTop = detail.offsetHeight + "px";
-        } else {
-          listEl.style.marginTop = "";
-        }
-      }
+      function syncMobile() { listEl.style.marginTop = ""; listEl.style.paddingBottom = ""; }
       window.addEventListener("resize", syncMobile);
       window.addEventListener("load", syncMobile);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncMobile);
 
-      rows.forEach((li) => li.addEventListener("mouseenter", () => activate(li)));
+      rows.forEach((li) => {
+        li.addEventListener("mouseenter", () => activate(li)); // desktop hover
+        li.addEventListener("click", () => activate(li));      // mobile tap
+      });
 
       let ticking = false;
       function onScroll() {
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
-          const cy = window.innerHeight / 2;
+          const lr = listEl.getBoundingClientRect();
+          const cy = (Math.max(lr.top, 0) + Math.min(lr.bottom, window.innerHeight)) / 2;
           let best = null, bestD = Infinity;
           for (const li of rows) {
+            if (li.classList.contains("is-hidden")) continue;
             const r = li.getBoundingClientRect();
             if (r.bottom < 0 || r.top > window.innerHeight) continue;
             const d = Math.abs(r.top + r.height / 2 - cy);
@@ -267,6 +303,53 @@
       const endDrag = () => { dragging = false; detail.classList.remove("is-drag"); };
       detail.addEventListener("pointerup", endDrag);
       detail.addEventListener("pointercancel", endDrag);
+
+      // ---- category filter (Mentions header) ----
+      const filterEl = document.getElementById("mFilter");
+      const cats = [];
+      MENTIONS.forEach(m => { if (!cats.includes(m.type)) cats.push(m.type); });
+      let activeCats = null; // null = all categories shown
+      function addChip(label, cat) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "mfilter-chip";
+        b.textContent = label;
+        b.dataset.cat = cat;
+        filterEl.appendChild(b);
+      }
+      addChip("Todos", "__all");
+      cats.forEach(c => addChip(cap(c), c));
+      function renderChips() {
+        [...filterEl.children].forEach(b => {
+          const c = b.dataset.cat;
+          const on = c === "__all" ? (activeCats === null) : (activeCats && activeCats.has(c));
+          b.classList.toggle("is-on", !!on);
+        });
+      }
+      function applyFilter() {
+        for (const li of rows) {
+          const vis = activeCats === null || activeCats.has(li.dataset.type);
+          li.classList.toggle("is-hidden", !vis);
+        }
+        renderChips();
+        const firstVis = rows.find(li => !li.classList.contains("is-hidden"));
+        if (firstVis) { activeRow = null; activate(firstVis); }
+        listEl.scrollTop = 0;
+        window.scrollTo(0, 0);
+      }
+      filterEl.addEventListener("click", (e) => {
+        const b = e.target.closest(".mfilter-chip");
+        if (!b) return;
+        const c = b.dataset.cat;
+        if (c === "__all") activeCats = null;
+        else if (activeCats === null) activeCats = new Set([c]);
+        else {
+          activeCats.has(c) ? activeCats.delete(c) : activeCats.add(c);
+          if (activeCats.size === 0) activeCats = null;
+        }
+        applyFilter();
+      });
+      renderChips();
 
       activate(rows[0]);
       onScroll();
