@@ -1,0 +1,9 @@
+# local dev helper (static preview server)
+server.mjs
+
+# tooling / OS
+.claude/
+node_modules/
+.DS_Store
+Thumbs.db
+.vercel
