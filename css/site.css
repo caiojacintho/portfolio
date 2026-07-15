@@ -2437,13 +2437,14 @@ figcaption {
   opacity: .8;
 }
 
+/* no padding here on purpose: it only restated the 4px .navigation-item already
+   has, but its extra specificity beat the stacked menu's padding and left the
+   current page's link out of line with the others */
 .navigation-item.w--current {
   opacity: 1;
   color: #1a1b1f;
   letter-spacing: 0;
   text-transform: none;
-  padding-left: 4px;
-  padding-right: 4px;
   font-family: DM Sans, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
@@ -2458,6 +2459,13 @@ figcaption {
   opacity: .7;
   color: #32343a;
 }
+
+/* transparent header + white pill buttons (same UI as the Mentions page) */
+.navigation .w-nav-link { background: #fff; opacity: 1; }
+.navigation .heading-8, .navigation .heading { background: #fff; padding: 9px 12px; }
+.navigation .navigation-item:hover, .navigation .navigation-item:active,
+.navigation .navigation-item.w--current:hover, .navigation .navigation-item.w--current:active,
+.navigation .w-nav-link:hover, .navigation .w-nav-link:active { opacity: 1; }
 
 .navigation-item._1.w--current {
   padding-left: 0;
@@ -2476,7 +2484,7 @@ figcaption {
 }
 
 .navigation {
-  background-color: #fff;
+  background-color: transparent;
   align-items: center;
   padding: 8px 12px;
   display: flex;
@@ -3060,6 +3068,11 @@ figcaption {
   display: none;
 }
 
+.div-block.dupla {
+  grid-template-columns: 1fr 1fr;
+  height: 600px;
+}
+
 .image {
   aspect-ratio: auto;
   object-fit: cover;
@@ -3257,7 +3270,7 @@ figcaption {
 }
 
 .div-block-6 {
-  margin-left: 140px;
+  margin-left: 40px;
 }
 
 .navigation-items-1, .navigation-items-2 {
@@ -3277,7 +3290,9 @@ figcaption {
 
 .paragraph {
   color: #b9b9b9;
-  width: 720px;
+  /* a hard 720px forced the page to scroll sideways on anything narrower */
+  width: 100%;
+  max-width: 720px;
   font-family: DM Sans, sans-serif;
   font-size: 1.4rem;
   font-weight: 300;
@@ -3498,7 +3513,11 @@ figcaption {
   }
 
   .navigation-item {
-    text-align: center;
+    text-align: left;
+    /* .w-nav-link ships margin-inline:auto, which as a flex item eats the free
+       space and overrides justify-content — it pulls EN/PT apart. */
+    margin-left: 0;
+    margin-right: 0;
     padding: 15px 30px;
     transition: background-color .4s, opacity .4s, color .4s;
   }
@@ -3513,6 +3532,30 @@ figcaption {
 
   .navigation-items {
     background-color: #fff;
+  }
+
+  /* the 40px indent spaces this block from the links in the desktop row; in the
+     stacked menu it just breaks the left edge. Without display:flex the links
+     inherit Webflow's .w--nav-link-open display:block and stack one per line. */
+  .div-block-6 {
+    flex-flow: row;
+    margin-left: 0;
+    display: flex;
+  }
+
+  /* Full-screen menu with no slide-in. Webflow slides the menu by writing an
+     inline transform, and it leaves that transform at -118px instead of
+     resetting it — which would leave a gap at the bottom. Pinning it to none
+     keeps the menu parked at the overlay's top, so it only ever appears and
+     disappears. The rest of the instant open/close is data-duration="1" on the
+     nav; the menu (not the overlay) carries the white, because Webflow keeps the
+     overlay painted for a beat after closing. */
+  .w-nav-overlay [data-nav-menu-open] {
+    transform: none !important;
+  }
+
+  .w-nav-overlay .navigation-items {
+    min-height: 100vh;
   }
 
   .navigation {
@@ -3719,6 +3762,38 @@ figcaption {
     height: 1px;
     padding-bottom: 0;
     padding-right: 0;
+  }
+
+  /* hamburger -> X: the outer bars slide onto the middle one, then rotate.
+     On close the order reverses, hence the mirrored transition delays.
+     The 7px offset is the gap between each bar's centre and the icon's. */
+  .menu-icon1_line-top,
+  .menu-icon1_line-bottom {
+    transition: translate .2s ease .2s, rotate .2s ease;
+  }
+
+  .menu-icon1_line-middle {
+    transition: opacity .2s ease .2s;
+  }
+
+  .menu-button.w--open .menu-icon1_line-top,
+  .menu-button.w--open .menu-icon1_line-bottom {
+    transition: translate .2s ease, rotate .2s ease .2s;
+  }
+
+  .menu-button.w--open .menu-icon1_line-middle {
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+
+  .menu-button.w--open .menu-icon1_line-top {
+    translate: 0 7px;
+    rotate: 45deg;
+  }
+
+  .menu-button.w--open .menu-icon1_line-bottom {
+    translate: 0 -7px;
+    rotate: -45deg;
   }
 }
 
@@ -3934,6 +4009,7 @@ figcaption {
     align-items: center;
     margin-bottom: 0;
     padding-top: 20px;
+    padding-bottom: 40px;
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -4043,6 +4119,11 @@ figcaption {
 
   .div-block.direita._5 {
     grid-template-columns: 1.5fr;
+  }
+
+  .div-block.dupla {
+    grid-template-columns: 1fr;
+    height: auto;
   }
 
   .div-block._4 {
@@ -4188,6 +4269,13 @@ figcaption {
     display: flex;
   }
 
+  /* keep in step with .div-block-6 above: both rows space their items alike.
+     Only needed here — at wider widths the spacing comes from the links' own
+     padding, which both rows already share. */
+  .lang-switch {
+    gap: 12px;
+  }
+
   .navigation-items-1 {
     justify-content: space-between;
     align-items: center;
@@ -4211,6 +4299,15 @@ figcaption {
   .menu-icon1_line-top, .menu-icon1_line-middle, .menu-icon1_line-bottom {
     background-color: #000;
     height: 2px;
+  }
+
+  /* bars are 2px here, so their centres sit 8px from the icon's */
+  .menu-button.w--open .menu-icon1_line-top {
+    translate: 0 8px;
+  }
+
+  .menu-button.w--open .menu-icon1_line-bottom {
+    translate: 0 -8px;
   }
 
   .div-block-9 {
