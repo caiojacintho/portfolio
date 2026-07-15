@@ -138,6 +138,8 @@
       text-transform: uppercase; transition: color .15s ease;
     }
     .mfilter-chip.is-on { color: #111; }
+    /* same hover as an unselected nav link (e.g. the PT language button) */
+    .mfilter-chip:not(.is-on):hover { color: #1a1b1f; }
     .ttcl__row.is-hidden { display: none; }
 
     @media (max-width: 860px) {

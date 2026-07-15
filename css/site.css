@@ -3483,6 +3483,7 @@ figcaption {
 .background-video-3 {
   width: 100%;
   height: auto;
+  aspect-ratio: 16 / 9;
 }
 
 @media screen and (max-width: 991px) {
