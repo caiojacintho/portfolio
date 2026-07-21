@@ -49,8 +49,8 @@
     // about — thanks (split across two nodes)
     "This journey was only possible thanks to the incredible people who supported me:":
       "Esta jornada só foi possível graças às pessoas incríveis que me apoiaram:",
-    "Marisa Rodrigues, Durval Jacintho, Mylenna Linares, João Carabetta, Júnior Magalhães, Pedro Meneghel, Mateus Lana, Fernando Santana, Lucas Tavares, Diego Oliveira, Frederico Zolio, Gabriel Milan, Ingrid Gomes, Thiago Trabach, Adriano Borges Costa and Mauricio Bouskela.":
-      "Marisa Rodrigues, Durval Jacintho, Mylenna Linares, João Carabetta, Júnior Magalhães, Pedro Meneghel, Mateus Lana, Fernando Santana, Lucas Tavares, Diego Oliveira, Frederico Zolio, Gabriel Milan, Ingrid Gomes, Thiago Trabach, Adriano Borges Costa e Mauricio Bouskela."
+    "Marisa Rodrigues, Durval Jacintho, Mylenna Linares, João Carabetta, Júnior Magalhães, Pedro Meneghel, Mateus Lana, Fernando Santana, Lucas Tavares, Diego Oliveira, Frederico Zolio, Gabriel Milan, Adriano Borges Costa and Mauricio Bouskela.":
+      "Marisa Rodrigues, Durval Jacintho, Mylenna Linares, João Carabetta, Júnior Magalhães, Pedro Meneghel, Mateus Lana, Fernando Santana, Lucas Tavares, Diego Oliveira, Frederico Zolio, Gabriel Milan, Adriano Borges Costa e Mauricio Bouskela."
   };
 
   function norm(s) {

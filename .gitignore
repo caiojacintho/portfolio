@@ -10,4 +10,7 @@ Thumbs.db
 
 .vercel
 .env*
-mentions.csv
+
+# content working files — the page itself is the source of truth
+mentions*.csv
+mentions.xlsx
