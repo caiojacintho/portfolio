@@ -257,35 +257,72 @@
         rows.push(li);
       });
 
-      // light, thin "mouse click" when the selected line changes (synthesized, no asset)
-      var actx = null, audioUnlocked = false;
+      // Light, thin "mouse click" when the selected line changes. Still synthesized
+      // (no asset to ship), but baked once into a WAV data URI and played through
+      // <audio> elements instead of Web Audio: on iOS the ringer switch silences a
+      // Web Audio graph while media-element playback keeps sounding, which is why
+      // the old version was mute on the phone in both Safari and Chrome.
+      // the baked burst peaks near full scale, so keep the element quiet — this
+      // lands a touch above the old 0.05 Web Audio gain
+      var CLICK_VOL = 0.1;
+      var CLICK_URI = (function () {
+        var RATE = 44100, LEN = Math.floor(RATE * 0.012), HDR = 44; // ~12ms burst
+        var ab = new ArrayBuffer(HDR + LEN * 2), dv = new DataView(ab);
+        function tag(off, s) { for (var i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); }
+        tag(0, "RIFF"); dv.setUint32(4, 36 + LEN * 2, true); tag(8, "WAVEfmt ");
+        dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+        dv.setUint32(24, RATE, true); dv.setUint32(28, RATE * 2, true);
+        dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+        tag(36, "data"); dv.setUint32(40, LEN * 2, true);
+        // decaying white noise through a one-pole highpass — same character the
+        // biquad + gain ramp used to give it
+        var pIn = 0, pOut = 0, a = 0.63;
+        for (var i = 0; i < LEN; i++) {
+          var x = (Math.random() * 2 - 1) * (1 - i / LEN);
+          var y = a * (pOut + x - pIn);
+          pIn = x; pOut = y;
+          dv.setInt16(HDR + i * 2, Math.max(-1, Math.min(1, y)) * 32767, true);
+        }
+        var bytes = new Uint8Array(ab), bin = "";
+        for (var j = 0; j < bytes.length; j++) bin += String.fromCharCode(bytes[j]);
+        return "data:audio/wav;base64," + btoa(bin);
+      })();
+
+      // a small pool so quick scrolls don't cut the previous click short
+      var clickPool = [], clickAt = 0, audioUnlocked = false;
+      for (var ci = 0; ci < 4; ci++) {
+        var ae = new Audio(CLICK_URI);
+        ae.preload = "auto";
+        ae.volume = CLICK_VOL;
+        clickPool.push(ae);
+      }
       function ensureAudio() {
-        try {
-          if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-          if (actx.state === "suspended") actx.resume();
-          if (!audioUnlocked) { // iOS: play a silent buffer inside the gesture to unlock
-            var b = actx.createBuffer(1, 1, 22050);
-            var s = actx.createBufferSource(); s.buffer = b; s.connect(actx.destination); s.start(0);
-            audioUnlocked = true;
-          }
-        } catch (e) {}
+        if (audioUnlocked) return;
+        audioUnlocked = true;
+        // iOS only lets an element play later if it played once inside a gesture.
+        // Prime muted and unmute synchronously — the play() call is what grants the
+        // unlock, so the very first click (which lands a frame later) is still audible.
+        clickPool.forEach(function (el) {
+          try {
+            el.muted = true;
+            var p = el.play();
+            el.muted = false;
+            var done = function () { try { el.pause(); el.currentTime = 0; } catch (e) {} };
+            if (p && p.then) p.then(done, function () {}); else done();
+          } catch (e) { el.muted = false; }
+        });
       }
       function clickSound() {
-        if (!actx || actx.state !== "running") return;
-        var t = actx.currentTime;
-        var len = Math.floor(actx.sampleRate * 0.012); // ~12ms noise burst
-        var buf = actx.createBuffer(1, len, actx.sampleRate);
-        var ch = buf.getChannelData(0);
-        for (var i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / len);
-        var src = actx.createBufferSource(); src.buffer = buf;
-        var hp = actx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 3800;
-        var g = actx.createGain();
-        g.gain.setValueAtTime(0.05, t);
-        g.gain.exponentialRampToValueAtTime(0.0005, t + 0.02);
-        src.connect(hp); hp.connect(g); g.connect(actx.destination);
-        src.start(t); src.stop(t + 0.03);
+        if (!audioUnlocked) return;
+        var el = clickPool[clickAt++ % clickPool.length];
+        try {
+          el.currentTime = 0;
+          var p = el.play();
+          if (p && p["catch"]) p["catch"](function () {});
+        } catch (e) {}
       }
-      ["pointerdown", "touchstart", "touchend", "keydown", "click", "wheel", "scroll"].forEach(function (ev) {
+      // scroll is not a user-activation gesture, so unlock off the touch/click that starts it
+      ["pointerdown", "touchstart", "touchend", "keydown", "click", "wheel"].forEach(function (ev) {
         window.addEventListener(ev, ensureAudio, { passive: true });
       });
 
