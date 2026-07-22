@@ -3294,14 +3294,14 @@ figcaption {
   width: 100%;
   max-width: 720px;
   font-family: DM Sans, sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 300;
   line-height: 130%;
 }
 
 .bold-text {
   color: #3a3a3a;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 500;
 }
 
@@ -4295,6 +4295,12 @@ figcaption {
 
   .div-block-7 {
     margin-top: 220px;
+  }
+
+  /* drop the negative pull so the icon box is inset 12px on the right,
+     matching the logo's 12px inset on the left */
+  .menu-icon1 {
+    margin-right: 0;
   }
 
   .menu-icon1_line-top, .menu-icon1_line-middle, .menu-icon1_line-bottom {

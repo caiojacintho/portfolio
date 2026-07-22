@@ -16,10 +16,10 @@
     "ABOUT": "SOBRE",
     "MENTIONS": "MENÇÕES",
     // work — intro (split across <strong> + text) and section labels
-    "Hi! I’m Caio, a Brazilian multiform Designer. My expertise often lies at the intersection of design, data and communication.":
-      "Olá! Sou o Caio, designer brasileiro multiforme. Minha atuação costuma estar na interseção entre design, dados e comunicação.",
-    "I currently lead the Design team at IplanRio, the technology agency of Rio de Janeiro City Hall, where I help shape the city's digital future.":
-      "Atualmente lidero o time de Design da IplanRio, a agência de tecnologia da Prefeitura do Rio de Janeiro, onde ajudo a moldar o futuro digital da cidade.",
+    "A Brazilian multiform designer working at the intersection of design, data and communication.":
+      "Designer brasileiro multiforme, atuando na interseção entre design, dados e comunicação.",
+    "I lead the Design team at IplanRio, the technology agency of Rio de Janeiro City Hall, shaping the city's digital future.":
+      "Lidero o time de Design da IplanRio, a agência de tecnologia da Prefeitura do Rio de Janeiro, moldando o futuro digital da cidade.",
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
     "Architecture": "Arquitetura",
