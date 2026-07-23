@@ -25,6 +25,9 @@
   </script>
   <style>
     html, body { overflow-x: clip; max-width: 100%; } /* clip (not hidden) keeps position:sticky working */
+    /* infinite loop: hide the scrollbar so the silent scroll-teleport is invisible */
+    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar { width: 0; height: 0; }
     .ttcl {
       --bg: #22c55e;
       min-height: 100vh;
@@ -244,18 +247,7 @@
       const catLabel = (c) => ((CATLABEL[LANG] && CATLABEL[LANG][c]) || cap(c));
       const LINKLABEL = { en: { acesso: "Link", news: "News" }, pt: { acesso: "Link", news: "Notícias" } };
 
-      const rows = [];
-      MENTIONS.forEach((m, i) => {
-        const li = document.createElement("li");
-        li.className = "ttcl__row";
-        li.dataset.idx = i;
-        li.dataset.type = m.type;
-        li.innerHTML =
-          '<span class="ttcl__name">' + cap(T(m)) + '</span>' +
-          '<span class="ttcl__badge">' + catLabel(m.type) + '</span>';
-        listEl.appendChild(li);
-        rows.push(li);
-      });
+      // rows are rendered into a repeating strip (see buildStrip) so the list loops
 
       // Light, thin "mouse click" when the selected line changes. Still synthesized
       // (no asset to ship), but baked once into a WAV data URI and played through
@@ -326,7 +318,10 @@
         window.addEventListener(ev, ensureAudio, { passive: true });
       });
 
-      let activeRow = null;
+      let activeRow = null, activeIdx = -1;
+      let activeCats = null;                                  // null = every category
+      let stripRows = [], visIdxs = [], N = 0, unitH = 0, UNITS = 0, homeUnit = 0, baseRowY = 0, anchorLow = 0;
+
       function fillDetail(m) {
         dMeta.textContent = (m.date || "").slice(0, 4);
         dCat.textContent = catLabel(m.type || "");
@@ -339,77 +334,123 @@
         if (newsLink) linksHtml += '<a class="ttcl__lnk" href="' + newsLink.h + '" target="_blank" rel="noopener"><span class="ttcl__lnk-t">' + LINKLABEL[LANG].news + '</span>' + ARROW_IMG + '</a>';
         dLinks.innerHTML = linksHtml;
       }
+
+      // the highlight follows whichever repeated copy sits nearest the middle of the
+      // screen; colour / detail / click only refresh when the underlying item changes
       function activate(li) {
         if (li === activeRow) return;
+        var idx = +li.dataset.idx;
+        var sameItem = idx === activeIdx;
         if (activeRow) activeRow.classList.remove("is-active");
         activeRow = li;
         li.classList.add("is-active");
-        const idx = +li.dataset.idx;
-        const m = MENTIONS[idx];
-        const color = PALETTE[idx % PALETTE.length];
-        section.style.setProperty("--bg", color);
+        if (sameItem) return;
+        activeIdx = idx;
+        var m = MENTIONS[idx];
+        section.style.setProperty("--bg", PALETTE[idx % PALETTE.length]);
         fillDetail(m);
         detail.classList.add("is-on");
         clickSound();
-        syncMobile();
       }
-      // re-render everything when the language changes
+
+      // ---- infinite repeating strip ----------------------------------------
+      // the visible rows are rendered many times back-to-back; while scrolling we
+      // silently shift by whole repetitions (identical pixels), so there is no edge
+      // and the selected row can always rest at the vertical centre of the screen.
+      function currentVisibleIdxs() {
+        var out = [];
+        MENTIONS.forEach(function (m, i) { if (activeCats === null || activeCats.has(m.type)) out.push(i); });
+        return out;
+      }
+      function makeRow(idx) {
+        var m = MENTIONS[idx];
+        var li = document.createElement("li");
+        li.className = "ttcl__row";
+        li.dataset.idx = idx;
+        li.dataset.type = m.type;
+        li.innerHTML = '<span class="ttcl__name">' + cap(T(m)) + '</span>' +
+                       '<span class="ttcl__badge">' + catLabel(m.type) + '</span>';
+        li.addEventListener("click", function () { centerRow(li, false); });
+        return li;
+      }
+      function appendUnit(vis) {
+        for (var k = 0; k < vis.length; k++) { var li = makeRow(vis[k]); listEl.appendChild(li); stripRows.push(li); }
+      }
+      function buildStrip() {
+        visIdxs = currentVisibleIdxs();
+        N = visIdxs.length;
+        listEl.innerHTML = "";
+        stripRows = [];
+        activeRow = null; activeIdx = -1;
+        if (!N) { detail.classList.remove("is-on"); return; }
+        appendUnit(visIdxs); appendUnit(visIdxs);              // two copies → measure one repetition
+        unitH = stripRows[N].offsetTop - stripRows[0].offsetTop;
+        if (unitH <= 0) unitH = Math.max(1, stripRows[0].getBoundingClientRect().height * N);
+        var vp = window.innerHeight;
+        UNITS = Math.max(5, Math.ceil((vp * 4) / unitH));       // enough copies to always fill the screen
+        for (var u = 2; u < UNITS; u++) appendUnit(visIdxs);
+        homeUnit = Math.floor(UNITS / 2);
+        baseRowY = stripRows[0].getBoundingClientRect().top + window.scrollY;
+        anchorLow = baseRowY + (homeUnit - 0.5) * unitH;
+      }
+      function centerRow(li, smooth) {
+        var r = li.getBoundingClientRect();
+        var y = r.top + window.scrollY - (window.innerHeight - r.height) / 2;
+        window.scrollTo({ top: y, behavior: smooth ? "smooth" : "auto" });
+      }
+      function wrap() {
+        if (unitH <= 0) return;
+        var y = window.scrollY;
+        var k = Math.floor((y - anchorLow) / unitH);
+        if (k !== 0) window.scrollTo(0, y - k * unitH);          // teleport whole repetitions — seamless
+      }
+      function activateCenter() {
+        if (!stripRows.length) return;
+        var mid = window.innerHeight / 2, best = null, bestD = Infinity;
+        for (var i = 0; i < stripRows.length; i++) {
+          var r = stripRows[i].getBoundingClientRect();
+          if (r.bottom < 0 || r.top > window.innerHeight) continue;
+          var d = Math.abs(r.top + r.height / 2 - mid);
+          if (d < bestD) { bestD = d; best = stripRows[i]; }
+        }
+        if (best) activate(best);
+      }
+      var ticking = false;
+      function onScroll() {
+        wrap();
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { activateCenter(); ticking = false; });
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      // (re)build the loop, keeping keepIdx centred (falls back to the first item)
+      function rebuild(keepIdx) {
+        var want = (keepIdx != null) ? keepIdx : (activeIdx >= 0 ? activeIdx : null);
+        buildStrip();
+        if (!stripRows.length) return;
+        var pos = (want != null) ? visIdxs.indexOf(want) : -1;
+        if (pos < 0) pos = 0;
+        centerRow(stripRows[homeUnit * N + pos], false);
+        wrap();
+        activateCenter();
+      }
+
+      // re-render on language change (text length shifts row heights → remeasure)
       function relang() {
         LANG = (window.SiteLang && window.SiteLang.get()) || "en";
-        rows.forEach(function (li) {
+        stripRows.forEach(function (li) {
           var m = MENTIONS[+li.dataset.idx];
           li.querySelector(".ttcl__name").textContent = cap(T(m));
           li.querySelector(".ttcl__badge").textContent = catLabel(m.type);
         });
         var f = document.getElementById("mFilter");
         if (f) [].forEach.call(f.children, function (b) { b.textContent = catLabel(b.dataset.cat); });
-        if (activeRow) fillDetail(MENTIONS[+activeRow.dataset.idx]);
+        if (activeIdx >= 0) fillDetail(MENTIONS[activeIdx]);
+        var keep = activeIdx;
+        requestAnimationFrame(function () { rebuild(keep >= 0 ? keep : null); });
       }
       document.addEventListener("langchange", relang);
-
-      // on mobile the card is fixed at the top with auto height (no internal scroll);
-      // push the list down so it starts right below the card
-      function syncMobile() { listEl.style.marginTop = ""; listEl.style.paddingBottom = ""; }
-      window.addEventListener("resize", syncMobile);
-      window.addEventListener("load", syncMobile);
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncMobile);
-
-      // guarantee the page is tall enough to scroll every visible item up to the
-      // activation line — otherwise short categories (Video, Arch) can't be scrolled
-      function ensureScrollRoom() {
-        section.style.minHeight = "";
-        var visible = rows.filter(function (li) { return !li.classList.contains("is-hidden"); });
-        if (visible.length < 2) return;
-        var refY = window.innerHeight * 0.22;
-        var last = visible[visible.length - 1];
-        var lastTopDoc = last.getBoundingClientRect().top + window.scrollY;
-        var needed = lastTopDoc - refY + window.innerHeight + 24;
-        var current = document.documentElement.scrollHeight;
-        if (needed > current) section.style.minHeight = (section.offsetHeight + (needed - current)) + "px";
-      }
-      window.addEventListener("resize", ensureScrollRoom);
-      window.addEventListener("load", ensureScrollRoom);
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(ensureScrollRoom);
-
-      // activation is scroll-driven only; tap still lets you jump to an item
-      rows.forEach((li) => li.addEventListener("click", () => activate(li)));
-
-      function onScroll() {
-        var visible = rows.filter(function (li) { return !li.classList.contains("is-hidden"); });
-        if (!visible.length) return;
-        var doc = document.documentElement;
-        // make the extremes always reachable
-        if (window.scrollY <= 2) { activate(visible[0]); return; }
-        if ((window.innerHeight + window.scrollY) >= (doc.scrollHeight - 2)) { activate(visible[visible.length - 1]); return; }
-        var refY = window.innerHeight * 0.22;
-        var best = null;
-        for (var i = 0; i < visible.length; i++) {
-          if (visible[i].getBoundingClientRect().top <= refY) best = visible[i];
-          else break;
-        }
-        activate(best || visible[0]);
-      }
-      window.addEventListener("scroll", onScroll, { passive: true });
 
       // drag the detail card (desktop)
       let dragging = false, sx = 0, sy = 0, tx = 0, ty = 0, bx = 0, by = 0;
@@ -433,7 +474,7 @@
       const filterEl = document.getElementById("mFilter");
       const cats = [];
       MENTIONS.forEach(m => { if (!cats.includes(m.type)) cats.push(m.type); });
-      let activeCats = null; // null = all categories shown
+      // activeCats is declared with the strip state above (null = every category)
       function addChip(label, cat) {
         const b = document.createElement("button");
         b.type = "button";
@@ -452,18 +493,9 @@
         });
       }
       function applyFilter() {
-        for (const li of rows) {
-          const vis = activeCats === null || activeCats.has(li.dataset.type);
-          li.classList.toggle("is-hidden", !vis);
-        }
         renderChips();
-        const firstVis = rows.find(li => !li.classList.contains("is-hidden"));
-        if (activeRow) activeRow.classList.remove("is-active");
-        activeRow = null;
-        if (firstVis) activate(firstVis);
-        listEl.scrollTop = 0;
-        window.scrollTo(0, 0);
-        ensureScrollRoom();
+        var first = currentVisibleIdxs()[0];
+        rebuild(first != null ? first : null);
       }
       filterEl.addEventListener("click", (e) => {
         const b = e.target.closest(".mfilter-chip");
@@ -487,12 +519,18 @@
           headerHost.insertBefore(filterEl, headerAnchor);
         }
       }
-      window.addEventListener("resize", placeFilter);
+      // ---- boot ----
       placeFilter();
-
-      // start with the first item selected; scroll takes over from there
-      activate(rows[0]);
-      ensureScrollRoom();
+      rebuild(null);                            // first item centred & selected
+      function reflow() { rebuild(activeIdx >= 0 ? activeIdx : null); }
+      window.addEventListener("load", reflow);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(reflow);
+      var resizeT;
+      window.addEventListener("resize", function () {
+        placeFilter();
+        clearTimeout(resizeT);
+        resizeT = setTimeout(reflow, 150);
+      });
     })();
   </script>
 
