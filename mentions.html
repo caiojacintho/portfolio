@@ -73,8 +73,7 @@
       position: fixed; top: 50%; right: 6vw;
       width: min(380px, 34vw);
       transform: translate(0, -50%);
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(6px);
+      background: #fff;
       border-radius: 0;
       box-shadow: 0 30px 80px rgba(0,0,0,.22);
       padding: 22px 22px 20px;
@@ -117,24 +116,19 @@
     }
     .ttcl__lnk:hover .ttcl__lnk-t { opacity: .55; }
 
-    /* media card: same footprint as the detail card, docked right below it */
+    /* media block: lives inside the detail card, follows its padding */
     .ttcl__media {
-      position: fixed;
-      width: min(380px, 34vw);
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(6px);
-      box-shadow: 0 30px 80px rgba(0,0,0,.22);
+      display: none;
+      margin-top: 16px;
       overflow: hidden;
-      opacity: 0; pointer-events: none;
-      transition: opacity .35s ease;
-      z-index: 39; box-sizing: border-box;
+      pointer-events: none;
     }
-    .ttcl__media.is-on { opacity: 1; }
+    .ttcl__media.is-on { display: block; }
     .ttcl__media img { display: block; width: 100%; height: 240px; object-fit: cover; }
-    @media (max-width: 860px) { .ttcl__media { display: none; } }
+    @media (max-width: 860px) { .ttcl__media { display: none !important; } }
 
     /* mentions page header: transparent bar + white pill buttons */
-    .navigation.w-nav { background-color: transparent !important; }
+    .navigation.w-nav { background-color: #fff !important; }
     .navigation .w-nav-link { background: #fff; border-radius: 0; opacity: 1; }
     /* keep the white pill fully opaque on hover (no dimming) */
     .navigation .navigation-item:hover, .navigation .navigation-item:active,
@@ -226,8 +220,8 @@
       <h2 class="ttcl__d-title" id="dTitle"></h2>
       <p class="ttcl__d-desc" id="dDesc"></p>
       <div class="ttcl__d-links" id="dLinks"></div>
+      <div class="ttcl__media" id="ttclMedia"><img id="ttclMediaImg" alt="" /></div>
     </div>
-    <div class="ttcl__media" id="ttclMedia"><img id="ttclMediaImg" alt="" /></div>
   </section>
 
   <script src="js/i18n.js"></script>
@@ -370,20 +364,6 @@
           }, 500);
         }
       }
-      // keep the media card glued right below the (draggable) detail card
-      function syncMedia() {
-        if (detail.classList.contains("is-on")) {
-          const r = detail.getBoundingClientRect();
-          media.style.left = r.left + "px";
-          media.style.top = (r.bottom + 12) + "px";
-          media.style.width = r.width + "px";
-        } else {
-          media.classList.remove("is-on");
-        }
-        requestAnimationFrame(syncMedia);
-      }
-      requestAnimationFrame(syncMedia);
-
       function fillDetail(m) {
         updateMedia(m);
         dMeta.textContent = (m.date || "").slice(0, 4);

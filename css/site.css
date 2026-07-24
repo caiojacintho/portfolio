@@ -2484,7 +2484,7 @@ figcaption {
 }
 
 .navigation {
-  background-color: transparent;
+  background-color: #fff;
   align-items: center;
   padding: 8px 12px;
   display: flex;
