@@ -36,7 +36,7 @@
 
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
-    .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 40px; align-items: start; }
+    .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
     .case-side { position: sticky; top: 120px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
@@ -47,8 +47,8 @@
     .case-ext:hover { color: #111; }
     /* arrow-only back button (lucide arrow-left), floated above the title without moving it.
        On hover the arrow slides out to the left while a twin slides in from the right. */
-    .case-arrow { position: absolute; top: -44px; left: 4px; width: 22px; height: 22px; color: #111; display: inline-block; overflow: hidden; text-decoration: none; }
-    .case-arrow svg { position: absolute; top: 0; left: 0; transition: transform .32s cubic-bezier(.2,.7,.2,1), opacity .32s ease; }
+    .case-arrow { position: absolute; top: -84px; left: 4px; width: 36px; height: 36px; color: #111; display: none; overflow: hidden; text-decoration: none; }
+    .case-arrow svg { position: absolute; top: 4px; left: 4px; transition: transform .32s cubic-bezier(.2,.7,.2,1), opacity .32s ease; }
     .case-arrow svg:last-child { transform: translateX(150%); opacity: 0; }
     .case-arrow:hover svg:first-child { transform: translateX(-150%); opacity: 0; }
     .case-arrow:hover svg:last-child { transform: translateX(0); opacity: 1; }
@@ -59,10 +59,18 @@
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     .case-media .sec { scroll-margin-top: 120px; }
     @media screen and (max-width: 860px) {
-      .case-wrap { grid-template-columns: 1fr; margin-top: 110px; }
+      .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
+      .case-side .case-sub { max-width: none; }
+      .case-arrow { position: absolute; top: -172px; left: 0; margin: 0; display: inline-flex; }
+      .div-block img.image { height: 60vh; object-fit: cover; }
+      .div-block img[src="images/embya-8.jpg"],
+      .div-block img[src="images/embya-9.jpg"],
+      .div-block img[src="images/embya-12.jpg"],
+      .div-block img[src="images/embya-13.jpg"],
+      .div-block img[src="images/embya-14.jpg"] { height: 42vh; }
       .case-desc { min-height: 0; }
-      .div-block { padding-left: 12px; padding-right: 12px; grid-column-gap: 12px; grid-row-gap: 12px; }
+      .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
 </head>
@@ -88,14 +96,13 @@
 
   <div class="case-wrap">
     <aside class="case-side">
-      <a class="case-arrow" href="index.html" aria-label="Back to featured"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a>
+      <a class="case-arrow" href="index.html" aria-label="Back to featured"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a>
       <div class="case-title"><h1>Embyá</h1><span class="case-year">2024</span></div>
-      <p class="case-sub">Embyá is a Brazilian landscape studio practicing ecosystem-based design — through a
-        sensitive perspective, it seeks a reconciliation between human occupation and natural processes.</p>
+      <p class="case-sub">Embyá is a Brazilian landscape studio practicing ecosystem-based design.
+        Through a sensitive perspective, it seeks a reconciliation between human occupation and
+        natural processes.</p>
       <p class="case-sub">Founded by Duarte Vaz, the team gathers 20+ architects, biologists and agronomists
-        working across parks, gardens, historic restoration and environmental studies. Projects grow from
-        analysis and design to cultivation in the studio's own 10,000 m² organic nursery, implementation
-        and maintenance.</p>
+        working across parks, gardens, historic restoration and environmental studies.</p>
       <a class="case-ext" href="https://www.embya.com.br/" target="_blank" rel="noopener">embya.com.br</a>
     </aside>
 
@@ -103,40 +110,40 @@
       <!-- rows mirror the Featured grid exactly: dupla/unica in the same order -->
       <div class="sec" id="challenge">
         <div class="div-block dupla case-hero">
-          <img src="images/embya-1.png" loading="eager" alt="Embyá" class="image" />
-          <img src="images/embya-2.png" loading="eager" alt="" class="image" />
+          <img src="images/embya-1.jpg" loading="eager" alt="Embyá" class="image" />
+          <img src="images/embya-2.jpg" loading="eager" alt="" class="image" />
         </div>
       </div>
-      <div class="div-block unica"><img src="images/embya-3.png" loading="lazy" alt="" class="image" /></div>
+      <div class="div-block unica"><img src="images/embya-3.jpg" loading="lazy" alt="" class="image" /></div>
 
       <div class="sec" id="strategy">
         <div class="div-block dupla">
-          <img src="images/embya-4.png" loading="lazy" alt="" class="image" />
-          <img src="images/embya-5.png" loading="lazy" alt="" class="image" />
+          <img src="images/embya-4.jpg" loading="lazy" alt="" class="image" />
+          <img src="images/embya-5.jpg" loading="lazy" alt="" class="image" />
         </div>
       </div>
-      <div class="div-block unica"><img src="images/embya-8.png" loading="lazy" alt="" class="image" /></div>
+      <div class="div-block unica"><img src="images/embya-8.jpg" loading="lazy" alt="" class="image" /></div>
 
       <div class="sec" id="identity">
         <div class="div-block dupla">
-          <img src="images/embya-6.png" loading="lazy" alt="" class="image" />
-          <img src="images/embya-7.png" loading="lazy" alt="" class="image" />
+          <img src="images/embya-6.jpg" loading="lazy" alt="" class="image" />
+          <img src="images/embya-7.jpg" loading="lazy" alt="" class="image" />
         </div>
       </div>
-      <div class="div-block unica"><img src="images/embya-9.png" loading="lazy" alt="" class="image" /></div>
+      <div class="div-block unica"><img src="images/embya-9.jpg" loading="lazy" alt="" class="image" /></div>
 
       <div class="sec" id="application">
         <div class="div-block dupla">
-          <img src="images/embya-10.png" loading="lazy" alt="" class="image" />
-          <img src="images/embya-11.png" loading="lazy" alt="" class="image" />
+          <img src="images/embya-10.jpg" loading="lazy" alt="" class="image" />
+          <img src="images/embya-11.jpg" loading="lazy" alt="" class="image" />
         </div>
       </div>
-      <div class="div-block unica"><img src="images/embya-14.png" loading="lazy" alt="" class="image" /></div>
+      <div class="div-block unica"><img src="images/embya-14.jpg" loading="lazy" alt="" class="image" /></div>
 
       <div class="sec" id="outcome">
         <div class="div-block dupla">
-          <img src="images/embya-12.png" loading="lazy" alt="" class="image" />
-          <img src="images/embya-13.png" loading="lazy" alt="" class="image" />
+          <img src="images/embya-12.jpg" loading="lazy" alt="" class="image" />
+          <img src="images/embya-13.jpg" loading="lazy" alt="" class="image" />
         </div>
       </div>
     </main>

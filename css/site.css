@@ -2462,7 +2462,7 @@ figcaption {
 
 /* transparent header + white pill buttons (same UI as the Mentions page) */
 .navigation .w-nav-link { background: #fff; opacity: 1; }
-.navigation .heading-8, .navigation .heading { background: #fff; padding: 9px 12px; }
+.navigation .heading-8, .navigation .heading { background: #fff; padding: 9px 0; }
 .navigation .navigation-item:hover, .navigation .navigation-item:active,
 .navigation .navigation-item.w--current:hover, .navigation .navigation-item.w--current:active,
 .navigation .w-nav-link:hover, .navigation .w-nav-link:active { opacity: 1; }
@@ -4341,7 +4341,7 @@ figcaption {
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 2px;
-    padding-left: 12px;
+    padding-left: 0;
     padding-right: 12px;
     font-size: 1rem;
     line-height: 100%;
