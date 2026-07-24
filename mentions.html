@@ -117,6 +117,22 @@
     }
     .ttcl__lnk:hover .ttcl__lnk-t { opacity: .55; }
 
+    /* media card: same footprint as the detail card, docked right below it */
+    .ttcl__media {
+      position: fixed;
+      width: min(380px, 34vw);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 30px 80px rgba(0,0,0,.22);
+      overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transition: opacity .35s ease;
+      z-index: 39; box-sizing: border-box;
+    }
+    .ttcl__media.is-on { opacity: 1; }
+    .ttcl__media img { display: block; width: 100%; height: 240px; object-fit: cover; }
+    @media (max-width: 860px) { .ttcl__media { display: none; } }
+
     /* mentions page header: transparent bar + white pill buttons */
     .navigation.w-nav { background-color: transparent !important; }
     .navigation .w-nav-link { background: #fff; border-radius: 0; opacity: 1; }
@@ -191,7 +207,7 @@
       </div>
       <div class="mfilter" id="mFilter" role="group" aria-label="Filtrar categorias"></div>
       <div class="navigation-wrap">
-        <nav role="navigation" class="navigation-items w-nav-menu"><a href="index.html" class="navigation-item w-nav-link">WORK</a><a href="about.html" class="navigation-item w-nav-link">ABOUT</a><a href="mentions.html" aria-current="page" class="navigation-item w-nav-link w--current">MENTIONS</a><div class="div-block-6"><a href="mailto:caio.rodrigues.jacintho@gmail.com" class="navigation-item w-nav-link">MAIL</a><a href="https://www.linkedin.com/in/caio-jacintho/" target="_blank" class="navigation-item w-nav-link">IN</a><a href="https://www.instagram.com/caio.jacintho/" target="_blank" class="navigation-item w-nav-link">IG</a><a href="https://drive.google.com/file/d/1hxJ0ckNGFz7-M-Ek84T9FUhLtNKsxG1G/view?usp=sharing" target="_blank" class="navigation-item w-nav-link">CV</a></div><div class="lang-switch"><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="en">EN</a><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="pt">PT</a></div></nav>
+        <nav role="navigation" class="navigation-items w-nav-menu"><a href="index.html" class="navigation-item w-nav-link">FEATURED</a><a href="about.html" class="navigation-item w-nav-link">ABOUT</a><a href="mentions.html" aria-current="page" class="navigation-item w-nav-link w--current">WORK</a><div class="div-block-6"><a href="mailto:caio.rodrigues.jacintho@gmail.com" class="navigation-item w-nav-link">MAIL</a><a href="https://www.linkedin.com/in/caio-jacintho/" target="_blank" class="navigation-item w-nav-link">IN</a><a href="https://www.instagram.com/caio.jacintho/" target="_blank" class="navigation-item w-nav-link">IG</a><a href="https://drive.google.com/file/d/1hxJ0ckNGFz7-M-Ek84T9FUhLtNKsxG1G/view?usp=sharing" target="_blank" class="navigation-item w-nav-link">CV</a></div><div class="lang-switch"><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="en">EN</a><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="pt">PT</a></div></nav>
         <div class="menu-button w-nav-button">
           <div class="menu-icon1">
             <div class="menu-icon1_line-top"></div>
@@ -211,6 +227,7 @@
       <p class="ttcl__d-desc" id="dDesc"></p>
       <div class="ttcl__d-links" id="dLinks"></div>
     </div>
+    <div class="ttcl__media" id="ttclMedia"><img id="ttclMediaImg" alt="" /></div>
   </section>
 
   <script src="js/i18n.js"></script>
@@ -322,7 +339,53 @@
       let activeCats = null;                                  // null = every category
       let stripRows = [], visIdxs = [], N = 0, unitH = 0, UNITS = 0, homeUnit = 0, baseRowY = 0, anchorLow = 0;
 
+      // ---- media card under the detail: first image of the work's Featured group,
+      //      cycling through up to 6 images (0.5s each). Works without images hide it.
+      const media = document.getElementById("ttclMedia");
+      const mediaImg = document.getElementById("ttclMediaImg");
+      const CDN = "https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/";
+      const WORK_IMAGES = {
+        m01: [CDN + "69271ba0fb44b9b2be0a8f69_t3.jpg", CDN + "69272e39466b12d1cee56556_testee-p-800.jpg", CDN + "69260573671bcac50e8d183d_9684.png"],
+        m02: ["images/fedd-p-1600.png"],
+        m03: [CDN + "68c196d365455fadf8d8e864_09%201.png", CDN + "68c196a184b5bd4baa09cd0e_3%201.png", CDN + "68c196d2497f6587bb241ede_08%201.png", CDN + "68c196bf6c53b99ba04d32b7_05%201.png", CDN + "68c197eccc000426ea8b9572_iplanrio%20-%205-min.jpg", CDN + "68a2758e368e00e43eefe6ee_iplanrio%20-%202.png"],
+        m04: ["images/embya-1.png", "images/embya-2.png", "images/embya-3.png", "images/embya-4.png", "images/embya-5.png", "images/embya-8.png"],
+        m05: [CDN + "68a2769fd2d6d279596039ef_investrio%20-%205.png", CDN + "68a2769f7045f35ec91b7dba_investrio%20-%203.png", CDN + "68ae2db814a7bca17bf15a70_investrio-1%20copiar-min.jpg", CDN + "68ae2da900ff5066bbea1319_investrio-2%20copiar-min.jpg", CDN + "68ae305637d62ef97e4f89b0_investrio%20-%204.png"],
+        m05b: [CDN + "68a27c03df703dcdcfeac972_t1.jpg", CDN + "68a27c0f9f8f6e14b5abf0c3_t5.jpg", CDN + "68a27c10206f02cd0f144016_t2.jpg", CDN + "68a27c101a82e0deea00a818_t3.jpg"],
+        m38: [CDN + "68b119088835337432ebc746_architecture-7.jpg", CDN + "68b119252fb8ae13b1562dfe_architecture-1.jpg", CDN + "68b1192c993c47b9b00bfb8a_architecture-4.jpg", CDN + "68b1197e2bbaac65da4cad5a_architecture-8.jpg", CDN + "68b1198a974067ae1d5ff56e_architecture-2.jpg"],
+        m39: [CDN + "68b119252fb8ae13b1562dfe_architecture-1.jpg", CDN + "68b1192c993c47b9b00bfb8a_architecture-4.jpg", CDN + "68b119088835337432ebc746_architecture-7.jpg", CDN + "68b1198a974067ae1d5ff56e_architecture-2.jpg", CDN + "68b1197e2bbaac65da4cad5a_architecture-8.jpg"]
+      };
+      let mediaTimer = null;
+      function updateMedia(m) {
+        const imgs = (WORK_IMAGES[m.id] || []).slice(0, 6);
+        if (mediaTimer) { clearInterval(mediaTimer); mediaTimer = null; }
+        if (!imgs.length) { media.classList.remove("is-on"); return; }
+        let i = 0;
+        mediaImg.src = imgs[0];
+        media.classList.add("is-on");
+        if (imgs.length > 1) {
+          imgs.forEach(function (s) { const p = new Image(); p.src = s; }); // preload
+          mediaTimer = setInterval(function () {
+            i = (i + 1) % imgs.length;
+            mediaImg.src = imgs[i];
+          }, 500);
+        }
+      }
+      // keep the media card glued right below the (draggable) detail card
+      function syncMedia() {
+        if (detail.classList.contains("is-on")) {
+          const r = detail.getBoundingClientRect();
+          media.style.left = r.left + "px";
+          media.style.top = (r.bottom + 12) + "px";
+          media.style.width = r.width + "px";
+        } else {
+          media.classList.remove("is-on");
+        }
+        requestAnimationFrame(syncMedia);
+      }
+      requestAnimationFrame(syncMedia);
+
       function fillDetail(m) {
+        updateMedia(m);
         dMeta.textContent = (m.date || "").slice(0, 4);
         dCat.textContent = catLabel(m.type || "");
         dTitle.textContent = cap(T(m));

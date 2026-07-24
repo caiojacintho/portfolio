@@ -12,9 +12,9 @@
   //  in the DOM and upper-cased by CSS).
   var PT = {
     // nav
-    "WORK": "PROJETOS",
+    "FEATURED": "DESTAQUES",
     "ABOUT": "SOBRE",
-    "MENTIONS": "MENÇÕES",
+    "WORK": "PROJETOS",
     // work — intro (split across <strong> + text) and section labels
     "A Brazilian multiform designer working at the intersection of design, data and communication.":
       "Designer brasileiro multiforme, atuando na interseção entre design, dados e comunicação.",
