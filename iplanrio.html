@@ -44,8 +44,8 @@
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
     .case-side .case-sub { color: #6b6b66; font-size: 13px; line-height: 1.6; margin: 10px 0 0; max-width: 250px; }
-    .case-ext { display: inline-block; margin-top: 6px; color: #9a9a94; font-size: 13px; }
-    .case-ext:hover { color: #111; }
+    .case-ext { display: inline-block; margin-top: 6px; color: #111; font-size: 13px; text-decoration: none; }
+    .case-ext:hover { color: #6b6b66; }
     /* arrow-only back button (lucide arrow-left), floated above the title without moving it.
        On hover the arrow slides out to the left while a twin slides in from the right. */
     .case-arrow { position: absolute; top: -84px; left: 4px; width: 36px; height: 36px; color: #111; display: none; overflow: hidden; text-decoration: none; }
@@ -58,6 +58,16 @@
     /* right column: stacked media, same card grid language as the work page */
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     .case-media > a { display: block; }
+    /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
+       must still span the column */
+    .case-media .div-block > a { display: block; width: 100%; }
+
+    /* Cards follow their own media's proportions instead of a fixed 100vh crop.
+       --ratio is filled in per card by the script at the end of the page. */
+    .case-media .div-block.unica.video,
+    .case-media .div-block.unica.video .w-background-video { height: auto; }
+    .case-media .w-background-video { aspect-ratio: var(--ratio, 16 / 9); }
+    .case-media .w-background-video > video { object-fit: fill; inset: 0; }
     @media screen and (max-width: 860px) {
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
@@ -72,8 +82,8 @@
   <div data-collapse="medium" data-animation="default" data-duration="1" data-easing="ease" data-easing2="ease" role="banner" class="navigation w-nav">
     <div class="navigation-items-2">
       <div class="navigation-wrap">
-        <nav role="navigation" class="navigation-items-1 w-nav-menu"><h1 class="heading-8">CAIO JACINTHO</h1></nav>
-        <div class="menu-button w-nav-button"><h1 class="heading">CAIO JACINTHO</h1></div>
+        <nav role="navigation" class="navigation-items-1 w-nav-menu"><a href="index.html" class="brand-home"><h1 class="heading-8">CAIO JACINTHO</h1></a></nav>
+        <a href="index.html" class="brand-home menu-button w-nav-button"><h1 class="heading">CAIO JACINTHO</h1></a>
       </div>
       <div class="navigation-wrap">
         <nav role="navigation" class="navigation-items w-nav-menu"><a href="index.html" class="navigation-item w-nav-link w--current">FEATURED</a><a href="about.html" class="navigation-item w-nav-link">ABOUT</a><a href="mentions.html" class="navigation-item w-nav-link">WORK</a><div class="div-block-6"><a href="mailto:caio.rodrigues.jacintho@gmail.com" class="navigation-item w-nav-link">MAIL</a><a href="https://www.linkedin.com/in/caio-jacintho/" target="_blank" class="navigation-item w-nav-link">IN</a><a href="https://www.instagram.com/caio.jacintho/" target="_blank" class="navigation-item w-nav-link">IG</a><a href="https://drive.google.com/file/d/1hxJ0ckNGFz7-M-Ek84T9FUhLtNKsxG1G/view?usp=sharing" target="_blank" class="navigation-item w-nav-link">CV</a></div><div class="lang-switch"><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="en">EN</a><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="pt">PT</a></div></nav>
@@ -94,15 +104,22 @@
       <div class="case-title"><h1>IplanRio</h1><span class="case-year">2025</span></div>
       <p class="case-sub">Rio de Janeiro's municipal information-technology company, responsible for the city's digital systems and services.</p>
       <p class="case-sub">I lead the Design team, shaping the city's digital future across platforms, apps and services.</p>
-      <a class="case-ext" href="https://www.iplan.rio/" target="_blank" rel="noopener">iplan.rio</a>
+      <a class="case-ext" href="https://www.iplan.rio/" target="_blank" rel="noopener">Link</a>
     </aside>
 
     <main class="case-media">
-      <div class="div-block case-hero unica video"><div data-poster-url="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-poster-00001.jpg" data-video-urls="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-transcode.mp4,https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-2 w-background-video w-background-video-atom"><video id="faa875ea-ded2-0f29-5759-8272fd3ca11f-video" loop="" style="background-image:url(&quot;https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-transcode.mp4" data-wf-ignore="true"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F68c19b3eae045676320e771e_iplanrio-transcode.webm" data-wf-ignore="true"></video></div></div>
-      <div class="div-block direita"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d365455fadf8d8e864_09%201.png" loading="lazy" id="w-node-_11fd221c-d66e-31f0-6873-b8259c8daad4-20d09488" sizes="(max-width: 1030px) 100vw, 1030px" alt="" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d365455fadf8d8e864_09%201-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d365455fadf8d8e864_09%201-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d365455fadf8d8e864_09%201.png 1030w" class="image-2"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196a184b5bd4baa09cd0e_3%201.png" loading="lazy" id="w-node-_11fd221c-d66e-31f0-6873-b8259c8daad5-20d09488" sizes="(max-width: 1111px) 100vw, 1111px" alt="" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196a184b5bd4baa09cd0e_3%201-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196a184b5bd4baa09cd0e_3%201-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196a184b5bd4baa09cd0e_3%201-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196a184b5bd4baa09cd0e_3%201.png 1111w" class="image _5"></div>
-      <div class="div-block esquerda"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d2497f6587bb241ede_08%201.png" loading="lazy" sizes="(max-width: 941px) 100vw, 941px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d2497f6587bb241ede_08%201-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d2497f6587bb241ede_08%201-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196d2497f6587bb241ede_08%201.png 941w" alt="" class="image _4"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196bf6c53b99ba04d32b7_05%201.png" loading="lazy" sizes="(max-width: 1060px) 100vw, 1060px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196bf6c53b99ba04d32b7_05%201-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196bf6c53b99ba04d32b7_05%201-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c196bf6c53b99ba04d32b7_05%201.png 1060w" alt="" class="image-6"></div>
-      <div class="div-block unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min.jpg" loading="lazy" sizes="(max-width: 6000px) 100vw, 6000px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-800.jpg 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-1080.jpg 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-1600.jpg 1600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-2000.jpg 2000w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-2600.jpg 2600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min-p-3200.jpg 3200w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68c197eccc000426ea8b9572_iplanrio%20-%205-min.jpg 6000w" alt="" class="image _4"></div>
-      <div class="div-block unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202.png" loading="lazy" sizes="(max-width: 1920px) 100vw, 1920px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202-p-1600.png 1600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2758e368e00e43eefe6ee_iplanrio%20-%202.png 1920w" alt="" class="image"></div>
+      <div class="div-block case-hero unica video"><div data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-2 w-background-video w-background-video-atom"><video loop="" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="images/iplanrio-0.mp4" type="video/mp4" data-wf-ignore="true"></video></div></div>
+      <div class="div-block dupla"><img src="images/iplanrio-1.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-2.png" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-5.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-6.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla"><img src="images/iplanrio-3.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-4.png" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-7.png" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-9.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-8.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-10.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-11.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-12.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/iplanrio-13.jpg" loading="lazy" alt="" class="image"/></div>
     </main>
   </div>
 
@@ -128,6 +145,27 @@
       });
     }, { rootMargin: '400px 0px 400px 0px', threshold: 0.01 });
     for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+  })();
+  </script>
+  <script>
+  /* Size every video card to its own proportions, once the metadata resolves. */
+  (function () {
+    var cards = document.querySelectorAll('.case-media .w-background-video');
+    Array.prototype.forEach.call(cards, function (card) {
+      function apply(w, h) {
+        if (w > 0 && h > 0) card.style.setProperty('--ratio', w + ' / ' + h);
+      }
+      var poster = card.getAttribute('data-poster-url');
+      if (poster) {
+        var probe = new Image();
+        probe.onload = function () { apply(probe.naturalWidth, probe.naturalHeight); };
+        probe.src = poster;
+      }
+      var v = card.querySelector('video');
+      if (!v) return;
+      v.addEventListener('loadedmetadata', function () { apply(v.videoWidth, v.videoHeight); });
+      if (v.readyState >= 1) apply(v.videoWidth, v.videoHeight);
+    });
   })();
   </script>
   <script src="js/i18n.js"></script>

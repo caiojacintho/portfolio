@@ -2994,8 +2994,20 @@ figcaption {
   display: flex;
 }
 
+/* the header wordmark links home; it must not read as a body link */
+.brand-home {
+  color: inherit;
+  text-decoration: none;
+}
+
 .div-block.direita {
   grid-template-columns: 1fr 1.5fr;
+}
+
+/* featured grid only: match the 720px row rhythm of .dupla.
+   Case pages size their rows from the media's own proportions instead. */
+.section .div-block.direita {
+  height: 720px;
 }
 
 .div-block.direita._1 {
@@ -4112,10 +4124,11 @@ figcaption {
     grid-row-gap: 8px;
   }
 
-  .div-block.direita {
+  .div-block.direita, .section .div-block.direita {
     grid-column-gap: 4px;
     grid-row-gap: 4px;
     grid-template-columns: 1fr;
+    height: auto;
   }
 
   .div-block.direita._5 {

@@ -44,8 +44,8 @@
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
     .case-side .case-sub { color: #6b6b66; font-size: 13px; line-height: 1.6; margin: 10px 0 0; max-width: 250px; }
-    .case-ext { display: inline-block; margin-top: 6px; color: #9a9a94; font-size: 13px; }
-    .case-ext:hover { color: #111; }
+    .case-ext { display: inline-block; margin-top: 6px; color: #111; font-size: 13px; text-decoration: none; }
+    .case-ext:hover { color: #6b6b66; }
     /* arrow-only back button (lucide arrow-left), floated above the title without moving it.
        On hover the arrow slides out to the left while a twin slides in from the right. */
     .case-arrow { position: absolute; top: -84px; left: 4px; width: 36px; height: 36px; color: #111; display: none; overflow: hidden; text-decoration: none; }
@@ -58,12 +58,23 @@
     /* right column: stacked media, same card grid language as the work page */
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     .case-media > a { display: block; }
+    /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
+       must still span the column */
+    .case-media .div-block > a { display: block; width: 100%; }
+
+    /* Every card is as tall as its own media. Webflow pinned the video cards to
+       100vh and cropped with object-fit; here the intrinsic ratio drives the box.
+       --ratio is filled in per card by the script at the end of the page. */
+    .case-media .div-block.unica.video,
+    .case-media .div-block.unica.video .w-background-video { height: auto; }
+    .case-media .w-background-video { aspect-ratio: var(--ratio, 16 / 9); }
+    .case-media .w-background-video > video { object-fit: fill; inset: 0; }
+    .case-media .div-block img.image { height: auto; object-fit: contain; }
     @media screen and (max-width: 860px) {
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
       .case-side .case-sub { max-width: none; }
       .case-arrow { position: absolute; top: -172px; left: 0; margin: 0; display: inline-flex; }
-      .div-block img.image { height: 60vh; object-fit: cover; }
       .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
@@ -72,8 +83,8 @@
   <div data-collapse="medium" data-animation="default" data-duration="1" data-easing="ease" data-easing2="ease" role="banner" class="navigation w-nav">
     <div class="navigation-items-2">
       <div class="navigation-wrap">
-        <nav role="navigation" class="navigation-items-1 w-nav-menu"><h1 class="heading-8">CAIO JACINTHO</h1></nav>
-        <div class="menu-button w-nav-button"><h1 class="heading">CAIO JACINTHO</h1></div>
+        <nav role="navigation" class="navigation-items-1 w-nav-menu"><a href="index.html" class="brand-home"><h1 class="heading-8">CAIO JACINTHO</h1></a></nav>
+        <a href="index.html" class="brand-home menu-button w-nav-button"><h1 class="heading">CAIO JACINTHO</h1></a>
       </div>
       <div class="navigation-wrap">
         <nav role="navigation" class="navigation-items w-nav-menu"><a href="index.html" class="navigation-item w-nav-link w--current">FEATURED</a><a href="about.html" class="navigation-item w-nav-link">ABOUT</a><a href="mentions.html" class="navigation-item w-nav-link">WORK</a><div class="div-block-6"><a href="mailto:caio.rodrigues.jacintho@gmail.com" class="navigation-item w-nav-link">MAIL</a><a href="https://www.linkedin.com/in/caio-jacintho/" target="_blank" class="navigation-item w-nav-link">IN</a><a href="https://www.instagram.com/caio.jacintho/" target="_blank" class="navigation-item w-nav-link">IG</a><a href="https://drive.google.com/file/d/1hxJ0ckNGFz7-M-Ek84T9FUhLtNKsxG1G/view?usp=sharing" target="_blank" class="navigation-item w-nav-link">CV</a></div><div class="lang-switch"><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="en">EN</a><a href="#" class="navigation-item w-nav-link lang-btn" data-lang-btn="pt">PT</a></div></nav>
@@ -93,6 +104,7 @@
       <a class="case-arrow" href="index.html" aria-label="Back to featured"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a>
       <div class="case-title"><h1>Storytelling</h1><span class="case-year">2022–2024</span></div>
       <p class="case-sub">Data stories and interactive specials produced with the Data Office of Rio's City Hall — turning public data into public narratives.</p>
+      <a class="case-ext" href="https://www.dados.rio/especiais" target="_blank" rel="noopener">Link</a>
     </aside>
 
     <main class="case-media">
@@ -135,6 +147,29 @@
       });
     }, { rootMargin: '400px 0px 400px 0px', threshold: 0.01 });
     for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+  })();
+  </script>
+  <script>
+  /* Size every video card to its own proportions. The poster shares the video's
+     dimensions and resolves long before the lazy-loaded source, so it sets --ratio
+     first; loadedmetadata then confirms it from the video itself. */
+  (function () {
+    var cards = document.querySelectorAll('.case-media .w-background-video');
+    Array.prototype.forEach.call(cards, function (card) {
+      function apply(w, h) {
+        if (w > 0 && h > 0) card.style.setProperty('--ratio', w + ' / ' + h);
+      }
+      var poster = card.getAttribute('data-poster-url');
+      if (poster) {
+        var probe = new Image();
+        probe.onload = function () { apply(probe.naturalWidth, probe.naturalHeight); };
+        probe.src = poster;
+      }
+      var v = card.querySelector('video');
+      if (!v) return;
+      v.addEventListener('loadedmetadata', function () { apply(v.videoWidth, v.videoHeight); });
+      if (v.readyState >= 1) apply(v.videoWidth, v.videoHeight);
+    });
   })();
   </script>
   <script src="js/i18n.js"></script>
