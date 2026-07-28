@@ -4477,20 +4477,24 @@ figcaption {
   height: auto;
 }
 
-.case-media .div-block.par {
-  grid-template-columns: 1fr 1fr;
-  flex-flow: row;
-}
+/* Pairing and the heights that go with it are a wide-screen affair; below the
+   mobile breakpoint every card stacks and each page's own rules size them. */
+@media screen and (min-width: 768px) {
+  .case-media .div-block.par {
+    grid-template-columns: 1fr 1fr;
+    flex-flow: row;
+  }
 
-/* a paired card is half as wide, so it would also be half as tall: give the two
-   images a taller box and let them crop in from the sides instead */
-.case-media .div-block.par img.image {
-  object-fit: cover;
-  height: 82vh;
-}
+  /* a paired card is half as wide, so it would also be half as tall: give the
+     two images a taller box and let them crop in from the sides instead */
+  .case-media .div-block.par img.image {
+    object-fit: cover;
+    height: 82vh;
+  }
 
-.case-media .div-block img.image {
-  height: auto;
+  .case-media .div-block img.image {
+    height: auto;
+  }
 }
 
 /* the sidebar's external link is an action, not body copy */
@@ -4535,16 +4539,6 @@ figcaption {
   overflow: hidden;
 }
 
-.case-nav-link svg {
-  flex: none;
-  stroke-width: 2px;
-  transition: transform .32s cubic-bezier(.2, .7, .2, 1);
-}
-
-.case-nav-link.is-next:hover svg {
-  transform: translateX(4px);
-}
-
 @media screen and (max-width: 560px) {
   /* the longest pair (Storytelling / Data visualization) would otherwise clip */
   .case-nav-name {
@@ -4558,5 +4552,12 @@ figcaption {
   .section > .link-block-4:not(:first-child),
   .section > .div-block-10:not(:first-child) {
     margin-top: 48px;
+  }
+
+  /* a case page is a single column here: no pair is narrow enough to read,
+     so every card stacks, sized by the page's own mobile rules */
+  .case-media .div-block.par {
+    grid-template-columns: 1fr;
+    flex-flow: column;
   }
 }
