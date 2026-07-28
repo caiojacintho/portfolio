@@ -4459,3 +4459,95 @@ figcaption {
     grid-row: 2 / 3;
   }
 }
+
+/* ===== case pages ======================================================= */
+
+/* One media per row: the case column stacks its cards full width and each card
+   takes its height from the media itself. A row marked .par keeps its pair side
+   by side — mockups that only read well next to each other. */
+.case-media .div-block,
+.case-media .div-block.dupla,
+.case-media .div-block.direita,
+.case-media .div-block.esquerda,
+.case-media .div-block.unica,
+.case-media .div-block._2,
+.case-media .div-block._4 {
+  grid-template-columns: 1fr;
+  flex-flow: column;
+  height: auto;
+}
+
+.case-media .div-block.par {
+  grid-template-columns: 1fr 1fr;
+  flex-flow: row;
+}
+
+/* a paired card is half as wide, so it would also be half as tall: give the two
+   images a taller box and let them crop in from the sides instead */
+.case-media .div-block.par img.image {
+  object-fit: cover;
+  height: 82vh;
+}
+
+.case-media .div-block img.image {
+  height: auto;
+}
+
+/* the sidebar's external link is an action, not body copy */
+.case-ext {
+  font-weight: 600;
+}
+
+/* previous / next project, below the last media of every case page:
+   arrow + project name only, flush with the edges of the media column */
+.case-nav {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  display: flex;
+}
+
+/* same type treatment as the header nav items */
+.case-nav-link {
+  color: #919191;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+  transition: color .25s ease;
+  display: inline-flex;
+}
+
+.case-nav-link:hover {
+  color: #1a1b1f;
+}
+
+.case-nav-name {
+  font-family: "DM Sans", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.case-nav-link svg {
+  flex: none;
+  stroke-width: 2px;
+  transition: transform .32s cubic-bezier(.2, .7, .2, 1);
+}
+
+.case-nav-link.is-next:hover svg {
+  transform: translateX(4px);
+}
+
+@media screen and (max-width: 560px) {
+  /* the longest pair (Storytelling / Data visualization) would otherwise clip */
+  .case-nav-name {
+    font-size: .95rem;
+  }
+}

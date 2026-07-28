@@ -31,15 +31,10 @@
     .div-block .w-background-video { border-radius: 16px; overflow: hidden; }
     .div-block .w-background-video video { border-radius: 16px; }
 
-    /* fluid card -> page transition (the hero receives the clicked card image) */
-    @view-transition { navigation: auto; }
-    ::view-transition-group(embya-hero) { animation-duration: .55s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-    .case-hero img { view-transition-name: embya-hero; }
-
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
     .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
-    .case-side { position: sticky; top: 120px; padding: 8px 4px; }
+    .case-side { position: sticky; top: 130px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
@@ -103,6 +98,11 @@
       <div data-w-id="34f8e784-0205-76b3-a5ed-8bcce1bcd51a" class="div-block case-hero unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3.jpg" loading="lazy" sizes="(max-width: 5760px) 100vw, 5760px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-800.jpg 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-1080.jpg 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-1600.jpg 1600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-2000.jpg 2000w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-2600.jpg 2600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-3200.jpg 3200w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3.jpg 5760w" alt="" class="image"></div>
       <div class="div-block unica"><div data-poster-url="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg" data-video-urls="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_mp4.mp4,https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_webm.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" id="w-node-_70d8135e-6a29-1757-c985-2e98749d15f5-20d09488" class="background-video-3 w-background-video w-background-video-atom"><video id="70d8135e-6a29-1757-c985-2e98749d15f5-video" loop="" style="background-image:url(&quot;https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_mp4.mp4" data-wf-ignore="true"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_webm.webm" data-wf-ignore="true"></video></div></div>
       <div class="div-block unica"><div data-poster-url="images/pref1-poster.jpg" data-video-urls="videos/pref1.mp4" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-3 w-background-video w-background-video-atom"><video id="077e4ca3-e34f-0746-f849-7ea6c123ca34-video" loop="" style="background-image:url(&quot;images/pref1-poster.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="videos/pref1.mp4" data-wf-ignore="true"></video></div></div>
+
+      <!-- previous / next project, same order as the Featured grid -->
+      <nav class="case-nav" aria-label="Project navigation">
+        <a class="case-nav-link is-next" href="investrio.html" rel="next"><span class="case-nav-name">Next project</span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </nav>
     </main>
   </div>
 

@@ -31,15 +31,10 @@
     .div-block .w-background-video { border-radius: 16px; overflow: hidden; }
     .div-block .w-background-video video { border-radius: 16px; }
 
-    /* fluid card -> page transition (the hero receives the clicked card image) */
-    @view-transition { navigation: auto; }
-    ::view-transition-group(embya-hero) { animation-duration: .55s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-    .case-hero img { view-transition-name: embya-hero; }
-
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
     .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
-    .case-side { position: sticky; top: 120px; padding: 8px 4px; }
+    .case-side { position: sticky; top: 130px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
@@ -102,6 +97,8 @@
     <main class="case-media">
       <div class="div-block case-hero unica"><img src="images/fedd-p-1600.png" loading="lazy" sizes="(max-width: 5760px) 100vw, 5760px" srcset="images/fedd-p-500.png 500w, images/fedd-p-800.png 800w, images/fedd-p-1080.png 1080w, images/fedd-p-1600.png 1600w, images/fedd-p-2000.png 2000w, images/fedd-p-2600.png 2600w, images/fedd-p-3200.png 3200w, images/fedd.png 5760w" alt="" class="image"></div>
       <div class="div-block unica video"><div data-poster-url="images/pref1-poster.jpg" data-video-urls="videos/pref1.mp4" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-2 w-background-video w-background-video-atom"><video id="077e4ca3-e34f-0746-f849-7ea6c123ca34-video" loop="" style="background-image:url(&quot;images/pref1-poster.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="videos/pref1.mp4" data-wf-ignore="true"></video></div></div>
+
+      <!-- previous / next project, same order as the Featured grid -->
     </main>
   </div>
 

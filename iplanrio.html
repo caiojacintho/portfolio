@@ -31,15 +31,10 @@
     .div-block .w-background-video { border-radius: 16px; overflow: hidden; }
     .div-block .w-background-video video { border-radius: 16px; }
 
-    /* fluid card -> page transition (the hero receives the clicked card image) */
-    @view-transition { navigation: auto; }
-    ::view-transition-group(embya-hero) { animation-duration: .55s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-    .case-hero img { view-transition-name: embya-hero; }
-
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
     .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
-    .case-side { position: sticky; top: 120px; padding: 8px 4px; }
+    .case-side { position: sticky; top: 130px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
@@ -103,16 +98,15 @@
       <a class="case-arrow" href="index.html" aria-label="Back to featured"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a>
       <div class="case-title"><h1>IplanRio</h1><span class="case-year">2025</span></div>
       <p class="case-sub">Rio de Janeiro's municipal information-technology company, responsible for the city's digital systems and services.</p>
-      <p class="case-sub">I lead the Design team, shaping the city's digital future across platforms, apps and services.</p>
       <a class="case-ext" href="https://www.iplan.rio/" target="_blank" rel="noopener">Link</a>
     </aside>
 
     <main class="case-media">
       <div class="div-block case-hero unica video"><div data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-2 w-background-video w-background-video-atom"><video loop="" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="images/iplanrio-0.mp4" type="video/mp4" data-wf-ignore="true"></video></div></div>
-      <div class="div-block dupla"><img src="images/iplanrio-1.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-2.png" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par"><img src="images/iplanrio-1.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-2.png" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-5.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-6.jpg" loading="lazy" alt="" class="image"/></div>
-      <div class="div-block dupla"><img src="images/iplanrio-3.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-4.png" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par"><img src="images/iplanrio-3.png" loading="lazy" alt="" class="image"/><img src="images/iplanrio-4.png" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-7.png" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-9.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-8.jpg" loading="lazy" alt="" class="image"/></div>
@@ -120,6 +114,11 @@
       <div class="div-block unica"><img src="images/iplanrio-11.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-12.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/iplanrio-13.jpg" loading="lazy" alt="" class="image"/></div>
+
+      <!-- previous / next project, same order as the Featured grid -->
+      <nav class="case-nav" aria-label="Project navigation">
+        <a class="case-nav-link is-next" href="storytelling.html" rel="next"><span class="case-nav-name">Next project</span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </nav>
     </main>
   </div>
 

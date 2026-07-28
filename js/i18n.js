@@ -23,6 +23,11 @@
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
     "Architecture": "Arquitetura",
+    // case pages — the link to the next project
+    "Next project": "Próximo projeto",
+    // case pages — sidebar descriptions
+    "Rivio is a healthtech using artificial intelligence to transform the financial management of hospitals. The platform automates the entire hospital revenue cycle — from auditing to billing and post-billing — reducing claim denials, increasing operational efficiency and delivering greater financial predictability for healthcare institutions.":
+      "Rivio é uma healthtech que utiliza inteligência artificial para transformar a gestão financeira de hospitais. A plataforma automatiza todo o ciclo de receita hospitalar — da auditoria ao faturamento e pós-faturamento — reduzindo glosas, aumentando a eficiência operacional e garantindo maior previsibilidade financeira para as instituições de saúde.",
     // about — three intro paragraphs (each a single text node)
     "Hello, my name is Caio. I'm from Campinas, Brazil, and I graduated in Architecture and Urbanism from the University of São Paulo in 2016. Since then, I have built my career around designing and developing digital products.":
       "Olá, meu nome é Caio. Sou de Campinas, Brasil, e me formei em Arquitetura e Urbanismo pela Universidade de São Paulo em 2016. Desde então, construí minha carreira em torno da concepção e do desenvolvimento de produtos digitais.",

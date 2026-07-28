@@ -31,15 +31,10 @@
     .div-block .w-background-video { border-radius: 16px; overflow: hidden; }
     .div-block .w-background-video video { border-radius: 16px; }
 
-    /* fluid card -> page transition (the hero receives the clicked card image) */
-    @view-transition { navigation: auto; }
-    ::view-transition-group(embya-hero) { animation-duration: .55s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-    .case-hero img { view-transition-name: embya-hero; }
-
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
     .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
-    .case-side { position: sticky; top: 120px; padding: 8px 4px; }
+    .case-side { position: sticky; top: 130px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
@@ -103,6 +98,8 @@
       <div class="div-block esquerda"><a href="https://concursosdeprojeto.org/2018/09/06/premiados-concurso-nacional-centro-educacional-bairro-crixa-sao-sebastiao-df/" target="_blank" class="w-inline-block"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b119252fb8ae13b1562dfe_architecture-1.jpg" loading="lazy" sizes="(max-width: 800px) 100vw, 800px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b119252fb8ae13b1562dfe_architecture-1-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b119252fb8ae13b1562dfe_architecture-1.jpg 800w" alt="" class="image"></a><a href="https://concursosdeprojeto.org/2017/10/28/premiados-concurso-nacional-setor-habitacional-por-do-sol-ceilandia-df/" target="_blank" class="w-inline-block"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1192c993c47b9b00bfb8a_architecture-4.jpg" loading="lazy" sizes="(max-width: 800px) 100vw, 800px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1192c993c47b9b00bfb8a_architecture-4-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1192c993c47b9b00bfb8a_architecture-4.jpg 800w" alt="" class="image-3"></a></div>
       <div class="div-block unica"><a href="https://concursosdeprojeto.org/2017/10/28/premiados-concurso-nacional-setor-habitacional-por-do-sol-ceilandia-df/" target="_blank" class="link-block-5 w-inline-block"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1197e2bbaac65da4cad5a_architecture-8.jpg" loading="lazy" sizes="(max-width: 800px) 100vw, 800px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1197e2bbaac65da4cad5a_architecture-8-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1197e2bbaac65da4cad5a_architecture-8.jpg 800w" alt="" class="image"></a></div>
       <div class="div-block unica"><a href="https://concursosdeprojeto.org/2017/10/28/premiados-concurso-nacional-setor-habitacional-por-do-sol-ceilandia-df/" target="_blank" class="link-block-5 w-inline-block"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1198a974067ae1d5ff56e_architecture-2.jpg" loading="lazy" sizes="(max-width: 800px) 100vw, 800px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1198a974067ae1d5ff56e_architecture-2-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b1198a974067ae1d5ff56e_architecture-2.jpg 800w" alt="" class="image"></a></div>
+
+      <!-- previous / next project, same order as the Featured grid -->
     </main>
   </div>
 

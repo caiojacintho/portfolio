@@ -31,15 +31,10 @@
     .div-block .w-background-video { border-radius: 16px; overflow: hidden; }
     .div-block .w-background-video video { border-radius: 16px; }
 
-    /* fluid card -> page transition (the hero receives the clicked card image) */
-    @view-transition { navigation: auto; }
-    ::view-transition-group(embya-hero) { animation-duration: .55s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-    .case-hero img { view-transition-name: embya-hero; }
-
     /* case layout — reference structure (sidebar left, stacked media right), site UI */
     html { scroll-behavior: smooth; scroll-padding-top: 120px; }
     .case-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 12px; margin: 130px 12px 0; padding-bottom: 24px; align-items: start; }
-    .case-side { position: sticky; top: 120px; padding: 8px 4px; }
+    .case-side { position: sticky; top: 130px; padding: 8px 4px; }
     .case-side h1 { font-family: "DM Sans", sans-serif; font-size: 40px; font-weight: 500; color: #111; margin: 0; line-height: 1.05; }
     .case-title { display: flex; align-items: baseline; gap: 10px; }
     .case-title .case-year { color: #9a9a94; font-size: 13px; }
@@ -103,6 +98,11 @@
       <div class="div-block unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral.png" loading="lazy" sizes="(max-width: 1920px) 100vw, 1920px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral-p-1600.png 1600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba20e11567f30afc807f88_invistogeral.png 1920w" alt="" class="image"></div>
       <div class="div-block unica _2"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0efd229f7c95ef9a415d3_gorio.png" loading="lazy" sizes="(max-width: 1440px) 100vw, 1440px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0efd229f7c95ef9a415d3_gorio-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0efd229f7c95ef9a415d3_gorio-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0efd229f7c95ef9a415d3_gorio-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0efd229f7c95ef9a415d3_gorio.png 1440w" alt="" class="image"></div>
       <div class="div-block unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f04faa237cb48ea48e63_gorio-2.png" loading="lazy" sizes="(max-width: 1440px) 100vw, 1440px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f04faa237cb48ea48e63_gorio-2-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f04faa237cb48ea48e63_gorio-2-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f04faa237cb48ea48e63_gorio-2-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f04faa237cb48ea48e63_gorio-2.png 1440w" alt="" class="image"></div><div class="div-block unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f01ff5775792f8e958c7_gorio-1.png" loading="lazy" sizes="(max-width: 1440px) 100vw, 1440px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f01ff5775792f8e958c7_gorio-1-p-500.png 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f01ff5775792f8e958c7_gorio-1-p-800.png 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f01ff5775792f8e958c7_gorio-1-p-1080.png 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68b0f01ff5775792f8e958c7_gorio-1.png 1440w" alt="" class="image"></div>
+
+      <!-- previous / next project, same order as the Featured grid -->
+      <nav class="case-nav" aria-label="Project navigation">
+        <a class="case-nav-link is-next" href="dataviz.html" rel="next"><span class="case-nav-name">Next project</span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </nav>
     </main>
   </div>
 
