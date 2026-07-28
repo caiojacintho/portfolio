@@ -4551,3 +4551,12 @@ figcaption {
     font-size: .95rem;
   }
 }
+
+@media screen and (max-width: 767px) {
+  /* stacked one per row, the groups run into each other: give every group
+     title after the first some air above it */
+  .section > .link-block-4:not(:first-child),
+  .section > .div-block-10:not(:first-child) {
+    margin-top: 48px;
+  }
+}
