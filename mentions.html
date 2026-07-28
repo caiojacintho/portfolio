@@ -124,7 +124,7 @@
       pointer-events: none;
     }
     .ttcl__media.is-on { display: block; }
-    .ttcl__media img { display: block; width: 100%; height: 240px; object-fit: cover; }
+    .ttcl__media img, .ttcl__media video { display: block; width: 100%; height: 240px; object-fit: cover; }
     @media (max-width: 860px) { .ttcl__media { display: none !important; } }
 
     /* mentions page header: transparent bar + white pill buttons */
@@ -220,7 +220,7 @@
       <h2 class="ttcl__d-title" id="dTitle"></h2>
       <p class="ttcl__d-desc" id="dDesc"></p>
       <div class="ttcl__d-links" id="dLinks"></div>
-      <div class="ttcl__media" id="ttclMedia"><img id="ttclMediaImg" alt="" /></div>
+      <div class="ttcl__media" id="ttclMedia"><img id="ttclMediaImg" alt="" /><video id="ttclMediaVid" muted playsinline loop preload="none" style="display:none"></video></div>
     </div>
   </section>
 
@@ -343,8 +343,8 @@
       const WORK_IMAGES = {
         // Project groups mirror the first cards of their case page — keep these in
         // sync whenever a case page's media changes.
-        m01:  [CDN + "69271ba0fb44b9b2be0a8f69_t3.jpg", VID + "6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg", CDN + "69272e39466b12d1cee56556_testee.jpg", CDN + "69260573671bcac50e8d183d_9684.png"],
-        m02:  ["images/fedd-p-1600.png", "images/pref1-poster.jpg"],
+        m01:  [CDN + "69271ba0fb44b9b2be0a8f69_t3.jpg", VID + "6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg", "images/pref1-poster.jpg"],
+        m02:  ["images/fedd-p-1600.png"],
         m03:  ["images/iplanrio-1.png", "images/iplanrio-2.png", "images/iplanrio-5.jpg", "images/iplanrio-6.jpg", "images/iplanrio-3.png", "images/iplanrio-4.png"],
         m04:  ["images/embya-1.jpg", "images/embya-2.jpg", "images/embya-3.jpg", "images/embya-4.jpg", "images/embya-5.jpg", "images/embya-8.jpg"],
         m05:  ["images/investrio-5.jpg", "images/investrio-1.png", "images/investrio-2.png", "images/investrio-6.jpg", "images/investrio-3.png", "images/investrio-4.jpg"],
@@ -374,21 +374,49 @@
         d08:  [CDN + "68b118a62bbaac65da4c8cd6_graphics-15.jpg"],
         d09:  [CDN + "68b1184076a7abef01a92bfc_graphics-7.jpg"]
       };
+      const mediaVid = document.getElementById("ttclMediaVid");
+      /* A poster frame is a still of a video that exists next to it: Webflow keeps
+         both under one name, and local clips live in videos/. Derive the playable
+         file so the card animates instead of freezing on the first frame. */
+      function videoOf(url) {
+        var wf = url.match(/^(.*)-poster-\d+\.jpg$/);
+        if (wf) return wf[1] + "-transcode.mp4";
+        var wf2 = url.match(/^(.*)_poster\.\d+\.jpg$/);
+        if (wf2) return wf2[1] + "_mp4.mp4";
+        var local = url.match(/^images\/(.+)-poster\.jpg$/);
+        if (local) return "videos/" + local[1] + ".mp4";
+        return null;
+      }
       let mediaTimer = null;
       function updateMedia(m) {
-        const imgs = (WORK_IMAGES[m.id] || []).slice(0, 6);
-        if (mediaTimer) { clearInterval(mediaTimer); mediaTimer = null; }
-        if (!imgs.length) { media.classList.remove("is-on"); return; }
-        let i = 0;
-        mediaImg.src = imgs[0];
+        const srcs = (WORK_IMAGES[m.id] || []).slice(0, 6);
+        if (mediaTimer) { clearTimeout(mediaTimer); mediaTimer = null; }
+        if (!srcs.length) { media.classList.remove("is-on"); mediaVid.pause(); return; }
         media.classList.add("is-on");
-        if (imgs.length > 1) {
-          imgs.forEach(function (s) { const p = new Image(); p.src = s; }); // preload
-          mediaTimer = setInterval(function () {
-            i = (i + 1) % imgs.length;
-            mediaImg.src = imgs[i];
-          }, 500);
-        }
+        /* a still gets half a second; a clip gets long enough to read as motion */
+        const slots = srcs.map(function (s) { return { still: s, video: videoOf(s) }; });
+        slots.forEach(function (s) { if (!s.video) { const p = new Image(); p.src = s.still; } }); // preload
+        let i = 0;
+        (function step() {
+          const slot = slots[i];
+          if (slot.video) {
+            mediaImg.style.display = "none";
+            mediaVid.style.display = "";
+            if (mediaVid.getAttribute("src") !== slot.video) {
+              mediaVid.poster = slot.still;
+              mediaVid.setAttribute("src", slot.video);
+              mediaVid.load();
+            }
+            const p = mediaVid.play();
+            if (p && p.catch) p.catch(function () {});
+          } else {
+            mediaVid.pause();
+            mediaVid.style.display = "none";
+            mediaImg.style.display = "";
+            mediaImg.src = slot.still;
+          }
+          if (slots.length > 1) mediaTimer = setTimeout(function () { i = (i + 1) % slots.length; step(); }, slot.video ? 3000 : 500);
+        })();
       }
       function fillDetail(m) {
         updateMedia(m);
