@@ -108,8 +108,6 @@
       font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 600;
       color: #0a0a0a; line-height: 1.15; transition: opacity .15s ease;
     }
-    .ttcl__lnk-arrow { width: 9px; height: 9px; flex: 0 0 auto; }
-    .ttcl__lnk:hover .ttcl__lnk-arrow { opacity: .55; }
     .ttcl__lnk-c {
       display: block; font-family: "DM Sans", sans-serif; font-size: 12.5px; font-weight: 400;
       color: rgba(0,0,0,.45); margin-top: 3px; line-height: 1.25;
@@ -242,8 +240,6 @@
       const dDesc = document.getElementById("dDesc");
       const dLinks = document.getElementById("dLinks");
       const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
-      // same up-right arrow used on the Work page
-      const ARROW_IMG = '<img class="ttcl__lnk-arrow" src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68ba147f97f176383d2b1cfb_arrow-up-right.svg" alt="" />';
 
       const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
@@ -427,8 +423,8 @@
         var accessLink = (m.links || []).find(function (l) { return l.cap === 'acesso'; });
         var newsLink = (m.links || []).find(function (l) { return l.cap === 'news'; });
         var linksHtml = '';
-        if (accessLink) linksHtml += '<a class="ttcl__lnk" href="' + accessLink.h + '" target="_blank" rel="noopener"><span class="ttcl__lnk-t">' + LINKLABEL[LANG].acesso + '</span>' + ARROW_IMG + '</a>';
-        if (newsLink) linksHtml += '<a class="ttcl__lnk" href="' + newsLink.h + '" target="_blank" rel="noopener"><span class="ttcl__lnk-t">' + LINKLABEL[LANG].news + '</span>' + ARROW_IMG + '</a>';
+        if (accessLink) linksHtml += '<a class="ttcl__lnk" href="' + accessLink.h + '" target="_blank" rel="noopener"><span class="ttcl__lnk-t">' + LINKLABEL[LANG].acesso + '</span></a>';
+        if (newsLink) linksHtml += '<a class="ttcl__lnk" href="' + newsLink.h + '" target="_blank" rel="noopener"><span class="ttcl__lnk-t">' + LINKLABEL[LANG].news + '</span></a>';
         dLinks.innerHTML = linksHtml;
       }
 

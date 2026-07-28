@@ -4561,3 +4561,16 @@ figcaption {
     flex-flow: column;
   }
 }
+
+/* ===== about ============================================================ */
+
+/* The year column always stays on one line — a range like "2025 - 2026" used to
+   wrap. The entry's title/subtitle beside it keeps wrapping as before. */
+.heading-5 {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.div-block-3 > .div-block-2 {
+  min-width: 0;
+}
