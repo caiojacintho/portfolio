@@ -138,8 +138,22 @@
     document.head.appendChild(s);
   }
 
+  function fixBrandLink() {
+    // Webflow also tags the mobile brand link as a nav toggle (w-nav-button),
+    // so tapping "CAIO JACINTHO" opens/closes the menu instead of navigating.
+    // Swallow the event before Webflow sees it: the link then behaves as a
+    // plain link home, and only the X button toggles the menu.
+    function block(e) {
+      if (e.target.closest && e.target.closest("a.brand-home.w-nav-button")) e.stopPropagation();
+    }
+    document.addEventListener("click", block, true);
+    document.addEventListener("mousedown", block, true);
+    document.addEventListener("touchstart", block, true);
+  }
+
   function init() {
     injectStyle();
+    fixBrandLink();
     collect();
     document.addEventListener("click", function (e) {
       var b = e.target.closest ? e.target.closest("[data-lang-btn]") : null;
