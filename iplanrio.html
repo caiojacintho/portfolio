@@ -69,6 +69,17 @@
       .case-side .case-sub { max-width: none; }
       .case-arrow { position: absolute; top: -172px; left: 0; margin: 0; display: inline-flex; }
       .div-block img.image { height: 60vh; object-fit: cover; }
+      /* match the featured-grid mobile heights */
+      .div-block img.image[src*="iplanrio-5"] { height: 40vh; }
+      .case-media .div-block.unica.video .w-background-video:has(source[data-src*="iplanrio-0"]) { height: 40vh; aspect-ratio: auto; }
+      .case-media .w-background-video:has(source[data-src*="iplanrio-0"]) > video { object-fit: cover; }
+      /* the print/photo cards get a shorter crop */
+      .div-block img.image[src*="iplanrio-6"],
+      .div-block img.image[src*="iplanrio-8"] { height: 45vh; }
+      .div-block img.image[src*="iplanrio-7"],
+      .div-block img.image[src*="iplanrio-9"],
+      .div-block img.image[src*="iplanrio-11"],
+      .div-block img.image[src*="iplanrio-12"] { height: 35vh; }
       .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
@@ -134,7 +145,7 @@
       v.preload = 'auto';
       v.load();
     }
-    function play(v) { var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }
+    function play(v) { v.muted = true; v.playsInline = true; var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }
     if (!('IntersectionObserver' in window)) { for (var i = 0; i < vids.length; i++) { loadOnce(vids[i]); play(vids[i]); } return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -144,6 +155,17 @@
       });
     }, { rootMargin: '400px 0px 400px 0px', threshold: 0.01 });
     for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+    /* if autoplay was blocked (e.g. Low Power Mode), retry on the first touch */
+    function kick() {
+      for (var k = 0; k < vids.length; k++) {
+        var v = vids[k];
+        if (!v.dataset.loaded || !v.paused) continue;
+        var r = v.getBoundingClientRect();
+        if (r.bottom > -400 && r.top < window.innerHeight + 400) play(v);
+      }
+    }
+    document.addEventListener('touchstart', kick, { passive: true });
+    document.addEventListener('click', kick, true);
   })();
   </script>
   <script>

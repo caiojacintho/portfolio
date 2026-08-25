@@ -62,6 +62,12 @@
       .case-side .case-sub { max-width: none; }
       .case-arrow { position: absolute; top: -172px; left: 0; margin: 0; display: inline-flex; }
       .div-block img.image { height: 60vh; object-fit: cover; }
+      /* match the featured-grid mobile heights */
+      .div-block img.image[src*="_2102"],
+      .div-block img.image[src*="_2099"],
+      .div-block img.image[src*="rivio-ppt1"] { height: 52vh; }
+      .case-media .div-block.unica.video .w-background-video[data-poster-url*="rivio9"] { height: 52vh; aspect-ratio: auto; }
+      .case-media .w-background-video[data-poster-url*="rivio9"] > video { object-fit: cover; }
       .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
@@ -121,7 +127,7 @@
       v.preload = 'auto';
       v.load();
     }
-    function play(v) { var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }
+    function play(v) { v.muted = true; v.playsInline = true; var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }
     if (!('IntersectionObserver' in window)) { for (var i = 0; i < vids.length; i++) { loadOnce(vids[i]); play(vids[i]); } return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -131,6 +137,17 @@
       });
     }, { rootMargin: '400px 0px 400px 0px', threshold: 0.01 });
     for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+    /* if autoplay was blocked (e.g. Low Power Mode), retry on the first touch */
+    function kick() {
+      for (var k = 0; k < vids.length; k++) {
+        var v = vids[k];
+        if (!v.dataset.loaded || !v.paused) continue;
+        var r = v.getBoundingClientRect();
+        if (r.bottom > -400 && r.top < window.innerHeight + 400) play(v);
+      }
+    }
+    document.addEventListener('touchstart', kick, { passive: true });
+    document.addEventListener('click', kick, true);
   })();
   </script>
   <script src="js/i18n.js"></script>
