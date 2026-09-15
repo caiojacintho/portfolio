@@ -591,12 +591,22 @@
         var first = currentVisibleIdxs()[0];
         rebuild(first != null ? first : null);
       }
+      // the active category lives in the URL (?filter=dataviz) so a filtered list can be shared
+      function syncUrl() {
+        const url = new URL(window.location.href);
+        if (activeCats === null) url.searchParams.delete("filter");
+        else url.searchParams.set("filter", [...activeCats][0]);
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+      }
+      const urlCat = new URLSearchParams(window.location.search).get("filter");
+      if (urlCat && cats.includes(urlCat.toLowerCase())) activeCats = new Set([urlCat.toLowerCase()]);
       filterEl.addEventListener("click", (e) => {
         const b = e.target.closest(".mfilter-chip");
         if (!b) return;
         const c = b.dataset.cat;
         // single-select: picking a category clears the others; "All" clears the filter
         activeCats = (c === "__all") ? null : new Set([c]);
+        syncUrl();
         applyFilter();
       });
       renderChips();
