@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Mockup</title>
+  <style>
+    :root {
+      --rail: 268px;
+      --ink: #1a1b1f;
+      --line: #e3e3e3;
+      --mut: #8a8a8a;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      display: flex;
+      font: 13px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* ---- controls ---- */
+    .rail {
+      width: var(--rail);
+      flex: 0 0 var(--rail);
+      height: 100%;
+      overflow-y: auto;
+      padding: 28px 24px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .rail h1 {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin: 0;
+      font-weight: 500;
+    }
+    .grp { display: flex; flex-direction: column; gap: 8px; }
+    .grp > label {
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mut);
+    }
+    input[type="text"], select {
+      width: 100%;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font: inherit;
+      color: inherit;
+      background: #fff;
+    }
+    input[type="text"]:focus, select:focus { outline: none; border-color: var(--ink); }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row input[type="text"] { flex: 1; }
+    input[type="color"] {
+      flex: 0 0 36px;
+      width: 36px;
+      height: 36px;
+      padding: 2px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .seg { display: flex; gap: 6px; }
+    .seg button {
+      flex: 1;
+      height: 32px;
+      font: inherit;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--mut);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .seg button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .acts { display: flex; flex-direction: column; gap: 8px; }
+    .acts button {
+      height: 40px;
+      font: inherit;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .acts button.ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+    .acts button.ghost.on { background: #fff; color: var(--ink); border-color: var(--ink); }
+    #save.rec { background: #c0392b; border-color: #c0392b; }
+    #save.busy { opacity: .6; }
+
+    /* ---- stage ---- */
+    /* nothing here may use transform: a CSS-transformed ancestor stops the
+       browser from handing clicks to the site inside the iframe */
+    .work {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      overflow: hidden;
+    }
+    #stage { position: relative; overflow: hidden; flex: none; }
+    .frame { position: absolute; }
+    .frame img.chrome { display: block; width: 100%; height: auto; pointer-events: none; }
+    /* the phone is a frame with a see-through screen, so it sits over the site */
+    .frame img.phone { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+    .frame img[hidden] { display: none; }        /* beats the rules above */
+    .vp { position: absolute; left: 0; width: 100%; overflow: hidden; background: #fff; }
+    .vp iframe { border: 0; display: block; }
+    .vp img.shot { display: block; width: 100%; }
+    .urlbox {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .35em;
+      background: #f2f2f2;
+      color: #4c4c4c;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* while grabbing, the window is blown up to the size of the work area
+       so the capture has as many real pixels of the site as possible */
+    body.cap #stage { background: transparent !important; }
+    body.cap .frame { position: fixed; }
+    .flag {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      z-index: 9;
+      background: rgba(26,27,31,.9);
+      color: #fff;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: none;
+    }
+    body.cap .flag { display: block; }
+  </style>
+</head>
+<body>
+  <aside class="rail">
+    <h1>Mockup</h1>
+
+    <div class="seg">
+      <button id="dDesk" type="button">Desktop</button>
+      <button id="dMob" type="button">Mobile</button>
+    </div>
+
+    <div class="grp">
+      <label for="url">Site</label>
+      <input id="url" type="text" placeholder="https://www.embya.com.br/" spellcheck="false">
+    </div>
+
+    <div class="grp">
+      <label for="bgText">Fundo</label>
+      <div class="row">
+        <input id="bgText" type="text" spellcheck="false">
+        <input id="bg" type="color">
+      </div>
+    </div>
+
+    <div class="grp">
+      <label for="out">Tamanho</label>
+      <select id="out">
+        <option value="2000x1125">2000 × 1125</option>
+        <option value="2400x1350">2400 × 1350</option>
+        <option value="1600x900">1600 × 900</option>
+        <option value="2000x1500">2000 × 1500</option>
+      </select>
+    </div>
+
+    <div class="grp">
+      <label for="fmt">Arquivo</label>
+      <select id="fmt">
+        <option value="jpg">JPG</option>
+        <option value="png">PNG</option>
+        <option value="vid">Vídeo</option>
+      </select>
+    </div>
+
+    <div class="acts">
+      <button id="roll" class="ghost" type="button">Rolar</button>
+      <button id="save" type="button">Baixar</button>
+    </div>
+  </aside>
+
+  <main class="work" id="work">
+    <div id="stage">
+      <div class="frame" id="frame">
+        <img class="chrome" id="chrome" src="images/safari-frame.svg" alt="">
+        <div class="vp" id="vp"><iframe id="site" scrolling="no"></iframe></div>
+        <div class="urlbox" id="urlbox"></div>
+        <img class="phone" id="phone" alt="" hidden>
+      </div>
+    </div>
+  </main>
+  <div class="flag" id="flag">Gravando — clique em "Parar e salvar"</div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // geometry of images/safari-frame.svg, in its own coordinates
+    var F = { w: 899.239, h: 550.784, chrome: 37.2344, r: 16.8607 };
+    var PILL_CX = 268.367 + 362.987 / 2;          // centre of the address pill
+    var TXT = { y: 12.9297, h: 11, size: 9.3 };   // the lock + domain sit in this band
+    var CLEAR = { x: 300, w: 300 };               // repainted slice of the pill, clear of the icons
+    var SITE_W = 1440;                            // width the site is drawn at
+    var FRAME = 0.70;                             // window width, as a share of the picture
+
+    // the phone, drawn as vector so it stays sharp at any size. Proportions come
+    // from the reference render: body 270 x 556, screen inset about 4.4%.
+    var PH = {
+      vx: -16, vw: 1032, vh: 2059,                // drawing box (room for the side buttons)
+      w: 1000, bez: 44, r: 137, sr: 100,          // body width, bezel, corner radii
+      isl: { w: 318, h: 92, top: 30, r: 46 }      // the island
+    };
+    var MOB_W = 390;                              // width the site is drawn at on the phone
+    var MOB_FILL = 0.80;                          // phone height, as a share of the picture
+    var MOB_STATUS = 59;                          // white band on top, so the site clears the island
+
+    function rr(x, y, w, h, r) {
+      return "M" + (x + r) + "," + y + "h" + (w - 2 * r) + "a" + r + "," + r + " 0 0 1 " + r + "," + r +
+        "v" + (h - 2 * r) + "a" + r + "," + r + " 0 0 1 " + (-r) + "," + r +
+        "h" + (-(w - 2 * r)) + "a" + r + "," + r + " 0 0 1 " + (-r) + "," + (-r) +
+        "v" + (-(h - 2 * r)) + "a" + r + "," + r + " 0 0 1 " + r + "," + (-r) + "z";
+    }
+
+    var phoneURL = null;
+    function phoneSVG() {
+      if (phoneURL) return phoneURL;
+      var W = PH.w, H = PH.vh, b = PH.bez;
+      var btn = function (x, y, h) {
+        return '<rect x="' + x + '" y="' + y + '" width="16" height="' + h + '" rx="8" fill="#1c1c1c"/>';
+      };
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + PH.vw + '" height="' + PH.vh +
+        '" viewBox="' + PH.vx + ' 0 ' + PH.vw + ' ' + PH.vh + '">' +
+        btn(-12, 430, 92) + btn(-12, 600, 170) + btn(-12, 800, 170) +   // action and volume
+        btn(W - 4, 660, 240) +                                          // power
+        '<path fill="#121212" fill-rule="evenodd" d="' + rr(0, 0, W, H, PH.r) + " " +
+        rr(b, b, W - 2 * b, H - 2 * b, PH.sr) + '"/>' +
+        '<rect x="' + ((W - PH.isl.w) / 2) + '" y="' + (b + PH.isl.top) + '" width="' + PH.isl.w +
+        '" height="' + PH.isl.h + '" rx="' + PH.isl.r + '" fill="#000"/>' +
+        '</svg>';
+      phoneURL = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+      return phoneURL;
+    }
+
+    // where the screen sits inside the drawing box, as fractions of it
+    var SCR = {
+      x: (PH.bez - PH.vx) / PH.vw,
+      y: PH.bez / PH.vh,
+      w: (PH.w - 2 * PH.bez) / PH.vw,
+      h: (PH.vh - 2 * PH.bez) / PH.vh,
+      r: PH.sr / PH.vw
+    };
+    function mobile() { return S.device === "mobile"; }
+
+    var $ = function (id) { return document.getElementById(id); };
+    var stage = $("stage"), frame = $("frame"), vp = $("vp"), urlbox = $("urlbox"),
+        chrome = $("chrome"), phone = $("phone"), site = $("site"), work = $("work"), saveBtn = $("save");
+
+    // the address is used exactly as typed; the bar only hides the "www."
+    var S = { url: "https://www.embya.com.br/", bg: "#F2F2F2", out: "2000x1125", fmt: "jpg", device: "desktop" };
+    try { Object.assign(S, JSON.parse(localStorage.getItem("mockup2") || "{}")); } catch (e) {}
+    function keep() { try { localStorage.setItem("mockup2", JSON.stringify(S)); } catch (e) {} }
+
+    var pasted = null;        // a print dropped or pasted in, used instead of the live site
+    var rec = null;           // MediaRecorder, while a video is being taken
+    var rolling = false, at = 0, tall = 0, seen = 0, tick = null;   // the gentle scroll
+
+    // width the browser gives a scrollbar, so the site's own bar can be clipped away
+    var SB = null;
+    function scrollbar() {
+      if (SB !== null) return SB;
+      var d = document.createElement("div");
+      d.style.cssText = "position:absolute;visibility:hidden;width:100px;height:100px;overflow:scroll";
+      document.body.appendChild(d);
+      SB = (d.offsetWidth - d.clientWidth) || 15;   // overlay bars measure 0 but still paint
+      d.remove();
+      return SB;
+    }
+
+    function outSize() { var p = S.out.split("x"); return { w: +p[0], h: +p[1] }; }
+    function full(u) { return /^https?:/.test(u) ? u : "https://" + u; }
+    function host(u) {
+      try { return new URL(full(u)).hostname.replace(/^www\./, ""); } catch (e) { return ""; }
+    }
+
+    // ---- drawing on screen ------------------------------------------------
+    // sizes the frame (and the site inside it) for a given frame width
+    function sizeFrame(fw) {
+      var fh, top, siteW;
+      if (mobile()) {
+        fh = fw * PH.vh / PH.vw;
+        top = fh * SCR.y;
+        siteW = MOB_W;
+        frame.style.width = fw + "px";
+        frame.style.height = fh + "px";
+        phone.hidden = false;
+        phone.src = phoneSVG();
+        chrome.hidden = true;
+        urlbox.hidden = true;
+        vp.style.left = (fw * SCR.x) + "px";
+        vp.style.width = (fw * SCR.w) + "px";
+        vp.style.top = top + "px";
+        vp.style.height = (fh * SCR.h) + "px";
+        var pr = fw * SCR.r;
+        vp.style.borderRadius = pr + "px";
+        vp.style.background = "#fff";              // the band the site starts below
+      } else {
+        fh = fw * F.h / F.w;
+        top = fh * (F.chrome / F.h);
+        siteW = SITE_W;
+        frame.style.width = fw + "px";
+        frame.style.height = fh + "px";
+        phone.hidden = true;
+        chrome.hidden = false;
+        vp.style.left = "0px";
+        vp.style.width = "100%";
+        vp.style.top = top + "px";
+        vp.style.height = (fh - top) + "px";
+        var r = fw * (F.r / F.w);
+        vp.style.borderRadius = "0 0 " + r + "px " + r + "px";
+        vp.style.background = "#fff";
+      }
+
+      if (pasted) {
+        site.style.display = "none";
+      } else {
+        site.style.display = "block";
+        // zoom, not transform: the site stays clickable and still lays out at its
+        // own width. The frame is widened by the scrollbar so that bar is clipped
+        // out of sight, leaving exactly the width the saved picture uses.
+        var k = (mobile() ? fw * SCR.w : fw) / siteW;
+        site.style.width = (siteW + scrollbar()) + "px";
+        site.style.zoom = k;
+        site.style.marginTop = mobile() ? MOB_STATUS + "px" : "0";
+        seen = (mobile() ? fh * SCR.h : fh - top) / k;   // visible height, in site pixels
+        if (mobile()) seen -= MOB_STATUS;
+        if (rolling) {
+          // while rolling, the frame holds the whole page and glides upwards
+          tall = Math.max(seen * 6, 4000);
+          site.style.height = tall + "px";
+          site.style.transform = "translateY(" + (-at) + "px)";
+        } else {
+          site.style.height = seen + "px";
+          site.style.transform = "";
+        }
+      }
+      drawUrl(fw);
+      return fh;
+    }
+
+    // the frame ships with "figma.com" drawn as vectors, so we repaint that slice
+    function drawUrl(fw) {
+      var d = host(S.url);
+      if (!d) { urlbox.hidden = true; return; }
+      urlbox.hidden = false;
+      var sx = fw / F.w;
+      urlbox.style.left = (CLEAR.x * sx) + "px";
+      urlbox.style.width = (CLEAR.w * sx) + "px";
+      urlbox.style.top = (TXT.y * sx) + "px";
+      urlbox.style.height = (TXT.h * sx) + "px";
+      urlbox.style.fontSize = (TXT.size * sx) + "px";
+      var l = TXT.size * sx * 0.95;
+      urlbox.innerHTML =
+        '<svg width="' + l + '" height="' + l + '" viewBox="0 0 12 12" fill="none">' +
+        '<path d="M3.6 5.1V3.9a2.4 2.4 0 0 1 4.8 0v1.2" stroke="#9E9E9E" stroke-width="1"/>' +
+        '<rect x="2.7" y="5" width="6.6" height="5.2" rx="1.3" fill="#9E9E9E"/></svg><span></span>';
+      urlbox.lastChild.textContent = d;
+    }
+
+    // how big the frame is on the picture: the window by width, the phone by height
+    function frameBox(o) {
+      if (mobile()) {
+        var h = o.h * MOB_FILL;
+        return { w: h * PH.vw / PH.vh, h: h };
+      }
+      var w = o.w * FRAME;
+      return { w: w, h: w * F.h / F.w };
+    }
+
+    function layout() {
+      var o = outSize();
+      stage.style.width = o.w + "px";
+      stage.style.height = o.h + "px";
+      stage.style.background = S.bg;
+      var box = frameBox(o);
+      frame.style.left = ((o.w - box.w) / 2) + "px";
+      frame.style.top = ((o.h - box.h) / 2) + "px";
+      sizeFrame(box.w);
+      if (!pasted) {
+        var want = full(S.url);
+        if (site.dataset.src !== want) { site.dataset.src = want; site.src = want; }
+      }
+      fit();
+    }
+
+    function fit() {
+      var o = outSize();
+      var k = Math.min((work.clientWidth - 48) / o.w, (work.clientHeight - 48) / o.h);
+      stage.style.zoom = k;          // zoom keeps the site inside clickable
+    }
+
+    // ---- the picture ------------------------------------------------------
+    function roundRect(c, x, y, w, h, r) {
+      if (c.roundRect) { c.beginPath(); c.roundRect(x, y, w, h, r); return; }
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.arcTo(x + w, y, x + w, y + h, r);
+      c.arcTo(x + w, y + h, x, y + h, r);
+      c.arcTo(x, y + h, x, y, r);
+      c.arcTo(x, y, x + w, y, r);
+      c.closePath();
+    }
+
+    // draws background + window + whatever is showing the site, at export size.
+    // `trim` drops a few pixels from each side of the source: a screen capture
+    // carries a black hairline on its edge, and it would land on the window's rim.
+    function compose(c, o, src, srcW, srcH, trim) {
+      trim = trim || 0;
+      var box = frameBox(o);
+      var fw = box.w, fh = box.h;
+      var fx = (o.w - fw) / 2, fy = (o.h - fh) / 2, sx = fw / F.w;
+
+      c.fillStyle = S.bg;
+      c.fillRect(0, 0, o.w, o.h);
+
+      if (mobile()) {
+        // the site first, then the phone frame over it: its screen is see-through
+        if (src && srcW && srcH) {
+          var px = fx + fw * SCR.x, py = fy + fh * SCR.y;
+          var pw = fw * SCR.w, ph = fh * SCR.h;
+          var band = pw * (MOB_STATUS / MOB_W);     // white strip under the island
+          c.save();
+          roundRect(c, px, py, pw, ph, fw * SCR.r);
+          c.clip();
+          c.fillStyle = "#fff";
+          c.fillRect(px, py, pw, ph);
+          var msw = srcW - trim * 2, msh = srcH - trim;
+          var mih = pw * msh / msw;
+          c.drawImage(src, trim, 0, msw, msh, px, py + band, pw, Math.max(mih, ph - band));
+          c.restore();
+        }
+        c.drawImage(phone, fx, fy, fw, fh);
+        return;
+      }
+
+      c.drawImage(chrome, fx, fy, fw, fh);
+
+      if (src && srcW && srcH) {
+        var top = fy + fh * (F.chrome / F.h), ch = fh - fh * (F.chrome / F.h);
+        c.save();
+        roundRect(c, fx, fy, fw, fh, F.r * sx);
+        c.clip();
+        c.beginPath();
+        c.rect(fx, top, fw, ch);
+        c.clip();
+        var sw = srcW - trim * 2, sh = srcH - trim;
+        var ih = fw * sh / sw;                     // fill the width, align to the top
+        c.drawImage(src, trim, 0, sw, sh, fx, top, fw, Math.max(ih, ch));
+        c.restore();
+      }
+
+      var d = host(S.url);
+      if (d) {
+        c.fillStyle = "#f2f2f2";
+        c.fillRect(fx + CLEAR.x * sx, fy + TXT.y * sx, CLEAR.w * sx, TXT.h * sx);
+        var fs = TXT.size * sx, u = fs * 0.95 / 12;
+        c.font = fs + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        c.textBaseline = "middle";
+        var tw = c.measureText(d).width, lock = fs * 0.95, gap = fs * 0.35;
+        var x0 = fx + PILL_CX * sx - (tw + lock + gap) / 2;
+        var cy = fy + (TXT.y + TXT.h / 2) * sx;
+        c.fillStyle = "#9E9E9E";
+        c.fillRect(x0 + 2.7 * u, cy - lock / 2 + 5 * u, 6.6 * u, 5.2 * u);
+        c.beginPath();
+        c.lineWidth = u;
+        c.strokeStyle = "#9E9E9E";
+        c.arc(x0 + 6 * u, cy - lock / 2 + 3.9 * u, 2.4 * u, Math.PI, 0);
+        c.stroke();
+        c.fillStyle = "#4C4C4C";
+        c.fillText(d, x0 + lock + gap, cy + fs * 0.04);
+      }
+    }
+
+    function send(blob, ext) {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = (host(S.url) || "mockup").replace(/[^a-z0-9.-]/gi, "-") + "-mockup." + ext;
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    }
+
+    function busy(on, label) {
+      saveBtn.classList.toggle("busy", !!on);
+      saveBtn.disabled = !!on;
+      saveBtn.textContent = label || "Baixar";
+    }
+    function flash(label) {
+      saveBtn.textContent = label;
+      setTimeout(function () { if (!rec) saveBtn.textContent = "Baixar"; }, 2600);
+    }
+
+    // The dev server can photograph the site with the browser installed on this
+    // machine. It needs no permission and works even where screen capture is off.
+    async function serverShot() {
+      var o = outSize(), box = frameBox(o), w, h;
+      if (mobile()) {
+        w = MOB_W;
+        h = Math.round(MOB_W * (box.h * SCR.h) / (box.w * SCR.w));
+      } else {
+        w = SITE_W;
+        h = Math.round(SITE_W * (box.w * (F.h - F.chrome) / F.w) / box.w);
+      }
+      var r = await fetch("/shot?url=" + encodeURIComponent(full(S.url)) + "&w=" + w + "&h=" + h);
+      if (!r.ok) throw new Error(await r.text());
+      var im = new Image();
+      im.src = URL.createObjectURL(await r.blob());
+      await im.decode();
+      return im;
+    }
+
+    // A page can't read the pixels of another site loaded inside it, so for a live
+    // site we ask the browser for this tab's own picture and crop it to the window.
+    function grabStream() {
+      return navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: 30, cursor: "never" },      // keep the pointer out of the picture
+        audio: false,
+        preferCurrentTab: true,
+        selfBrowserSurface: "include"
+      });
+    }
+
+    async function cropToSite(track) {
+      try { await track.applyConstraints({ cursor: "never" }); } catch (e) {}
+      if (window.CropTarget && track.cropTo) {
+        try { await track.cropTo(await CropTarget.fromElement(vp)); return true; } catch (e) {}
+      }
+      return false;
+    }
+
+    // a few source pixels to drop on each side (the capture's own black rim)
+    function edgeTrim(w) { return Math.max(2, Math.round(w * 0.004)); }
+
+    // blow the window up to the size of the work area while we capture
+    function bigFrame() {
+      document.body.classList.add("cap");
+      stage.style.zoom = 1;
+      site.style.pointerEvents = "none";   // no hover states while the camera is on
+      var w = work.clientWidth, h = work.clientHeight;
+      var fw = Math.min(w, h * F.w / F.h);
+      var fh = sizeFrame(fw);
+      var r = work.getBoundingClientRect();
+      frame.style.left = (r.left + (w - fw) / 2) + "px";
+      frame.style.top = (r.top + (h - fh) / 2) + "px";
+      return fw;
+    }
+    function smallFrame() {
+      document.body.classList.remove("cap");
+      site.style.pointerEvents = "";
+      layout();                            // puts the frame back where it belongs
+    }
+
+    async function videoOf(stream) {
+      var v = document.createElement("video");
+      v.srcObject = stream;
+      v.muted = true;
+      v.playsInline = true;
+      await v.play();
+      await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+      return v;
+    }
+
+    // ---- still ------------------------------------------------------------
+    async function still() {
+      var o = outSize();
+      var cv = document.createElement("canvas");
+      cv.width = o.w; cv.height = o.h;
+      var c = cv.getContext("2d");
+
+      if (pasted) {
+        compose(c, o, pasted, pasted.naturalWidth, pasted.naturalHeight);
+      } else {
+        var im = null;
+        try { im = await serverShot(); } catch (e) { im = null; }
+        if (im) {
+          compose(c, o, im, im.naturalWidth, im.naturalHeight);
+        } else {
+          // no local renderer (page served from somewhere else): ask the browser
+          // for this tab's own picture instead
+          var stream = await grabStream();
+          var track = stream.getVideoTracks()[0];
+          try {
+            bigFrame();
+            await cropToSite(track);
+            var v = await videoOf(stream);
+            await new Promise(function (r) { setTimeout(r, 450); });   // let the crop settle
+            compose(c, o, v, v.videoWidth, v.videoHeight, edgeTrim(v.videoWidth));
+          } finally {
+            track.stop();
+            smallFrame();
+          }
+        }
+      }
+      var png = S.fmt === "png";
+      await new Promise(function (r) {
+        cv.toBlob(function (b) { send(b, png ? "png" : "jpg"); r(); }, png ? "image/png" : "image/jpeg", 0.92);
+      });
+    }
+
+    // ---- video ------------------------------------------------------------
+    var mime = MediaRecorder.isTypeSupported("video/mp4;codecs=avc1.42E01E")
+      ? { type: "video/mp4;codecs=avc1.42E01E", ext: "mp4" }
+      : { type: "video/webm;codecs=vp9", ext: "webm" };
+
+    async function startVideo() {
+      var o = outSize();
+      var cv = document.createElement("canvas");
+      cv.width = o.w; cv.height = o.h;
+      var c = cv.getContext("2d");
+
+      var stream = await grabStream();
+      var track = stream.getVideoTracks()[0];
+      bigFrame();
+      await cropToSite(track);
+      var v = await videoOf(stream);
+
+      var live = true;
+      (function paint() {
+        if (!live) return;
+        compose(c, o, v, v.videoWidth, v.videoHeight, edgeTrim(v.videoWidth));
+        requestAnimationFrame(paint);
+      })();
+
+      var chunks = [];
+      rec = new MediaRecorder(cv.captureStream(30), { mimeType: mime.type, videoBitsPerSecond: 12e6 });
+      rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+      rec.onstop = function () {
+        live = false;
+        track.stop();
+        rec = null;
+        smallFrame();
+        saveBtn.textContent = "Baixar";
+        saveBtn.classList.remove("rec");
+        send(new Blob(chunks, { type: mime.type }), mime.ext);
+      };
+      track.addEventListener("ended", function () { if (rec) rec.stop(); });
+      rec.start();
+      saveBtn.textContent = "Parar e salvar";
+      saveBtn.classList.add("rec");
+    }
+
+    // ---- the gentle scroll -------------------------------------------------
+    // A page can't scroll a site from another domain, so instead the frame is made
+    // tall enough to hold the whole page and slid upwards behind the window.
+    function roll() {
+      if (rolling || pasted) return;
+      rolling = true;
+      at = 0;
+      $("roll").textContent = "Parar";
+      $("roll").classList.add("on");
+      layout();
+      var last = performance.now();
+      (function step(now) {
+        if (!rolling) return;
+        at += (now - last) * 0.16;             // ~160 px a second, in the site's pixels
+        last = now;
+        if (at > tall - seen) at = 0;          // back to the top and round again
+        site.style.transform = "translateY(" + (-at) + "px)";
+        tick = requestAnimationFrame(step);
+      })(last);
+    }
+    function unroll() {
+      if (!rolling) return;
+      rolling = false;
+      cancelAnimationFrame(tick);
+      at = 0;
+      $("roll").textContent = "Rolar";
+      $("roll").classList.remove("on");
+      layout();
+    }
+    $("roll").onclick = function () { rolling ? unroll() : roll(); };
+
+    // ---- wiring -----------------------------------------------------------
+    saveBtn.onclick = async function () {
+      if (rec) { rec.stop(); return; }
+      try {
+        if (S.fmt === "vid") { await startVideo(); return; }
+        busy(true, "Gerando…");
+        await still();
+        busy(false);
+      } catch (e) {
+        smallFrame();
+        busy(false);
+        flash("Não deu — tente de novo");
+      }
+    };
+
+    function setDevice(d) {
+      S.device = d;
+      $("dDesk").classList.toggle("on", d === "desktop");
+      $("dMob").classList.toggle("on", d === "mobile");
+      unroll();
+      keep();
+      site.removeAttribute("data-src");    // the site must lay out again at the new width
+      site.src = "about:blank";
+      layout();
+    }
+    $("dDesk").onclick = function () { setDevice("desktop"); };
+    $("dMob").onclick = function () { setDevice("mobile"); };
+
+    $("url").value = S.url;
+    function loadUrl() {
+      var v = $("url").value.trim();
+      if (!v || v === S.url) { drawUrl(parseFloat(frame.style.width)); return; }
+      S.url = v;
+      pasted = null;
+      unroll();
+      keep(); layout();
+    }
+    $("url").addEventListener("change", loadUrl);
+    $("url").addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
+
+    function setBg(v) {
+      if (!/^#[0-9a-f]{6}$/i.test(v)) return;
+      S.bg = v.toUpperCase();
+      $("bg").value = v.toLowerCase();
+      if ($("bgText").value.toUpperCase() !== S.bg) $("bgText").value = S.bg;
+      keep(); layout();
+    }
+    $("bg").oninput = function () { setBg(this.value); };
+    $("bgText").oninput = function () { setBg(this.value.trim()); };
+    $("bgText").value = S.bg;
+    setBg(S.bg);
+
+    $("out").value = S.out;
+    $("out").onchange = function () { S.out = this.value; keep(); layout(); };
+    $("fmt").value = S.fmt;
+    $("fmt").onchange = function () { S.fmt = this.value; keep(); };
+
+    // a print can also be pasted or dropped in, and then it is used instead of the site
+    function usePrint(file) {
+      if (!file || !/^image\//.test(file.type)) return;
+      var im = new Image();
+      im.onload = function () {
+        pasted = im;
+        var old = vp.querySelector("img.shot");
+        if (old) old.remove();
+        im.className = "shot";
+        vp.appendChild(im);
+        layout();
+      };
+      im.src = URL.createObjectURL(file);
+    }
+    document.addEventListener("paste", function (e) {
+      var it = e.clipboardData && e.clipboardData.items;
+      for (var i = 0; it && i < it.length; i++) {
+        if (/^image\//.test(it[i].type)) { usePrint(it[i].getAsFile()); break; }
+      }
+    });
+    ["dragover", "drop"].forEach(function (ev) {
+      work.addEventListener(ev, function (e) { e.preventDefault(); });
+    });
+    work.addEventListener("drop", function (e) { usePrint(e.dataTransfer.files[0]); });
+
+    window.addEventListener("resize", function () { if (!rec) fit(); });
+    chrome.addEventListener("load", layout);
+    phone.addEventListener("load", layout);
+    setDevice(S.device);
+  })();
+  </script>
+</body>
+</html>
