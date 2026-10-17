@@ -120,7 +120,7 @@
     .frame img[hidden] { display: none; }        /* beats the rules above */
     .vp { position: absolute; left: 0; width: 100%; overflow: hidden; background: #fff; }
     .vp iframe { border: 0; display: block; }
-    .vp img.shot { display: block; width: 100%; }
+    .vp img.shot { display: block; width: 100%; will-change: transform; }
     .urlbox {
       position: absolute;
       display: flex;
@@ -151,6 +151,21 @@
       display: none;
     }
     body.cap .flag { display: block; }
+    .work { position: relative; }
+    .note {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      z-index: 9;
+      background: rgba(26,27,31,.9);
+      color: #fff;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .note[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -209,6 +224,7 @@
         <img class="phone" id="phone" alt="" hidden>
       </div>
     </div>
+    <div class="note" id="note" hidden></div>
   </main>
   <div class="flag" id="flag">Gravando — clique em "Parar e salvar"</div>
 
@@ -281,7 +297,18 @@
     try { Object.assign(S, JSON.parse(localStorage.getItem("mockup2") || "{}")); } catch (e) {}
     function keep() { try { localStorage.setItem("mockup2", JSON.stringify(S)); } catch (e) {} }
 
-    var pasted = null;        // a print dropped or pasted in, used instead of the live site
+    // A picture of the site, shown instead of the live frame: a print pasted in
+    // ("paste"), or the server's photo of a site that refuses to be framed ("shot").
+    // picY is how far it has rolled, in the picture's own pixels.
+    var pic = null, picKind = null, picY = 0;
+    var probeKey = null, probeTok = 0;
+    // A site that refuses to be framed is fetched through the dev server instead
+    // (/site), which hands it back without that refusal. It is then same-origin
+    // with this page, so it can really be scrolled and its animations run.
+    var proxied = false, frameCache = {};
+    function frameSrc() {
+      return proxied ? "/site?url=" + encodeURIComponent(full(S.url)) : full(S.url);
+    }
     var rec = null;           // MediaRecorder, while a video is being taken
     var rolling = false, at = 0, tall = 0, seen = 0, tick = null;   // the gentle scroll
 
@@ -341,8 +368,9 @@
         vp.style.background = "#fff";
       }
 
-      if (pasted) {
+      if (pic) {
         site.style.display = "none";
+        placePic();
       } else {
         site.style.display = "block";
         // zoom, not transform: the site stays clickable and still lays out at its
@@ -354,7 +382,7 @@
         site.style.marginTop = mobile() ? MOB_STATUS + "px" : "0";
         seen = (mobile() ? fh * SCR.h : fh - top) / k;   // visible height, in site pixels
         if (mobile()) seen -= MOB_STATUS;
-        if (rolling) {
+        if (rolling && !proxied) {
           // while rolling, the frame holds the whole page and glides upwards
           tall = Math.max(seen * 6, 4000);
           site.style.height = tall + "px";
@@ -397,7 +425,7 @@
       return { w: w, h: w * F.h / F.w };
     }
 
-    function layout() {
+    function layout(noProbe) {
       var o = outSize();
       stage.style.width = o.w + "px";
       stage.style.height = o.h + "px";
@@ -406,11 +434,120 @@
       frame.style.left = ((o.w - box.w) / 2) + "px";
       frame.style.top = ((o.h - box.h) / 2) + "px";
       sizeFrame(box.w);
-      if (!pasted) {
-        var want = full(S.url);
+      if (!pic) {
+        var want = frameSrc();
         if (site.dataset.src !== want) { site.dataset.src = want; site.src = want; }
       }
       fit();
+      if (!noProbe) probe();
+    }
+
+    // ---- the picture in place of the site ----------------------------------
+    // the window's screen, in stage pixels, and the white band under the island
+    function vpBox() {
+      var fw = parseFloat(frame.style.width) || 0;
+      if (mobile()) {
+        var w = fw * SCR.w;
+        return { w: w, h: fw * PH.vh / PH.vw * SCR.h, band: w * (MOB_STATUS / MOB_W) };
+      }
+      var fh = fw * F.h / F.w;
+      return { w: fw, h: fh - fh * (F.chrome / F.h), band: 0 };
+    }
+    function placePic() {
+      if (!pic) return;
+      var b = vpBox(), k = b.w / pic.naturalWidth;
+      pic.style.marginTop = b.band + "px";
+      pic.style.transform = "translateY(" + (-picY * k) + "px)";
+    }
+    // how much of the picture fits in the window, in the picture's own pixels
+    function picSeen() {
+      var b = vpBox();
+      return (b.h - b.band) * pic.naturalWidth / b.w;
+    }
+    function setPic(im, kind) {
+      unroll();
+      if (pic && pic !== im) pic.remove();
+      pic = im; picKind = kind; picY = 0;
+      im.className = "shot";
+      vp.appendChild(im);
+      layout(true);
+    }
+    function clearPic() {
+      unroll();
+      if (pic) pic.remove();
+      pic = null; picKind = null; picY = 0;
+    }
+
+    var noteEl = $("note");
+    function note(t) { noteEl.textContent = t || ""; noteEl.hidden = !t; }
+
+    // A site that refuses to be framed stays blank in the window. It is opened
+    // through the dev server instead; if even that comes back empty, the server's
+    // photo of the whole page is shown.
+    function probe() {
+      if (picKind === "paste") return;
+      var url = full(S.url), key = url + "|" + S.device;
+      if (key === probeKey) return;
+      probeKey = key;
+      var tok = ++probeTok;
+      if (picKind === "shot") clearPic();        // a photo of another address or width
+      note("");
+      var known = frameCache[url];
+      var ask = known !== undefined ? Promise.resolve({ frameable: known }) :
+        fetch("/frameable?url=" + encodeURIComponent(url))
+          .then(function (r) { return r.ok ? r.json() : { frameable: true }; })
+          .catch(function () { return { frameable: true }; });
+      ask.then(function (d) {
+        frameCache[url] = d.frameable;
+        if (tok !== probeTok) return;
+        proxied = !d.frameable;
+        layout(true);
+        if (proxied) {
+          note("Este site bloqueia moldura — abrindo pelo servidor local…");
+          whenFramed(tok);
+        }
+      });
+    }
+
+    // once the site has come through the dev server, check it really drew something
+    function whenFramed(tok) {
+      // the page may have come in already, when the last site was proxied too
+      var d = null;
+      try { d = site.contentDocument; } catch (e) {}
+      if (d && d.readyState === "complete" && d.location.href !== "about:blank" && site.src.indexOf("/site?") >= 0) {
+        return checkFramed(tok);
+      }
+      site.addEventListener("load", function onLoad() {
+        if (site.src.indexOf("/site?") < 0) return;   // the blank page between sites
+        site.removeEventListener("load", onLoad);
+        checkFramed(tok);
+      });
+    }
+    function checkFramed(tok) {
+      setTimeout(function () {
+        if (tok !== probeTok) return;
+        var ok = false;
+        try {
+          var b = site.contentDocument && site.contentDocument.body;
+          var text = b ? b.innerText.trim() : "";
+          // an app that crashed away from its real address shows its error page
+          var crashed = text.length < 400 &&
+            /couldn.t load|application error|client-side exception|something went wrong|page not found|404/i.test(text);
+          ok = !!b && b.children.length > 0 && text.length > 0 && !crashed;
+        } catch (e) {}
+        if (ok) note(""); else takeShot(tok);
+      }, 2500);
+    }
+
+    function takeShot(tok) {
+      note("Não abriu pelo servidor local — capturando a página…");
+      serverShot(true).then(function (im) {
+        if (tok !== probeTok) return;
+        note("");
+        setPic(im, "shot");
+      }, function () {
+        if (tok === probeTok) note("Este site bloqueia a moldura e não deu para capturá-lo");
+      });
     }
 
     function fit() {
@@ -434,8 +571,10 @@
     // draws background + window + whatever is showing the site, at export size.
     // `trim` drops a few pixels from each side of the source: a screen capture
     // carries a black hairline on its edge, and it would land on the window's rim.
-    function compose(c, o, src, srcW, srcH, trim) {
+    // `offY` is how far down the source to start, in source pixels (a rolled picture).
+    function compose(c, o, src, srcW, srcH, trim, offY) {
       trim = trim || 0;
+      offY = offY || 0;
       var box = frameBox(o);
       var fw = box.w, fh = box.h;
       var fx = (o.w - fw) / 2, fy = (o.h - fh) / 2, sx = fw / F.w;
@@ -456,7 +595,7 @@
           c.fillRect(px, py, pw, ph);
           var msw = srcW - trim * 2, msh = srcH - trim;
           var mih = pw * msh / msw;
-          c.drawImage(src, trim, 0, msw, msh, px, py + band, pw, Math.max(mih, ph - band));
+          c.drawImage(src, trim, 0, msw, msh, px, py + band - offY * (pw / msw), pw, Math.max(mih, ph - band));
           c.restore();
         }
         c.drawImage(phone, fx, fy, fw, fh);
@@ -475,7 +614,7 @@
         c.clip();
         var sw = srcW - trim * 2, sh = srcH - trim;
         var ih = fw * sh / sw;                     // fill the width, align to the top
-        c.drawImage(src, trim, 0, sw, sh, fx, top, fw, Math.max(ih, ch));
+        c.drawImage(src, trim, 0, sw, sh, fx, top - offY * (fw / sw), fw, Math.max(ih, ch));
         c.restore();
       }
 
@@ -521,7 +660,8 @@
 
     // The dev server can photograph the site with the browser installed on this
     // machine. It needs no permission and works even where screen capture is off.
-    async function serverShot() {
+    // `whole` asks for the full length of the page, not just the first screen
+    async function serverShot(whole) {
       var o = outSize(), box = frameBox(o), w, h;
       if (mobile()) {
         w = MOB_W;
@@ -530,7 +670,7 @@
         w = SITE_W;
         h = Math.round(SITE_W * (box.w * (F.h - F.chrome) / F.w) / box.w);
       }
-      var r = await fetch("/shot?url=" + encodeURIComponent(full(S.url)) + "&w=" + w + "&h=" + h);
+      var r = await fetch("/shot?url=" + encodeURIComponent(full(S.url)) + "&w=" + w + "&h=" + h + (whole ? "&full=1" : ""));
       if (!r.ok) throw new Error(await r.text());
       var im = new Image();
       im.src = URL.createObjectURL(await r.blob());
@@ -596,8 +736,8 @@
       cv.width = o.w; cv.height = o.h;
       var c = cv.getContext("2d");
 
-      if (pasted) {
-        compose(c, o, pasted, pasted.naturalWidth, pasted.naturalHeight);
+      if (pic) {
+        compose(c, o, pic, pic.naturalWidth, pic.naturalHeight, 0, picY);
       } else {
         var im = null;
         try { im = await serverShot(); } catch (e) { im = null; }
@@ -637,16 +777,23 @@
       cv.width = o.w; cv.height = o.h;
       var c = cv.getContext("2d");
 
-      var stream = await grabStream();
-      var track = stream.getVideoTracks()[0];
-      bigFrame();
-      await cropToSite(track);
-      var v = await videoOf(stream);
+      // a picture is painted straight from memory: no screen capture, no permission
+      var track = null, v = null;
+      if (!pic) {
+        var stream = await grabStream();
+        track = stream.getVideoTracks()[0];
+        bigFrame();
+        await cropToSite(track);
+        v = await videoOf(stream);
+      } else if (!rolling) {
+        roll();                              // a still picture only makes a video by rolling
+      }
 
       var live = true;
       (function paint() {
         if (!live) return;
-        compose(c, o, v, v.videoWidth, v.videoHeight, edgeTrim(v.videoWidth));
+        if (pic) compose(c, o, pic, pic.naturalWidth, pic.naturalHeight, 0, picY);
+        else compose(c, o, v, v.videoWidth, v.videoHeight, edgeTrim(v.videoWidth));
         requestAnimationFrame(paint);
       })();
 
@@ -655,14 +802,14 @@
       rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
       rec.onstop = function () {
         live = false;
-        track.stop();
+        if (track) track.stop();
         rec = null;
-        smallFrame();
+        if (track) smallFrame();
         saveBtn.textContent = "Baixar";
         saveBtn.classList.remove("rec");
         send(new Blob(chunks, { type: mime.type }), mime.ext);
       };
-      track.addEventListener("ended", function () { if (rec) rec.stop(); });
+      if (track) track.addEventListener("ended", function () { if (rec) rec.stop(); });
       rec.start();
       saveBtn.textContent = "Parar e salvar";
       saveBtn.classList.add("rec");
@@ -672,11 +819,13 @@
     // A page can't scroll a site from another domain, so instead the frame is made
     // tall enough to hold the whole page and slid upwards behind the window.
     function roll() {
-      if (rolling || pasted) return;
+      if (rolling) return;
       rolling = true;
       at = 0;
       $("roll").textContent = "Parar";
       $("roll").classList.add("on");
+      if (pic) { rollPic(); return; }
+      if (proxied) { rollFrame(); return; }
       layout();
       var last = performance.now();
       (function step(now) {
@@ -688,11 +837,65 @@
         tick = requestAnimationFrame(step);
       })(last);
     }
+    // a picture rolls the same way, at the same pace, by sliding it up the window
+    function rollPic() {
+      picY = 0;
+      var HOLD = 1200;                           // ms to rest at the top and at the end
+      var last = performance.now(), restUntil = last + HOLD;
+      (function step(now) {
+        if (!rolling || !pic) return;
+        var max = Math.max(0, pic.naturalHeight - picSeen());
+        if (now >= restUntil) {
+          if (picY >= max) {
+            picY = 0;                            // back to the top and round again
+            restUntil = now + HOLD;
+          } else {
+            var siteW = mobile() ? MOB_W : SITE_W;
+            picY = Math.min(max, picY + (now - last) * 0.16 * (pic.naturalWidth / siteW));
+            if (picY >= max) restUntil = now + HOLD;
+          }
+          placePic();
+        }
+        last = now;
+        tick = requestAnimationFrame(step);
+      })(last);
+    }
+    // a site opened through the dev server is scrolled for real, so whatever it
+    // animates on scroll plays as it goes
+    function frameWin() {
+      try { var w = site.contentWindow; return w && w.document ? w : null; } catch (e) { return null; }
+    }
+    function rollFrame() {
+      var w = frameWin();
+      if (!w) return;
+      var y = 0, HOLD = 1200;
+      var last = performance.now(), restUntil = last + HOLD;
+      w.scrollTo({ top: 0, behavior: "instant" });
+      (function step(now) {
+        if (!rolling || !proxied || pic) return;
+        var el = w.document.scrollingElement || w.document.documentElement;
+        var max = Math.max(0, el.scrollHeight - w.innerHeight);
+        if (now >= restUntil) {
+          if (y >= max) {
+            y = 0;                               // back to the top and round again
+            restUntil = now + HOLD;
+          } else {
+            y = Math.min(max, y + (now - last) * 0.16);
+            if (y >= max) restUntil = now + HOLD;
+          }
+          w.scrollTo({ top: y, behavior: "instant" });
+        }
+        last = now;
+        tick = requestAnimationFrame(step);
+      })(last);
+    }
     function unroll() {
       if (!rolling) return;
       rolling = false;
       cancelAnimationFrame(tick);
       at = 0;
+      picY = 0;
+      if (proxied && frameWin()) frameWin().scrollTo({ top: 0, behavior: "instant" });
       $("roll").textContent = "Rolar";
       $("roll").classList.remove("on");
       layout();
@@ -732,8 +935,7 @@
       var v = $("url").value.trim();
       if (!v || v === S.url) { drawUrl(parseFloat(frame.style.width)); return; }
       S.url = v;
-      pasted = null;
-      unroll();
+      clearPic();
       keep(); layout();
     }
     $("url").addEventListener("change", loadUrl);
@@ -761,12 +963,9 @@
       if (!file || !/^image\//.test(file.type)) return;
       var im = new Image();
       im.onload = function () {
-        pasted = im;
-        var old = vp.querySelector("img.shot");
-        if (old) old.remove();
-        im.className = "shot";
-        vp.appendChild(im);
-        layout();
+        probeTok++;                          // a photo still on its way must not replace this
+        note("");
+        setPic(im, "paste");
       };
       im.src = URL.createObjectURL(file);
     }
