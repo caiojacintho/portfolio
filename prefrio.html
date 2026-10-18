@@ -52,6 +52,11 @@
 
     /* right column: stacked media, same card grid language as the work page */
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
+    /* the site mockup clip runs full width at its own ratio, so nothing is cropped */
+    .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
+    /* phone clips sit in a pair like the phone stills: cropped to the card, as tall as them */
+    .case-media video.case-phone { display: block; width: 100%; height: 82vh; object-fit: cover; border-radius: 16px; background: #F3F3F3; }
+    @media screen and (max-width: 767px) { .case-media video.case-phone { height: 60vh; } }
     .case-media > a { display: block; }
     /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
        must still span the column */
@@ -64,10 +69,8 @@
       .div-block img.image { height: 60vh; object-fit: cover; }
       /* match the featured-grid mobile heights */
       .div-block img.image[src*="_t3"] { height: 50vh; }
-      .case-media .div-block .w-background-video[data-video-urls*="pref1.mp4"],
-      .case-media .div-block .w-background-video[data-poster-url*="prefriooo2"] { height: 40vh; aspect-ratio: auto; }
-      .case-media .w-background-video[data-video-urls*="pref1.mp4"] > video,
-      .case-media .w-background-video[data-poster-url*="prefriooo2"] > video { object-fit: cover; }
+      .case-media .div-block .w-background-video[data-video-urls*="pref1.mp4"] { height: 40vh; aspect-ratio: auto; }
+      .case-media .w-background-video[data-video-urls*="pref1.mp4"] > video { object-fit: cover; }
       .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
@@ -102,7 +105,7 @@
 
     <main class="case-media">
       <div data-w-id="34f8e784-0205-76b3-a5ed-8bcce1bcd51a" class="div-block case-hero unica"><img src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3.jpg" loading="lazy" sizes="(max-width: 5760px) 100vw, 5760px" srcset="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-500.jpg 500w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-800.jpg 800w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-1080.jpg 1080w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-1600.jpg 1600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-2000.jpg 2000w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-2600.jpg 2600w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3-p-3200.jpg 3200w, https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/69271ba0fb44b9b2be0a8f69_t3.jpg 5760w" alt="" class="image"></div>
-      <div class="div-block unica"><div data-poster-url="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg" data-video-urls="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_mp4.mp4,https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_webm.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" id="w-node-_70d8135e-6a29-1757-c985-2e98749d15f5-20d09488" class="background-video-3 w-background-video w-background-video-atom"><video id="70d8135e-6a29-1757-c985-2e98749d15f5-video" loop="" style="background-image:url(&quot;https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_poster.0000000.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_mp4.mp4" data-wf-ignore="true"><source data-src="https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452%2F6927073a8be3e0faf7785de2_prefriooo2_webm.webm" data-wf-ignore="true"></video></div></div>
+      <div class="div-block dupla par"><video class="case-phone" src="videos/prefrio-onboarding-1.mp4" autoplay loop muted playsinline preload="metadata"></video><video class="case-phone" src="videos/prefrio-onboarding-2.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
       <div class="div-block unica"><div data-poster-url="images/pref1-poster.jpg" data-video-urls="videos/pref1.mp4" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-3 w-background-video w-background-video-atom"><video id="077e4ca3-e34f-0746-f849-7ea6c123ca34-video" loop="" style="background-image:url(&quot;images/pref1-poster.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover" preload="none" data-lazy-video="1"><source data-src="videos/pref1.mp4" data-wf-ignore="true"></video></div></div>
 
       <!-- previous / next project, same order as the Featured grid -->
