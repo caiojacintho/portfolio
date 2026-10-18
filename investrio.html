@@ -52,6 +52,8 @@
 
     /* right column: stacked media, same card grid language as the work page */
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
+    /* the site mockup clip runs full width at its own ratio, so nothing is cropped */
+    .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
     .case-media > a { display: block; }
     /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
        must still span the column */
@@ -64,7 +66,6 @@
       .div-block img.image { height: 60vh; object-fit: cover; }
       /* match the featured-grid mobile heights */
       .div-block img.image[src*="investrio-6"] { height: 50vh; }
-      .div-block img.image[src*="investrio-5"] { height: 44vh; }
       .div-block { grid-column-gap: 12px; grid-row-gap: 12px; }
     }
   </style>
@@ -98,7 +99,7 @@
     </aside>
 
     <main class="case-media">
-      <div class="div-block case-hero unica"><img src="images/investrio-5.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block case-hero unica"><video class="case-video" src="videos/investrio-video.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
       <div class="div-block dupla par"><img src="images/investrio-1.png" loading="lazy" alt="" class="image"/><img src="images/investrio-2.png" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/investrio-6.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block dupla par"><img src="images/investrio-3.png" loading="lazy" alt="" class="image"/><img src="images/investrio-4.jpg" loading="lazy" alt="" class="image"/></div>
