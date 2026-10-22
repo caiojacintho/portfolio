@@ -11,7 +11,24 @@
   if (!btn || !menu || !menu.animate) return;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var EASE = "cubic-bezier(.65,0,.35,1)";
-  var closing = false, handOn = false;
+  var closing = false, handOn = false, leftovers = [];
+
+  // drop the exit's end states, so the next opening starts clean
+  function clearLeftovers() {
+    leftovers.forEach(function (a) { a.cancel(); });
+    leftovers = [];
+  }
+  // Webflow takes a few frames to hide the menu after the click: cancelling the
+  // exit before that let the full panel flash back in for a moment
+  function clearWhenHidden() {
+    var overlay = document.querySelector(".w-nav-overlay");
+    var t0 = performance.now();
+    (function check() {
+      var hidden = !overlay || getComputedStyle(overlay).display === "none";
+      if (hidden || performance.now() - t0 > 1500) clearLeftovers();
+      else requestAnimationFrame(check);
+    })();
+  }
 
   function closeAnimated() {
     if (closing) return;
@@ -35,18 +52,20 @@
     function done() {
       if (finished) return;
       finished = true;
+      leftovers = mine;
       handOn = true;
       btn.click();                 // now Webflow closes it
       handOn = false;
       closing = false;
-      // the menu is hidden by now: drop the end states so the next opening starts clean
-      mine.forEach(function (a) { a.cancel(); });
+      clearWhenHidden();
     }
     curtain.finished.then(done, done);
     setTimeout(done, 800);         // never leave the menu stuck open if animations stall
   }
 
   document.addEventListener("click", function (e) {
+    // opening again before the last exit was cleared: clear it now
+    if (!btn.classList.contains("w--open") && leftovers.length) clearLeftovers();
     if (handOn || reduce || !btn.classList.contains("w--open") || !e.target.closest) return;
     var onButton = e.target.closest(".menu-button.w-nav-button:not(.brand-home)");
     var lang = e.target.closest("[data-lang-btn]");
