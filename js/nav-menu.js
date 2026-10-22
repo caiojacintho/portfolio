@@ -1,7 +1,9 @@
 /* Mobile menu exit, the entrance in reverse (the entrance is CSS, in site.css):
    the links fade up and out, then the panel's curtain rolls back up.
-   Webflow closes the menu on a click on its button, instantly. That click is held
-   back here until the exit has played, then handed on to Webflow to close for real. */
+   Webflow closes the menu instantly, on a click on its button and on a click on
+   any "#" link inside it (the EN/PT switch). Those clicks are held back here in
+   the capture phase, so Webflow never sees them; the exit plays, then a click on
+   the button is handed on to Webflow to close the menu for real. */
 (function () {
   "use strict";
   var btn = document.querySelector(".navigation .menu-button.w-nav-button:not(.brand-home)");
@@ -11,12 +13,7 @@
   var EASE = "cubic-bezier(.65,0,.35,1)";
   var closing = false, handOn = false;
 
-  document.addEventListener("click", function (e) {
-    if (handOn || reduce || !btn.classList.contains("w--open")) return;
-    if (!e.target.closest || !e.target.closest(".menu-button.w-nav-button:not(.brand-home)")) return;
-    // capture phase on document: Webflow's own handler, on the button, never sees it
-    e.stopPropagation();
-    e.preventDefault();
+  function closeAnimated() {
     if (closing) return;
     closing = true;
 
@@ -47,6 +44,18 @@
     }
     curtain.finished.then(done, done);
     setTimeout(done, 800);         // never leave the menu stuck open if animations stall
+  }
 
+  document.addEventListener("click", function (e) {
+    if (handOn || reduce || !btn.classList.contains("w--open") || !e.target.closest) return;
+    var onButton = e.target.closest(".menu-button.w-nav-button:not(.brand-home)");
+    var lang = e.target.closest("[data-lang-btn]");
+    if (!onButton && !(lang && menu.contains(lang))) return;
+    e.stopPropagation();
+    e.preventDefault();
+    if (closing) return;
+    // i18n.js would have switched the language on this click; it no longer sees it
+    if (lang && window.SiteLang) window.SiteLang.set(lang.getAttribute("data-lang-btn"));
+    closeAnimated();
   }, true);
 })();

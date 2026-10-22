@@ -4578,6 +4578,10 @@ figcaption {
 /* Mobile menu entrance (Webflow marks the open menu [data-nav-menu-open]):
    the panel drops in like a curtain, then the links rise one after another. */
 @media screen and (max-width: 991px) {
+  /* Webflow also opens the brand-only menu (CAIO JACINTHO) in the overlay; it sat
+     unseen behind the white panel until the curtain reveal let it show through.
+     The brand is already in the header, so it has no place in the open menu. */
+  .w-nav-overlay .navigation-items-1 { display: none !important; }
   .navigation-items.w-nav-menu[data-nav-menu-open] {
     animation: nav-curtain .55s cubic-bezier(.65, 0, .35, 1) both;
   }
