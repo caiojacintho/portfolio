@@ -111,13 +111,19 @@
     .section .div-block.unica.video .media-wrap-video .w-background-video[data-poster-url*="rivio9"] { height: 100%; aspect-ratio: auto; }
     .div-block.unica.video .w-background-video[data-poster-url*="rivio9"] > video { object-fit: cover; }
 
-    /* mockup clips sit in square cards. The browser-window clips show whole on
-       their own grey; the phone clips fill the square, the phone staying whole.
+    /* mockup clips sit in square cards. The browser-window clips keep their own
+       16:9 box, centred on the card's grey: letterboxing them with object-fit:contain
+       made iOS Safari paint a black hairline where the clip meets the grey. The 1px
+       clip hides any edge the phone still rounds into view (the clip's rim is grey).
+       The phone clips fill the square, the phone staying whole.
        (Webflow parks background videos at z-index:-100, behind the grey: lift them.) */
     .section .div-block .media-wrap:has(source[data-src*="videos/embya-site"], source[data-src*="videos/revolusolar-site"], source[data-src*="videos/investrio-video"], source[data-src*="videos/iplanrio-video"], source[data-src*="videos/prefrio-onboarding"]) { height: auto; aspect-ratio: auto; }
     .section .div-block .w-background-video:has(source[data-src*="videos/embya-site"], source[data-src*="videos/revolusolar-site"], source[data-src*="videos/investrio-video"], source[data-src*="videos/iplanrio-video"], source[data-src*="videos/prefrio-onboarding"]) { height: auto !important; aspect-ratio: 1 / 1 !important; background: #F2F2F2; }
-    .section .div-block .w-background-video:has(source[data-src*="videos/embya-site"], source[data-src*="videos/revolusolar-site"], source[data-src*="videos/investrio-video"], source[data-src*="videos/iplanrio-video"]) > video { object-fit: contain !important; z-index: 0; }
+    .section .div-block .w-background-video:has(source[data-src*="videos/embya-site"], source[data-src*="videos/revolusolar-site"], source[data-src*="videos/investrio-video"], source[data-src*="videos/iplanrio-video"]) > video { height: auto !important; aspect-ratio: 2000 / 1124; object-fit: cover !important; clip-path: inset(1px); border-radius: 0; z-index: 0; }
     .section .div-block .w-background-video:has(source[data-src*="videos/prefrio-onboarding"]) > video { object-fit: cover !important; z-index: 0; }
+
+    /* rows left out of the phone layout */
+    .section .div-block:has(img[src*="revolusolar-3"], img[src*="investrio-6"], img[src*="_2102"], img[src*="rivio-ppt1"], source[data-src*="videos/prefrio-onboarding"], [data-video-urls*="pref1.mp4"]) { display: none; }
   }
 </style>
 </head><body>

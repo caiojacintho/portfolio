@@ -57,8 +57,13 @@
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     /* the site mockup clip runs full width at its own ratio, so nothing is cropped */
     .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
-    /* on phones the clip sits whole in a square card of its own grey */
-    @media screen and (max-width: 767px) { .case-media .case-video { aspect-ratio: 1 / 1; object-fit: contain; } }
+    /* on phones the clip sits whole, at its own 16:9, in a square card of its grey.
+       Not object-fit:contain: iOS Safari paints a black hairline where a letterboxed
+       clip meets the grey. The 1px clip hides any edge it still rounds into view. */
+    @media screen and (max-width: 767px) {
+      .case-media .div-block:has(> .case-video) { display: flex; flex-direction: column; justify-content: center; aspect-ratio: 1 / 1; background: #F2F2F2; border-radius: 16px; overflow: hidden; }
+      .case-media .div-block > .case-video { clip-path: inset(1px); border-radius: 0; }
+    }
     .case-media .sec { scroll-margin-top: 120px; }
     @media screen and (max-width: 860px) {
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
