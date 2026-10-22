@@ -327,7 +327,18 @@
     }
   }
 
-  var clickedImg = null;
+  var clickedImg = null, clickedPair = null;
+
+  /* the other picture of a pair shown side by side (desktop), so both travel */
+  function pairOf(el) {
+    var row = el && el.closest('.div-block');
+    if (!row) return null;
+    var all = row.querySelectorAll('.media-wrap > img, .media-wrap > .w-background-video');
+    if (all.length !== 2) return null;
+    var other = all[0] === el ? all[1] : all[0];
+    var a = el.getBoundingClientRect(), b = other.getBoundingClientRect();
+    return Math.abs(a.top - b.top) < 2 && a.left !== b.left ? other : null;
+  }
 
   /* Webflow left every card pointing at the live project. On the featured grid the
      card is a preview of the case page, so send every link there instead. */
@@ -371,9 +382,15 @@
     card.addEventListener('click', function (e) {
       var wrap = e.target.closest('.media-wrap') || card.querySelector('.media-wrap');
       clickedImg = wrap ? wrap.querySelector('img, .w-background-video') : null;
+      clickedPair = pairOf(clickedImg);
       /* tell the project page which picture to open on (js/hero-transition.js) */
       try {
-        sessionStorage.setItem('hero-from-grid', JSON.stringify({ page: page, key: mediaKey(clickedImg), t: Date.now() }));
+        sessionStorage.setItem('hero-from-grid', JSON.stringify({
+          page: page, key: mediaKey(clickedImg), t: Date.now(),
+          pair: clickedPair ? mediaKey(clickedPair) : '',
+          /* which of the two sits on the left, so the project page lines them up the same */
+          pairLeft: !!clickedPair && clickedPair.getBoundingClientRect().left < clickedImg.getBoundingClientRect().left
+        }));
         /* and remember where the grid stood, for the way back */
         sessionStorage.setItem('grid-origin', JSON.stringify({ page: page, key: mediaKey(clickedImg), y: window.scrollY }));
       } catch (err) {}
@@ -401,10 +418,12 @@
   window.addEventListener('pageswap', function (e) {
     if (e.viewTransition && clickedImg) {
       clickedImg.style.viewTransitionName = 'hero';
+      if (clickedPair) clickedPair.style.viewTransitionName = 'hero-2';
     }
   });
   window.addEventListener('pagehide', function () {
     if (clickedImg) { clickedImg.style.viewTransitionName = ''; clickedImg = null; }
+    if (clickedPair) { clickedPair.style.viewTransitionName = ''; clickedPair = null; }
   });
 
   /* The way back: a project page leaves a note of the picture on screen when its
@@ -434,6 +453,9 @@
     /* the picture that was on screen, else the card that was clicked, else the project's first */
     var target = byKey(note.key) || (origin && byKey(origin.key)) || media[0];
     if (!target) return;
+    /* a pair that left side by side comes back into its own card, side by side */
+    var pairTarget = note.pair ? byKey(note.pair) : null;
+    if (pairTarget && (pairTarget.closest('.div-block') !== target.closest('.div-block') || pairOf(target) !== pairTarget)) pairTarget = null;
 
     /* a history step back restores its own scroll; a click on the arrow lands on the
        grid where it was left, or centred on the card if that is now out of view */
@@ -465,7 +487,12 @@
     var root = document.documentElement;
     if (mediaKey(target) === note.key) root.classList.add('vt-same');   /* see css/transitions.css */
     target.style.viewTransitionName = 'hero';
-    var unname = function () { target.style.viewTransitionName = ''; root.classList.remove('vt-same'); };
+    if (pairTarget) pairTarget.style.viewTransitionName = 'hero-2';
+    var unname = function () {
+      target.style.viewTransitionName = '';
+      if (pairTarget) pairTarget.style.viewTransitionName = '';
+      root.classList.remove('vt-same');
+    };
     e.viewTransition.ready.catch(function () {});     /* a skipped glide (tab hidden, page resized) is not an error */
     e.viewTransition.finished.then(unname, unname);
   });

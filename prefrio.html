@@ -44,9 +44,10 @@
     .case-side .case-sub { color: #6b6b66; font-size: 13px; line-height: 1.6; margin: 10px 0 0; max-width: 250px; }
     .case-ext { display: inline-block; margin-top: 6px; color: #111; font-size: 13px; text-decoration: none; }
     .case-ext:hover { color: #6b6b66; }
-    /* arrow-only back button (lucide arrow-left), floated above the title without moving it.
+    /* arrow-only back button (lucide arrow-left): pinned to the bottom-left corner on
+       desktop, floated above the title on phones, never moving the title.
        On hover the arrow slides out to the left while a twin slides in from the right. */
-    .case-arrow { position: absolute; top: -84px; left: 4px; width: 36px; height: 36px; color: #111; display: none; overflow: hidden; text-decoration: none; }
+    .case-arrow { position: fixed; bottom: 20px; left: 12px; z-index: 5; width: 36px; height: 36px; color: #111; display: inline-flex; overflow: hidden; text-decoration: none; }
     .case-arrow svg { position: absolute; top: 4px; left: 4px; transition: transform .32s cubic-bezier(.2,.7,.2,1), opacity .32s ease; }
     .case-arrow svg:last-child { transform: translateX(150%); opacity: 0; }
     .case-arrow:hover svg:first-child { transform: translateX(-150%); opacity: 0; }
@@ -68,7 +69,7 @@
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
       .case-side .case-sub { max-width: none; }
-      .case-arrow { position: absolute; top: -172px; left: 0; margin: 0; display: inline-flex; }
+      .case-arrow { position: absolute; top: -172px; bottom: auto; left: 0; margin: 0; display: inline-flex; }
       .div-block img.image { height: 60vh; object-fit: cover; }
       /* match the featured-grid mobile heights */
       .div-block img.image[src*="_t3"] { height: 50vh; }

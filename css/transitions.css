@@ -6,7 +6,9 @@
 /* the header is the same on both pages: keep it still while the rest fades */
 .navigation { view-transition-name: site-nav; }
 
-::view-transition-group(hero) {
+/* "hero-2" is the other half of a pair shown side by side: the two travel as a block */
+::view-transition-group(hero),
+::view-transition-group(hero-2) {
   animation-duration: .65s;
   animation-timing-function: cubic-bezier(.4, 0, .2, 1);
   overflow: hidden;
@@ -14,16 +16,21 @@
 }
 /* the card and the first slot can differ in shape: crop instead of stretching */
 ::view-transition-old(hero),
-::view-transition-new(hero) {
+::view-transition-new(hero),
+::view-transition-old(hero-2),
+::view-transition-new(hero-2) {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 /* Same picture at both ends (html.vt-same, set on arrival): carry the one that was
    already on screen all the way, rather than cross-fading into a copy that may
-   still be loading. The live picture takes over when the glide ends. */
-:root.vt-same::view-transition-old(hero) { animation: none; opacity: 1; }
-:root.vt-same::view-transition-new(hero) { animation: none; opacity: 0; }
+   still be loading. The live picture takes over when the glide ends. The partner
+   of a pair is always found by its own file, so it is always the same picture. */
+:root.vt-same::view-transition-old(hero),
+::view-transition-old(hero-2) { animation: none; opacity: 1; }
+:root.vt-same::view-transition-new(hero),
+::view-transition-new(hero-2) { animation: none; opacity: 0; }
 
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: .35s; animation-timing-function: ease-out; }
