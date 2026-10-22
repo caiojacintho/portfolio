@@ -109,6 +109,29 @@
     });
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
-  else run();
+  // DM Sans comes in through WebFont.load, which marks <html> wf-active (or
+  // wf-inactive) when done. Splitting before that would measure and animate the
+  // fallback font, then redraw the title when the real one lands.
+  function fontsReady() {
+    return new Promise(function (done) {
+      var settled = /\bwf-(active|inactive)\b/;
+      if (!window.WebFont || settled.test(root.className)) return done();
+      var mo = new MutationObserver(function () {
+        if (settled.test(root.className)) { mo.disconnect(); done(); }
+      });
+      mo.observe(root, { attributes: true, attributeFilter: ["class"] });
+      setTimeout(function () { mo.disconnect(); done(); }, 2000);
+    });
+  }
+
+  var once = false;
+  function start() {
+    Promise.all([window.heroSettled || Promise.resolve(), fontsReady()]).then(function () {
+      if (once) return;
+      once = true;
+      run();
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 })();

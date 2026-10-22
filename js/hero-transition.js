@@ -6,11 +6,17 @@
   "use strict";
   var KEY = "hero-from-grid";
 
-  // the sidebar text waits hidden for js/text-in.js; never longer than 3s if that fails
+  // the sidebar text waits hidden for js/text-in.js; never longer than 5s if that fails
   if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
     document.documentElement.classList.add("text-wait");
-    setTimeout(function () { document.documentElement.classList.remove("text-wait"); }, 3000);
+    setTimeout(function () { document.documentElement.classList.remove("text-wait"); }, 5000);
   }
+
+  // settles once the picture has landed (or straight away when nothing glides), so
+  // the text entrance plays once on the live page, not under the transition
+  var settle;
+  window.heroSettled = new Promise(function (r) { settle = r; });
+  setTimeout(function () { settle(); }, 2500);
 
   // a media file's own name, whatever URL form it comes in (Webflow escapes the /)
   function fileOf(url) {
@@ -62,6 +68,8 @@
     // the page's <link rel="expect" blocking="render"> holds the first frame until
     // the media column is parsed, so it is all there when this runs
     window.addEventListener("pagereveal", function (e) {
+      if (e.viewTransition) e.viewTransition.finished.finally(settle);
+      else settle();
       var key = take();
       if (!e.viewTransition && !key) return;
       var hero = place(key);
@@ -72,6 +80,7 @@
   } else {
     // no view transitions here: still open the page on the picture that was clicked
     document.addEventListener("DOMContentLoaded", function () {
+      settle();
       var key = take();
       if (key) place(key);
     });
