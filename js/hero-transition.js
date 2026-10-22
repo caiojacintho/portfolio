@@ -64,18 +64,65 @@
     return hit;
   }
 
+  // the way back: whichever picture fills most of the screen glides back into its
+  // card on the featured grid (index.html picks the note up on pagereveal)
+  function onScreen() {
+    var main = document.querySelector(".case-media");
+    if (!main) return null;
+    var media = main.querySelectorAll("img, video.case-video, video.case-phone, .w-background-video");
+    var best = null, most = 0, vw = window.innerWidth, vh = window.innerHeight;
+    for (var i = 0; i < media.length; i++) {
+      var r = media[i].getBoundingClientRect();
+      var area = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0)) * Math.max(0, Math.min(r.right, vw) - Math.max(r.left, 0));
+      if (area > most) { most = area; best = media[i]; }
+    }
+    return best || media[0] || null;
+  }
+  var leaving = null;
+  function toGrid(url) {
+    try { return (new URL(url, location.href).pathname.split("/").pop() || "index.html") === "index.html"; }
+    catch (err) { return false; }
+  }
+  function leaveNote() {
+    leaving = onScreen();
+    if (!leaving) return;
+    try {
+      sessionStorage.setItem("hero-to-grid", JSON.stringify({
+        page: location.pathname.split("/").pop(), key: keyOf(leaving), t: Date.now()
+      }));
+    } catch (err) {}
+  }
+  // written on the click itself, before the grid starts loading and looks for it
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (a && !a.target && toGrid(a.getAttribute("href"))) leaveNote();
+  });
+  window.addEventListener("pageswap", function (e) {
+    if (!e.viewTransition || !e.activation || !e.activation.entry || !toGrid(e.activation.entry.url)) return;
+    if (!leaving) leaveNote();          // the browser's own back button: best effort
+    if (leaving) leaving.style.viewTransitionName = "hero";
+  });
+  // coming back to this page from the history cache: drop the name it left with
+  window.addEventListener("pageshow", function () {
+    if (leaving) { leaving.style.viewTransitionName = ""; leaving = null; }
+  });
+
   if ("onpagereveal" in window) {
     // the page's <link rel="expect" blocking="render"> holds the first frame until
     // the media column is parsed, so it is all there when this runs
     window.addEventListener("pagereveal", function (e) {
-      if (e.viewTransition) e.viewTransition.finished.finally(settle);
+      if (e.viewTransition) {
+        e.viewTransition.ready.catch(function () {});   // a skipped glide (tab hidden, page resized) is not an error
+        e.viewTransition.finished.then(settle, settle);
+      }
       else settle();
       var key = take();
       if (!e.viewTransition && !key) return;
       var hero = place(key);
       if (!hero || !e.viewTransition) return;
       hero.style.viewTransitionName = "hero";
-      e.viewTransition.finished.finally(function () { hero.style.viewTransitionName = ""; });
+      var unname = function () { hero.style.viewTransitionName = ""; };
+      e.viewTransition.finished.then(unname, unname);
     });
   } else {
     // no view transitions here: still open the page on the picture that was clicked
