@@ -63,6 +63,10 @@
   /* limit the Embyá preview to 3 rows on the work grid */
   .embya-hidden { display: none !important; }
 
+  /* rows left out of the featured grid at every size (still counted in their
+     project's preview, so no hidden card moves up into their place) */
+  .section .div-block:has(img[src*="revolusolar-3"], img[src*="_2102"], [data-video-urls*="pref1.mp4"]) { display: none; }
+
   /* breathing room after the last card (margin would collapse at the body edge) */
   .section { padding-bottom: 24px; margin-bottom: 0; }
   /* the empty Webflow block after the grid shares the intro's 340px top margin */
@@ -122,8 +126,8 @@
     .section .div-block .w-background-video:has(source[data-src*="videos/embya-site"], source[data-src*="videos/revolusolar-site"], source[data-src*="videos/investrio-video"], source[data-src*="videos/iplanrio-video"]) > video { height: auto !important; aspect-ratio: 2000 / 1124; object-fit: cover !important; clip-path: inset(1px); border-radius: 0; z-index: 0; }
     .section .div-block .w-background-video:has(source[data-src*="videos/prefrio-onboarding"]) > video { object-fit: cover !important; z-index: 0; }
 
-    /* rows left out of the phone layout */
-    .section .div-block:has(img[src*="revolusolar-3"], img[src*="investrio-6"], img[src*="_2102"], img[src*="rivio-ppt1"], source[data-src*="videos/prefrio-onboarding"], [data-video-urls*="pref1.mp4"]) { display: none; }
+    /* rows left out of the phone layout (more in the rule for every size above) */
+    .section .div-block:has(img[src*="investrio-6"], img[src*="rivio-ppt1"], source[data-src*="videos/prefrio-onboarding"]) { display: none; }
   }
 </style>
 </head><body>
