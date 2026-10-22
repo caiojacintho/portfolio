@@ -119,9 +119,13 @@
       var key = take();
       if (!e.viewTransition && !key) return;
       var hero = place(key);
-      if (!hero || !e.viewTransition) return;
+      if (!hero) return;
+      if (hero.tagName === "IMG") hero.loading = "eager";   // it is now the first thing on the page
+      if (!e.viewTransition) return;
+      var root = document.documentElement;
+      if (key && keyOf(hero) === key) root.classList.add("vt-same");   // see css/transitions.css
       hero.style.viewTransitionName = "hero";
-      var unname = function () { hero.style.viewTransitionName = ""; };
+      var unname = function () { hero.style.viewTransitionName = ""; root.classList.remove("vt-same"); };
       e.viewTransition.finished.then(unname, unname);
     });
   } else {

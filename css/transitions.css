@@ -7,8 +7,8 @@
 .navigation { view-transition-name: site-nav; }
 
 ::view-transition-group(hero) {
-  animation-duration: .7s;
-  animation-timing-function: cubic-bezier(.22, .7, .2, 1);
+  animation-duration: .65s;
+  animation-timing-function: cubic-bezier(.4, 0, .2, 1);
   overflow: hidden;
   border-radius: 16px;
 }
@@ -19,8 +19,18 @@
   height: 100%;
   object-fit: cover;
 }
+/* Same picture at both ends (html.vt-same, set on arrival): carry the one that was
+   already on screen all the way, rather than cross-fading into a copy that may
+   still be loading. The live picture takes over when the glide ends. */
+:root.vt-same::view-transition-old(hero) { animation: none; opacity: 1; }
+:root.vt-same::view-transition-new(hero) { animation: none; opacity: 0; }
+
 ::view-transition-old(root),
-::view-transition-new(root) { animation-duration: .45s; }
+::view-transition-new(root) { animation-duration: .35s; animation-timing-function: ease-out; }
+
+/* Back on the grid from a project page (html.grid-return): Webflow's scroll-in
+   reveals would make the cards around the landing spot fade in late */
+html.grid-return [data-w-id] { opacity: 1 !important; transform: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
