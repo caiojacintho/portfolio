@@ -1,0 +1,40 @@
+/* Card -> project-page transition (cross-document view transitions; browsers
+   without them simply navigate as before). The clicked card and its twin on the
+   project page share the name "hero", so the picture glides up into place. */
+@view-transition { navigation: auto; }
+
+/* the header is the same on both pages: keep it still while the rest fades */
+.navigation { view-transition-name: site-nav; }
+
+::view-transition-group(hero) {
+  animation-duration: .7s;
+  animation-timing-function: cubic-bezier(.22, .7, .2, 1);
+  overflow: hidden;
+  border-radius: 16px;
+}
+/* the card and the first slot can differ in shape: crop instead of stretching */
+::view-transition-old(hero),
+::view-transition-new(hero) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: .45s; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+
+/* Case sidebar entrance (js/text-in.js): hidden until the script has split the
+   text, so nothing flashes in its final place first. Layout is kept for measuring. */
+html.text-wait .case-side .case-title,
+html.text-wait .case-side .case-sub,
+html.text-wait .case-side .case-ext { visibility: hidden; }
+.ti-word { display: inline-block; white-space: nowrap; }
+/* the mask reaches past the letter box so accents and descenders are not clipped */
+.ti-mask { display: inline-block; overflow: hidden; vertical-align: top; padding: .14em 0 .2em; margin: -.14em 0 -.2em; }
+.ti-char { display: inline-block; }
+.ti-line { display: block; }
