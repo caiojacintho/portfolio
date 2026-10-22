@@ -57,6 +57,8 @@
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     /* the site mockup clip runs full width at its own ratio, so nothing is cropped */
     .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
+    /* on phones the clip sits whole in a square card of its own grey */
+    @media screen and (max-width: 767px) { .case-media .case-video { aspect-ratio: 1 / 1; object-fit: contain; } }
     .case-media > a { display: block; }
     /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
        must still span the column */

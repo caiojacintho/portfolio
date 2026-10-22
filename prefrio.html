@@ -59,7 +59,7 @@
     .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
     /* phone clips sit in a pair like the phone stills: cropped to the card, as tall as them */
     .case-media video.case-phone { display: block; width: 100%; height: 82vh; object-fit: cover; border-radius: 16px; background: #F3F3F3; }
-    @media screen and (max-width: 767px) { .case-media video.case-phone { height: 60vh; } }
+    @media screen and (max-width: 767px) { .case-media video.case-phone { height: auto; aspect-ratio: 1 / 1; } }
     .case-media > a { display: block; }
     /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
        must still span the column */
