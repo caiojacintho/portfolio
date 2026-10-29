@@ -341,7 +341,9 @@
         frame.style.width = fw + "px";
         frame.style.height = fh + "px";
         phone.hidden = false;
-        phone.src = phoneSVG();
+        // set it once: assigning src again, even unchanged, reloads the image, and its
+        // load event lays the page out afresh (it undid the capture settings mid-recording)
+        if (phone.getAttribute("src") !== phoneSVG()) phone.src = phoneSVG();
         chrome.hidden = true;
         urlbox.hidden = true;
         vp.style.left = (fw * SCR.x) + "px";
@@ -706,8 +708,20 @@
       stage.style.zoom = 1;
       site.style.pointerEvents = "none";   // no hover states while the camera is on
       var w = work.clientWidth, h = work.clientHeight;
-      var fw = Math.min(w, h * F.w / F.h);
+      // as big as fits: the window by its own shape, the phone by the phone's
+      var fw = mobile() ? Math.min(w, h * PH.vw / PH.vh) : Math.min(w, h * F.w / F.h);
       var fh = sizeFrame(fw);
+      // square corners: the window and the phone round the picture themselves when
+      // it is composed, and rounded corners caught here would show inside the screen
+      vp.style.borderRadius = "0";
+      if (mobile()) {
+        // the capture must hold the site alone. The phone is drawn over the screen
+        // (it would come out twice, island and all) and the white band under the
+        // island is added again when the picture is composed, so drop both here.
+        phone.style.visibility = "hidden";
+        site.style.marginTop = "0";
+        if (!rolling || proxied) site.style.height = (parseFloat(site.style.height) + MOB_STATUS) + "px";
+      }
       var r = work.getBoundingClientRect();
       frame.style.left = (r.left + (w - fw) / 2) + "px";
       frame.style.top = (r.top + (h - fh) / 2) + "px";
@@ -716,7 +730,23 @@
     function smallFrame() {
       document.body.classList.remove("cap");
       site.style.pointerEvents = "";
+      phone.style.visibility = "";
       layout();                            // puts the frame back where it belongs
+    }
+
+    // The capture starts on the whole tab and only narrows to the site once the crop
+    // takes hold, a few frames later. Wait until its frames have the site's shape,
+    // or those first frames flash the wrong picture at the start of a recording.
+    function cropSettled(v) {
+      var want = vp.getBoundingClientRect(), ratio = want.width / want.height;
+      var t0 = performance.now();
+      return new Promise(function (done) {
+        (function check() {
+          var ok = v.videoWidth && Math.abs(v.videoWidth / v.videoHeight - ratio) < 0.03;
+          if (ok || performance.now() - t0 > 1500) setTimeout(done, 250);   // and a beat to be sure
+          else requestAnimationFrame(check);
+        })();
+      });
     }
 
     async function videoOf(stream) {
@@ -752,7 +782,7 @@
             bigFrame();
             await cropToSite(track);
             var v = await videoOf(stream);
-            await new Promise(function (r) { setTimeout(r, 450); });   // let the crop settle
+            await cropSettled(v);
             compose(c, o, v, v.videoWidth, v.videoHeight, edgeTrim(v.videoWidth));
           } finally {
             track.stop();
@@ -785,6 +815,7 @@
         bigFrame();
         await cropToSite(track);
         v = await videoOf(stream);
+        await cropSettled(v);                // nothing is recorded before the crop holds
       } else if (!rolling) {
         roll();                              // a still picture only makes a video by rolling
       }
@@ -826,7 +857,7 @@
       $("roll").classList.add("on");
       if (pic) { rollPic(); return; }
       if (proxied) { rollFrame(); return; }
-      layout();
+      relayout();
       var last = performance.now();
       (function step(now) {
         if (!rolling) return;
@@ -898,7 +929,13 @@
       if (proxied && frameWin()) frameWin().scrollTo({ top: 0, behavior: "instant" });
       $("roll").textContent = "Rolar";
       $("roll").classList.remove("on");
-      layout();
+      relayout();
+    }
+    // mid-recording the frame is blown up for the capture: re-fit it the same way,
+    // or layout() would put it back small and undo the capture's own settings
+    function relayout() {
+      if (document.body.classList.contains("cap")) bigFrame();
+      else layout();
     }
     $("roll").onclick = function () { rolling ? unroll() : roll(); };
 
@@ -981,8 +1018,9 @@
     work.addEventListener("drop", function (e) { usePrint(e.dataTransfer.files[0]); });
 
     window.addEventListener("resize", function () { if (!rec) fit(); });
-    chrome.addEventListener("load", layout);
-    phone.addEventListener("load", layout);
+    // a frame image landing while recording must keep the capture layout
+    chrome.addEventListener("load", function () { relayout(); });
+    phone.addEventListener("load", function () { relayout(); });
     setDevice(S.device);
   })();
   </script>
