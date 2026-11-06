@@ -4610,3 +4610,11 @@ figcaption {
   .navigation-items.w-nav-menu[data-nav-menu-open],
   .navigation-items.w-nav-menu[data-nav-menu-open] .navigation-item { animation: none; }
 }
+
+/* the name in the nav (desktop and the collapsed menu bar), in Source Serif 4 */
+.heading-8, .brand-home .heading { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; letter-spacing: .01em; }
+/* the nav links (FEATURED, ABOUT, WORK, MAIL… and EN/PT) in the same serif */
+.navigation-item, .navigation-item.w--current { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; }
+/* About: the section headers (Experience, Education, Skills, Special thanks) in the
+   serif, written as they are, not in capitals */
+.heading-3 { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; text-transform: none; }

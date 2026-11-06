@@ -49,9 +49,143 @@ html.grid-return [data-w-id] { opacity: 1 !important; transform: none !important
    text, so nothing flashes in its final place first. Layout is kept for measuring. */
 html.text-wait .case-side .case-title,
 html.text-wait .case-side .case-sub,
-html.text-wait .case-side .case-ext { visibility: hidden; }
-.ti-word { display: inline-block; white-space: nowrap; }
-/* the mask reaches past the letter box so accents and descenders are not clipped */
-.ti-mask { display: inline-block; overflow: hidden; vertical-align: top; padding: .14em 0 .2em; margin: -.14em 0 -.2em; }
-.ti-char { display: inline-block; }
+html.text-wait .case-side .case-ext,
+html.text-wait .case-side .case-arrow,
+html.text-wait .case-side .case-facts { visibility: hidden; }
+/* each letter sits at its measured place (js/text-in.js); the mask reaches past the
+   letter on every side so accents, descenders and overhangs are not clipped */
+.ti-mask { position: absolute; overflow: hidden; padding: .14em .3em .2em; margin: -.14em 0 0 -.3em; white-space: pre; }
+.ti-char { display: inline-block; vertical-align: top; }
 .ti-line { display: block; }
+
+/* Serif: Source Serif 4 on the project titles and the home intro */
+.case-wrap .case-side h1 { font-family: "Source Serif 4", Georgia, serif; font-weight: 400; letter-spacing: -.015em; }
+.div-block-9 > p.paragraph, .div-block-9 > p.paragraph strong { font-family: "Source Serif 4", Georgia, serif; letter-spacing: -.01em; }
+
+/* Phones: every project page in one column — title, the text, cover, facts, carousel.
+   js/case-mobile.js rearranges the page and marks it .m-built. */
+/* desktop: in the sidebar, under the link; each label above its value */
+.case-side .case-facts { display: grid; gap: 14px; margin: 28px 0 0; padding: 0; max-width: 250px; }
+.case-side .case-facts > div { display: grid; gap: 3px; }
+.case-side .case-facts dt { color: #9a9a94; font-size: 12px; line-height: 1.3; margin: 0; }
+.case-side .case-facts dd { font-family: "Source Serif 4", Georgia, serif; color: #111; font-size: 14px; line-height: 1.4; margin: 0; }
+@media screen and (max-width: 860px) {
+  html.case-m-wait .case-wrap { visibility: hidden; }
+  .case-wrap.m-built { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .m-built .case-title { align-self: flex-start; }
+  .case-wrap.m-built > .case-side,
+  .case-wrap.m-built > .case-media { display: contents; }
+  .m-built .case-media > * { order: 6; }
+  .m-built .case-title { order: 1; }
+  .m-built .case-side .case-sub,
+  .m-built .case-side .case-ext { order: 2; }
+  .m-built .case-m-cover { order: 3; margin-top: 40px; height: 60vh; }
+  .m-built .case-facts { order: 4; }
+  .m-built .case-m-carousel { order: 5; }
+  .m-built .case-nav { order: 8; margin-top: 40px; }
+  .case-m-empty { display: none !important; }
+  /* the back arrow's stroke lines up with the "Caio Jacintho" brand above it */
+  .m-built .case-side .case-arrow { left: -6px; }
+
+  /* about: every paragraph under the title, one after the other, in the small grey sans */
+  .m-built .case-side .case-sub { font-family: "DM Sans", sans-serif; font-size: 15px; line-height: 1.5; color: #9a9a94; max-width: none; margin: 10px 0 0; }
+  .m-built .case-side .case-ext { align-self: flex-start; margin-top: 24px; font-size: 15px; }
+
+  /* carousel: runs to the screen's edges and scrolls freely (no snapping) */
+  .m-built .case-m-carousel { display: flex; gap: 12px; overflow-x: auto; margin: 104px -12px 0; padding: 0 12px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .m-built .case-m-carousel::-webkit-scrollbar { display: none; }
+  /* a mouse drags it too (js/case-mobile.js) */
+  @media (hover: hover) { .m-built .case-m-carousel { cursor: grab; } }
+  .m-built .case-m-carousel.is-dragging { cursor: grabbing; user-select: none; }
+  /* one height for every slide, each as wide as its picture (--r, set by
+     js/case-mobile.js; 16:9 until the picture has loaded). A phone mockup stays a
+     narrow card (80vw); any other picture, GIF or clip (.is-wide, sorted by the script)
+     may run up to 120vw. A wider one is trimmed at its sides. */
+  .m-built .case-m-slide { flex: 0 0 auto; height: 120vw; width: auto; max-width: 80vw; aspect-ratio: var(--r, 16 / 9); }
+  .m-built .case-m-slide.is-wide { max-width: 120vw; }
+  /* Storytelling, Data visualization and Playground: wide recordings and charts, so a lower
+     carousel lets them run wider (a 2:1 piece fills about 120vw) */
+  [data-wf-page="storytelling"] .m-built .case-m-slide,
+  [data-wf-page="dataviz"] .m-built .case-m-slide,
+  [data-wf-page="playground"] .m-built .case-m-slide { height: 56vw; max-width: 120vw; }
+
+  /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
+     background videos (parked at z-index:-100) still paint over the grey. */
+  .case-m-frame { position: relative; isolation: isolate; border-radius: 16px; overflow: hidden; background: #F2F2F2; }
+  .case-m-frame > * { position: absolute !important; inset: 0; }
+  .case-m-frame .div-block, .case-m-frame a, .case-m-frame .sec { display: flex !important; align-items: center; justify-content: center; width: 100%; height: 100% !important; margin: 0 !important; padding: 0 !important; aspect-ratio: auto !important; background: transparent !important; border-radius: 0 !important; overflow: visible !important; }
+  .case-m-frame img { display: block; width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0 !important; }
+  .case-m-frame .w-background-video { width: 100% !important; height: 100% !important; aspect-ratio: auto !important; border-radius: 0 !important; }
+  .case-m-frame .w-background-video > video { object-fit: cover !important; border-radius: 0 !important; }
+  /* site mockup clips stay whole at their own ratio, centred on the grey (not
+     object-fit:contain: iOS paints a hairline where a letterboxed clip meets it) */
+  .case-m-frame video.case-video { width: 100% !important; height: auto !important; aspect-ratio: auto !important; border-radius: 0 !important; clip-path: inset(1px); background: transparent !important; }
+  .case-m-frame > video.case-video { top: 50%; bottom: auto; transform: translateY(-50%); }
+  /* phone recordings stand whole, as tall as the card */
+  .case-m-frame video.case-phone { width: auto !important; max-width: 100%; height: 100% !important; object-fit: contain; border-radius: 0 !important; }
+  .case-m-frame > video.case-phone { left: 50%; right: auto; transform: translateX(-50%); }
+
+  /* facts: industry, contribution, year, skills — under the cover */
+  /* each label above its value, as on desktop */
+  .m-built .case-facts { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 0; padding: 96px 0 0; max-width: none; }
+  .m-built .case-facts > div { display: grid; grid-template-columns: 1fr; gap: 3px; }
+  .m-built .case-facts dt { color: #9a9a94; font-size: 13px; line-height: 1.3; margin: 0; }
+  .m-built .case-facts dd { font-family: "Source Serif 4", Georgia, serif; color: #111; font-size: 15px; line-height: 1.45; margin: 0; }
+}
+
+/* "Next project": the same pill as "Let's talk" on the home. On hover the label rolls
+   up out of the pill while its copy (::after, from data-label, kept in step with
+   EN/PT by js/case-mobile.js) rolls in from underneath. */
+.case-nav { justify-content: flex-start; }
+@media screen and (min-width: 861px) { .case-nav { justify-content: flex-end; } }   /* desktop: at the right */
+.case-nav .case-nav-link { background: #111; color: #fff; border-radius: 999px; padding: 14px 22px; overflow: hidden; transition: background-color .2s ease; }
+.case-nav .case-nav-link:hover { background: #2a2a2a; color: #fff; }
+.case-nav .case-nav-name { position: relative; display: inline-block; overflow: visible; font-family: "DM Sans", sans-serif; font-size: 15px; font-weight: 500; line-height: 1; text-transform: none; transition: transform .5s cubic-bezier(.65, 0, .35, 1); }
+.case-nav .case-nav-name::after { content: attr(data-label); position: absolute; left: 0; top: 2em; white-space: nowrap; }
+.case-nav .case-nav-link:hover .case-nav-name,
+.case-nav .case-nav-link:focus-visible .case-nav-name { transform: translateY(-2em); }
+
+/* the back arrow only on phones (above the title); desktop goes back through the nav */
+@media screen and (min-width: 861px) {
+  .case-side .case-arrow { display: none !important; }
+}
+
+
+/* the picture viewer (js/case-mobile.js): a tap on a carousel picture shows it whole */
+html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
+.case-viewer { position: fixed; inset: 0; z-index: 2000; background: #fff; opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility 0s linear .25s; }
+.case-viewer.is-open { opacity: 1; visibility: visible; transition: opacity .25s ease; }
+.case-viewer-stage { position: absolute; inset: 64px 12px 104px; }
+.case-viewer-stage img, .case-viewer-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+/* a phone mockup fills the stage (its plain background trimmed at the sides), so the
+   phone itself shows large */
+.case-viewer-stage .is-phone { object-fit: cover; border-radius: 16px; }
+.case-viewer-btn { position: absolute; width: 44px; height: 44px; border-radius: 999px; border: 1px solid #e3e3df; background: #fff; color: #111; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; text-decoration: none; }
+.case-viewer-btn[hidden] { display: none; }
+.case-viewer-close { top: 12px; right: 12px; border-color: transparent; }
+/* the arrows side by side in the middle, a little above the bottom */
+.case-viewer-prev { bottom: 40px; left: calc(50% - 48px); }
+.case-viewer-next { bottom: 40px; left: calc(50% + 4px); }
+.case-viewer-out { bottom: 40px; right: 12px; }
+.case-viewer-btn:hover { background: #111; border-color: #111; color: #fff; }
+/* the carousel's pictures show they open */
+.m-built .case-m-slide { cursor: zoom-in; }
+/* the facts' link: the address itself, clickable */
+.case-facts dd a { display: block; width: fit-content; color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.case-facts dd a:hover { color: #6b6b66; }
+/* Rivio's two screens sit small on a wide grey field: in the viewer they are zoomed so
+   the screen fills the width */
+.case-viewer-stage { overflow: hidden; }
+.case-viewer-stage img[src*="68ade5a3c3123ce060052a1d_2102"],
+.case-viewer-stage img[src*="68ade3b1e60beed1c7076be2_2099"] { transform: scale(1.9); }
+/* Rivio: its cover is a wide 16:9 slide clip, so on phones the cover card is a square
+   (a little taller than the clip) instead of the tall 60vh crop */
+@media screen and (max-width: 860px) {
+  [data-wf-page="rivio"] .m-built .case-m-cover { height: auto; aspect-ratio: 1 / 1; }
+}
+/* Storytelling and Data visualization: the cover card takes its picture's own shape (--r, from
+   js/case-mobile.js) instead of the 60vh crop */
+@media screen and (max-width: 860px) {
+  [data-wf-page="storytelling"] .m-built .case-m-cover,
+  [data-wf-page="dataviz"] .m-built .case-m-cover { height: auto; aspect-ratio: var(--r, 16 / 9); }
+}

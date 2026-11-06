@@ -152,6 +152,7 @@
     if (a && !a.target && toGrid(a.getAttribute("href"))) leaveNote();
   });
   window.addEventListener("pageswap", function (e) {
+    if (e.viewTransition) e.viewTransition.ready.catch(function () {});   // a skipped glide is not an error
     if (!e.viewTransition || !e.activation || !e.activation.entry || !toGrid(e.activation.entry.url)) return;
     if (!leaving) leaveNote();          // the browser's own back button: best effort
     if (leaving) leaving.style.viewTransitionName = "hero";

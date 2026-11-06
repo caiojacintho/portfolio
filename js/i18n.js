@@ -12,19 +12,70 @@
   //  in the DOM and upper-cased by CSS).
   var PT = {
     // nav
-    "FEATURED": "DESTAQUES",
-    "ABOUT": "SOBRE",
-    "WORK": "PROJETOS",
+    "Featured": "Destaques",
+    "About": "Sobre",
+    "Work": "Projetos",
     // work — intro (split across <strong> + text) and section labels
     "A Brazilian multiform designer working at the intersection of design, data and communication.":
       "Designer brasileiro multiforme, atuando na interseção entre design, dados e comunicação.",
-    "I lead the Design team at IplanRio, the technology agency of Rio de Janeiro City Hall, shaping the city's digital future.":
-      "Lidero o time de Design da IplanRio, a agência de tecnologia da Prefeitura do Rio de Janeiro, moldando o futuro digital da cidade.",
+    "Design partner to Brazilian startups that have raised more than R$100 million.":
+      "Parceiro de design de startups brasileiras que já captaram mais de R$ 100 milhões.",
+    "Let's talk": "Vamos conversar",
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
     "Architecture": "Arquitetura",
     // case pages — the link to the next project
     "Next project": "Próximo projeto",
+    // case pages — Storytelling's first paragraph
+    "Data stories and interactive specials produced for the Data Office of Rio's City Hall and for Insper's Center for City Studies — turning public data into public narratives.":
+      "Histórias de dados e especiais interativos produzidos para o Escritório de Dados da Prefeitura do Rio e para o Centro de Estudos das Cidades do Insper — transformando dados públicos em narrativas públicas.",
+    // case pages — the paragraph under the cover on phones (second in the sidebar)
+    "A space to test ideas outside client work — motion, interfaces and visual systems that often find their way into later projects.":
+      "Um espaço para testar ideias fora dos trabalhos para clientes — motion, interfaces e sistemas visuais que muitas vezes chegam a projetos posteriores.",
+    "Before moving to digital products, I worked in architecture and visualization — designing schools, housing and public spaces, and presenting them through drawings, models and renders.":
+      "Antes de migrar para produtos digitais, trabalhei com arquitetura e visualização — projetando escolas, habitação e espaços públicos, e apresentando-os em desenhos, maquetes e renders.",
+    // case pages — facts under the carousel
+    "Industry": "Indústria",
+    "Contribution": "Contribuição",
+    "Year": "Ano",
+    "Skills": "Habilidades",
+    "Ongoing": "Em andamento",
+    // industry
+    "Architecture and urbanism": "Arquitetura e urbanismo",
+    "Public sector, data": "Setor público, dados",
+    "Landscape architecture": "Arquitetura paisagística",
+    "Public sector": "Setor público",
+    "Public sector, economic development": "Setor público, desenvolvimento econômico",
+    "Public sector, technology": "Setor público, tecnologia",
+    "Public sector, education and employment": "Setor público, educação e emprego",
+    "Personal projects": "Projetos pessoais",
+    "Public sector, government services": "Setor público, serviços ao cidadão",
+    "Renewable energy, nonprofit": "Energia renovável, ONG",
+    "Healthtech": "Healthtech",
+    "Public sector, data journalism": "Setor público, jornalismo de dados",
+    // contribution
+    "Award-winning entries in national competitions": "Projetos premiados em concursos nacionais",
+    "Research, charts, maps, graphic design": "Pesquisa, gráficos, mapas, design gráfico",
+    "Branding and website": "Branding e site",
+    "Website": "Site",
+    "Design leadership, branding, design system and website": "Liderança de design, branding, design system e site",
+    "Course platform design": "Design da plataforma de cursos",
+    "Visual experiments and studies": "Experimentos e estudos visuais",
+    "Design and digital communication": "Design e comunicação digital",
+    "Product and pitch design": "Design de produto e de apresentação",
+    "Script, art direction, design, 3D modeling, front-end": "Roteiro, direção de arte, design, modelagem 3D, front-end",
+    // skills
+    "Architectural design, Urban design, 3D visualization": "Projeto arquitetônico, Desenho urbano, Visualização 3D",
+    "Data visualization, Information design, Cartography": "Visualização de dados, Design da informação, Cartografia",
+    "Branding, Web design, UI design, Art direction": "Branding, Web design, UI design, Direção de arte",
+    "Web design, UI design, Content design": "Web design, UI design, Design de conteúdo",
+    "Design leadership, Design systems, Web design": "Liderança de design, Design systems, Web design",
+    "UX design, UI design, Web design": "UX design, UI design, Web design",
+    "Visual design, Motion design, Prototyping": "Design visual, Motion design, Prototipagem",
+    "UI design, Design systems, Digital communication": "UI design, Design systems, Comunicação digital",
+    "Web design, UI design, Art direction": "Web design, UI design, Direção de arte",
+    "Product design, UI design, Presentation design": "Design de produto, UI design, Design de apresentação",
+    "Data storytelling, Data visualization, Interactive design, Motion design": "Narrativa de dados, Visualização de dados, Design interativo, Motion design",
     // case pages — sidebar descriptions
     "Rivio is a healthtech using artificial intelligence to transform the financial management of hospitals. The platform automates the entire hospital revenue cycle — from auditing to billing and post-billing — reducing claim denials, increasing operational efficiency and delivering greater financial predictability for healthcare institutions.":
       "Rivio é uma healthtech que utiliza inteligência artificial para transformar a gestão financeira de hospitais. A plataforma automatiza todo o ciclo de receita hospitalar — da auditoria ao faturamento e pós-faturamento — reduzindo glosas, aumentando a eficiência operacional e garantindo maior previsibilidade financeira para as instituições de saúde.",
@@ -35,10 +86,10 @@
       "Comecei na visualização arquitetônica, onde aprendi a traduzir ideias complexas em experiências visuais claras e envolventes. Com o tempo, isso evoluiu para um foco mais amplo em design de produtos digitais, combinando narrativa, dados e tecnologia para criar ferramentas que melhoram a forma como as pessoas interagem com informações e serviços.",
     "I am currently Head of Design at IplanRio, the municipal technology company of Rio de Janeiro City Hall, where I lead a multidisciplinary team of designers, developers, and content creators. My work spans from defining design systems and user experiences to building platforms, apps, dashboards, and data-driven stories that connect citizens with public services.":
       "Atualmente sou Head de Design na IplanRio, a empresa municipal de tecnologia da Prefeitura do Rio de Janeiro, onde lidero um time multidisciplinar de designers, desenvolvedores e criadores de conteúdo. Meu trabalho vai da definição de design systems e experiências do usuário à construção de plataformas, aplicativos, dashboards e histórias baseadas em dados que conectam os cidadãos aos serviços públicos.",
-    // about — section headers (lower-case in DOM, CSS upper-cases them)
-    "experience": "experiência",
-    "education": "formação",
-    "Special Thanks": "Agradecimentos especiais",
+    // about — section headers
+    "Experience": "Experiência",
+    "Education": "Formação",
+    "Special thanks": "Agradecimentos especiais",
     // about — experience entries
     "Head of Design": "Head de Design",
     "Iplanrio at Rio de Janeiro City Hall": "IplanRio na Prefeitura do Rio de Janeiro",

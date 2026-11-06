@@ -21,22 +21,33 @@
     };
   }
 
-  // title: one mask per letter, letters grouped by word so lines still break at spaces
-  function letters(el, text) {
-    var spans = [];
-    text.split(/(\s+)/).forEach(function (part) {
-      if (!part) return;
-      if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(" ")); return; }
-      var word = document.createElement("span");
-      word.className = "ti-word";
-      Array.prototype.forEach.call(part, function (ch) {
-        var mask = document.createElement("span"); mask.className = "ti-mask";
-        var c = document.createElement("span"); c.className = "ti-char"; c.textContent = ch;
-        mask.appendChild(c); word.appendChild(mask); spans.push(c);
-      });
-      el.appendChild(word);
+  // title: where the font sets every letter, kerning included, measured on the real
+  // text before it is set aside
+  function glyphs(el) {
+    var box = el.getBoundingClientRect(), out = [], range = document.createRange();
+    var walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), node;
+    while ((node = walk.nextNode())) {
+      for (var i = 0; i < node.nodeValue.length; i++) {
+        var ch = node.nodeValue[i];
+        if (/\s/.test(ch)) continue;
+        range.setStart(node, i); range.setEnd(node, i + 1);
+        var r = range.getClientRects()[0];
+        if (r) out.push({ ch: ch, x: r.left - box.left, y: r.top - box.top, h: r.height });
+      }
+    }
+    return out;
+  }
+  // one mask per letter, each at the exact place the letter holds in the real text,
+  // so nothing moves when the real text comes back
+  function letters(el, places) {
+    return places.map(function (g) {
+      var mask = document.createElement("span"); mask.className = "ti-mask";
+      mask.style.left = g.x + "px"; mask.style.top = g.y + "px";
+      var c = document.createElement("span"); c.className = "ti-char";
+      c.textContent = g.ch; c.style.lineHeight = g.h + "px";
+      mask.appendChild(c); el.appendChild(mask);
+      return c;
     });
-    return spans;
   }
 
   // paragraph: one block per rendered line, measured from the laid-out words
@@ -74,18 +85,15 @@
     }
 
     if (h1) {
-      var text = h1.textContent;
-      // split letters lose their kerning and run ~2px wider: hold a one-line title
-      // to its real width so the year beside it does not shift when the text returns
-      var box = h1.getBoundingClientRect();
-      var oneLine = box.height < parseFloat(getComputedStyle(h1).lineHeight) * 1.5;
-      if (oneLine) {
-        h1.style.width = box.width + "px";
-        h1.style.whiteSpace = "nowrap";
-        restores.push(function () { h1.style.width = ""; h1.style.whiteSpace = ""; });
-      }
+      // the title keeps its own box while its letters stand in for the text
+      var box = h1.getBoundingClientRect(), places = glyphs(h1);
+      h1.style.position = "relative";
+      h1.style.width = box.width + "px";
+      h1.style.height = box.height + "px";
+      restores.push(function () { h1.style.position = ""; h1.style.width = ""; h1.style.height = ""; });
       restores.push(stage(h1));
-      letters(h1, text).forEach(function (c, i) {
+      var chars = letters(h1, places);
+      chars.forEach(function (c, i) {
         play(c, [{ transform: "translateY(110%)" }, { transform: "none" }], { duration: 750, delay: i * 35 });
       });
     }
@@ -99,7 +107,14 @@
         play(l, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { delay: 420 + n++ * 90 });
       });
     });
-    if (link) play(link, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { delay: 420 + n * 90 });
+    var linkAt = 420 + n * 90;
+    if (link) play(link, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { delay: linkAt });
+    // the facts (industry, contribution, year, skills) follow the link
+    var facts = side.querySelector(".case-facts");
+    if (facts) play(facts, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { delay: linkAt + (link ? 90 : 0) });
+    // the back arrow comes in with the title: from the right, fading up
+    var arrow = side.querySelector(".case-arrow");
+    if (arrow) play(arrow, [{ opacity: 0, transform: "translateX(18px)" }, { opacity: 1, transform: "none" }], { duration: 650 });
 
     reveal();
     Promise.all(anims.map(function (a) { return a.finished; })).then(function () {
@@ -113,7 +128,11 @@
   // wf-inactive) when done. Splitting before that would measure and animate the
   // fallback font, then redraw the title when the real one lands.
   function fontsReady() {
-    return new Promise(function (done) {
+    // the serif title (Source Serif 4) comes from its own stylesheet: wait for it too
+    var serif = document.fonts && document.fonts.load
+      ? Promise.race([document.fonts.load('400 40px "Source Serif 4"'), new Promise(function (r) { setTimeout(r, 2000); })]).catch(function () {})
+      : Promise.resolve();
+    return Promise.all([serif, new Promise(function (done) {
       var settled = /\bwf-(active|inactive)\b/;
       if (!window.WebFont || settled.test(root.className)) return done();
       var mo = new MutationObserver(function () {
@@ -121,7 +140,7 @@
       });
       mo.observe(root, { attributes: true, attributeFilter: ["class"] });
       setTimeout(function () { mo.disconnect(); done(); }, 2000);
-    });
+    })]);
   }
 
   var once = false;
