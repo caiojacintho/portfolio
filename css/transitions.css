@@ -189,3 +189,7 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
   [data-wf-page="storytelling"] .m-built .case-m-cover,
   [data-wf-page="dataviz"] .m-built .case-m-cover { height: auto; aspect-ratio: var(--r, 16 / 9); }
 }
+
+/* project pages: a Webflow background video has no height of its own (its clip is laid
+   over it), so it takes the clip's 16:9 shape unless a rule gives it a height */
+.case-media .w-background-video { aspect-ratio: var(--ratio, 16 / 9); }
