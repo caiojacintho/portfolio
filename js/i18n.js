@@ -23,6 +23,8 @@
     "Let's talk": "Vamos conversar",
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
+    "Housing Game": "Jogo da Habitação",
+    "Digital Government Observatory": "Observatório de Governo Digital",
     "Architecture": "Arquitetura",
     // case pages — the link to the next project
     "Next project": "Próximo projeto",
@@ -52,12 +54,15 @@
     "Public sector, government services": "Setor público, serviços ao cidadão",
     "Renewable energy, nonprofit": "Energia renovável, ONG",
     "Healthtech": "Healthtech",
+    "Public sector, housing": "Setor público, habitação",
+    "Public sector, digital government": "Setor público, governo digital",
     "Public sector, data journalism": "Setor público, jornalismo de dados",
     // contribution
     "Award-winning entries in national competitions": "Projetos premiados em concursos nacionais",
     "Research, charts, maps, graphic design": "Pesquisa, gráficos, mapas, design gráfico",
     "Branding and website": "Branding e site",
     "Website": "Site",
+    "Website and platform": "Site e plataforma",
     "Design leadership, branding, design system and website": "Liderança de design, branding, design system e site",
     "Course platform design": "Design da plataforma de cursos",
     "Visual experiments and studies": "Experimentos e estudos visuais",
@@ -77,6 +82,10 @@
     "Product design, UI design, Presentation design": "Design de produto, UI design, Design de apresentação",
     "Data storytelling, Data visualization, Interactive design, Motion design": "Narrativa de dados, Visualização de dados, Design interativo, Motion design",
     // case pages — sidebar descriptions
+    "An open-data platform that tracks how Brazil's federal government, states and capitals are doing on the National Digital Government Strategy, with a comparative ranking, indicators for each of its ten objectives and downloadable data from official sources.":
+      "Uma plataforma de dados abertos que acompanha o desempenho do governo federal, dos estados e das capitais na Estratégia Nacional de Governo Digital, com ranking comparativo, indicadores para cada um dos dez objetivos e dados para download com fontes oficiais.",
+    "A participatory game made for FDTE (Fundação para o Desenvolvimento Tecnológico da Engenharia) and Bahia's state housing plan. Residents pick the cards that show how they live today and the home they want, bringing their own voices into the plan.":
+      "Um jogo participativo feito para a FDTE (Fundação para o Desenvolvimento Tecnológico da Engenharia) e o plano estadual de habitação da Bahia. Os moradores escolhem as cartas que mostram como vivem hoje e a casa que desejam, levando a própria voz para o plano.",
     "Rivio is a healthtech using artificial intelligence to transform the financial management of hospitals. The platform automates the entire hospital revenue cycle — from auditing to billing and post-billing — reducing claim denials, increasing operational efficiency and delivering greater financial predictability for healthcare institutions.":
       "Rivio é uma healthtech que utiliza inteligência artificial para transformar a gestão financeira de hospitais. A plataforma automatiza todo o ciclo de receita hospitalar — da auditoria ao faturamento e pós-faturamento — reduzindo glosas, aumentando a eficiência operacional e garantindo maior previsibilidade financeira para as instituições de saúde.",
     // about — three intro paragraphs (each a single text node)

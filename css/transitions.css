@@ -107,6 +107,8 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
      carousel lets them run wider (a 2:1 piece fills about 120vw) */
   [data-wf-page="storytelling"] .m-built .case-m-slide,
   [data-wf-page="dataviz"] .m-built .case-m-slide,
+  [data-wf-page="habitacao"] .m-built .case-m-slide,
+  [data-wf-page="observatorio"] .m-built .case-m-slide,
   [data-wf-page="playground"] .m-built .case-m-slide { height: 56vw; max-width: 120vw; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
@@ -187,6 +189,7 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
    js/case-mobile.js) instead of the 60vh crop */
 @media screen and (max-width: 860px) {
   [data-wf-page="storytelling"] .m-built .case-m-cover,
+  [data-wf-page="observatorio"] .m-built .case-m-cover,
   [data-wf-page="dataviz"] .m-built .case-m-cover { height: auto; aspect-ratio: var(--r, 16 / 9); }
 }
 

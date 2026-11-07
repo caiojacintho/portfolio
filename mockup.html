@@ -63,6 +63,8 @@
     input[type="text"]:focus, select:focus { outline: none; border-color: var(--ink); }
     .row { display: flex; gap: 8px; align-items: center; }
     .row input[type="text"] { flex: 1; }
+    .grp > label output { float: right; letter-spacing: 0; color: var(--ink); }
+    input[type="range"] { width: 100%; height: 20px; margin: 0; accent-color: var(--ink); cursor: pointer; }
     input[type="color"] {
       flex: 0 0 36px;
       width: 36px;
@@ -187,6 +189,11 @@
     </div>
 
     <div class="grp">
+      <label for="shown">Endereço na barra</label>
+      <input id="shown" type="text" placeholder="o mesmo do site" spellcheck="false">
+    </div>
+
+    <div class="grp">
       <label for="bgText">Fundo</label>
       <div class="row">
         <input id="bgText" type="text" spellcheck="false">
@@ -204,12 +211,24 @@
       </select>
     </div>
 
+    <div class="grp" id="sizeGrp">
+      <label for="fw">Largura da janela <output id="fwOut"></output></label>
+      <input id="fw" type="range" min="76" max="140" step="1">
+    </div>
+
     <div class="grp">
+      <label>Captura</label>
+      <div class="seg">
+        <button id="cPic" type="button">Print</button>
+        <button id="cVid" type="button">Vídeo</button>
+      </div>
+    </div>
+
+    <div class="grp" id="fmtGrp">
       <label for="fmt">Arquivo</label>
       <select id="fmt">
         <option value="jpg">JPG</option>
         <option value="png">PNG</option>
-        <option value="vid">Vídeo</option>
       </select>
     </div>
 
@@ -223,7 +242,7 @@
     <div id="stage">
       <div class="frame" id="frame">
         <img class="chrome" id="chrome" src="images/safari-frame.svg" alt="">
-        <div class="vp" id="vp"><iframe id="site" scrolling="no"></iframe></div>
+        <div class="vp" id="vp"><iframe id="site"></iframe></div>
         <div class="urlbox" id="urlbox"></div>
         <img class="phone" id="phone" alt="" hidden>
       </div>
@@ -243,6 +262,39 @@
     var CLEAR = { x: 300, w: 300 };               // repainted slice of the pill, clear of the icons
     var SITE_W = 1440;                            // width the site is drawn at
     var FRAME = 0.70;                             // window width, as a share of the picture
+
+    // the slider: how much wider (or narrower) the window is than its usual shape.
+    // Only the width changes; the height stays. The site gets the extra width too,
+    // as a wider browser window would give it.
+    function wide() {
+      if (mobile()) return 1;
+      var o = outSize(), base = o.w * FRAME;
+      return Math.max(0.76, Math.min((S.wide || 100) / 100, o.w * 0.98 / base));
+    }
+    function siteWidth() { return mobile() ? MOB_W : Math.round(SITE_W * wide()); }
+    // the stretched window bar: the Safari drawing in slices, the empty stretches of
+    // the bar widened and the icons, the address pill and the corners left as drawn
+    var chromeRaw = null, chromeFor = "";
+    fetch("images/safari-frame.svg").then(function (r) { return r.text(); }).then(function (t) {
+      chromeRaw = t.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+      setChrome();
+    });
+    function setChrome() {
+      if (!chromeRaw) return;
+      var k = wide().toFixed(3);
+      if (chromeFor === k) return;
+      chromeFor = k;
+      if (+k === 1) { chrome.src = "images/safari-frame.svg"; return; }
+      var E = 900 * (k - 1), h = E / 2;
+      function cut(from, to, x, w) {
+        return '<svg x="' + x + '" y="0" width="' + w + '" height="551" viewBox="' + from + ' 0 ' + (to - from) + ' 551" preserveAspectRatio="none">' + chromeRaw + "</svg>";
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + (900 + E) + '" height="551" viewBox="0 0 ' + (900 + E) + ' 551" fill="none">' +
+        // the stretches first, a touch over their edges, then the fixed parts on top
+        cut(137, 240, 134, 109 + h) + cut(642, 778, 639 + h, 142 + h) +
+        cut(0, 135, 0, 135) + cut(242, 640, 242 + h, 398) + cut(780, 900, 780 + E, 120) + "</svg>";
+      chrome.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
 
     // the phone, drawn as vector so it stays sharp at any size. Proportions come
     // from the reference render: body 270 x 556, screen inset about 4.4%.
@@ -329,6 +381,12 @@
     }
 
     function outSize() { var p = S.out.split("x"); return { w: +p[0], h: +p[1] }; }
+    // what the address bar says: the address typed for it, or else the site's own
+    function barText() {
+      var t = (S.shown || "").trim();
+      if (!t) return host(S.url);
+      return t.replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/$/, "");
+    }
     function full(u) { return /^https?:/.test(u) ? u : "https://" + u; }
     function host(u) {
       try { return new URL(full(u)).hostname.replace(/^www\./, ""); } catch (e) { return ""; }
@@ -358,9 +416,10 @@
         vp.style.borderRadius = pr + "px";
         vp.style.background = "#fff";              // the band the site starts below
       } else {
-        fh = fw * F.h / F.w;
+        fh = fw * F.h / (F.w * wide());
         top = fh * (F.chrome / F.h);
-        siteW = SITE_W;
+        siteW = siteWidth();
+        setChrome();
         frame.style.width = fw + "px";
         frame.style.height = fh + "px";
         phone.hidden = true;
@@ -369,7 +428,7 @@
         vp.style.width = "100%";
         vp.style.top = top + "px";
         vp.style.height = (fh - top) + "px";
-        var r = fw * (F.r / F.w);
+        var r = fh * (F.r / F.h);
         vp.style.borderRadius = "0 0 " + r + "px " + r + "px";
         vp.style.background = "#fff";
       }
@@ -404,11 +463,11 @@
 
     // the frame ships with "figma.com" drawn as vectors, so we repaint that slice
     function drawUrl(fw) {
-      var d = host(S.url);
+      var d = barText();
       if (!d) { urlbox.hidden = true; return; }
       urlbox.hidden = false;
-      var sx = fw / F.w;
-      urlbox.style.left = (CLEAR.x * sx) + "px";
+      var sx = fw / (F.w * wide()), shift = F.w * (wide() - 1) / 2;
+      urlbox.style.left = ((CLEAR.x + shift) * sx) + "px";
       urlbox.style.width = (CLEAR.w * sx) + "px";
       urlbox.style.top = (TXT.y * sx) + "px";
       urlbox.style.height = (TXT.h * sx) + "px";
@@ -427,8 +486,9 @@
         var h = o.h * MOB_FILL;
         return { w: h * PH.vw / PH.vh, h: h };
       }
-      var w = o.w * FRAME;
-      return { w: w, h: w * F.h / F.w };
+      // the slider's share of the picture, never taller than the picture allows
+      var h = Math.min(o.w * FRAME * F.h / F.w, o.h * 0.96);
+      return { w: h * F.w / F.h * wide(), h: h };
     }
 
     function layout(noProbe) {
@@ -456,7 +516,7 @@
         var w = fw * SCR.w;
         return { w: w, h: fw * PH.vh / PH.vw * SCR.h, band: w * (MOB_STATUS / MOB_W) };
       }
-      var fh = fw * F.h / F.w;
+      var fh = fw * F.h / (F.w * wide());
       return { w: fw, h: fh - fh * (F.chrome / F.h), band: 0 };
     }
     function placePic() {
@@ -583,7 +643,7 @@
       offY = offY || 0;
       var box = frameBox(o);
       var fw = box.w, fh = box.h;
-      var fx = (o.w - fw) / 2, fy = (o.h - fh) / 2, sx = fw / F.w;
+      var fx = (o.w - fw) / 2, fy = (o.h - fh) / 2, sx = fh / F.h, shift = F.w * (wide() - 1) / 2;
 
       c.fillStyle = S.bg;
       c.fillRect(0, 0, o.w, o.h);
@@ -624,15 +684,15 @@
         c.restore();
       }
 
-      var d = host(S.url);
+      var d = barText();
       if (d) {
         c.fillStyle = "#f2f2f2";
-        c.fillRect(fx + CLEAR.x * sx, fy + TXT.y * sx, CLEAR.w * sx, TXT.h * sx);
+        c.fillRect(fx + (CLEAR.x + shift) * sx, fy + TXT.y * sx, CLEAR.w * sx, TXT.h * sx);
         var fs = TXT.size * sx, u = fs * 0.95 / 12;
         c.font = fs + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
         c.textBaseline = "middle";
         var tw = c.measureText(d).width, lock = fs * 0.95, gap = fs * 0.35;
-        var x0 = fx + PILL_CX * sx - (tw + lock + gap) / 2;
+        var x0 = fx + (PILL_CX + shift) * sx - (tw + lock + gap) / 2;
         var cy = fy + (TXT.y + TXT.h / 2) * sx;
         c.fillStyle = "#9E9E9E";
         c.fillRect(x0 + 2.7 * u, cy - lock / 2 + 5 * u, 6.6 * u, 5.2 * u);
@@ -654,14 +714,15 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
     }
 
+    function idle() { return S.fmt === "vid" ? "Gravar" : "Baixar"; }
     function busy(on, label) {
       saveBtn.classList.toggle("busy", !!on);
       saveBtn.disabled = !!on;
-      saveBtn.textContent = label || "Baixar";
+      saveBtn.textContent = label || idle();
     }
     function flash(label) {
       saveBtn.textContent = label;
-      setTimeout(function () { if (!rec) saveBtn.textContent = "Baixar"; }, 2600);
+      setTimeout(function () { if (!rec) saveBtn.textContent = idle(); }, 2600);
     }
 
     // The dev server can photograph the site with the browser installed on this
@@ -673,8 +734,8 @@
         w = MOB_W;
         h = Math.round(MOB_W * (box.h * SCR.h) / (box.w * SCR.w));
       } else {
-        w = SITE_W;
-        h = Math.round(SITE_W * (box.w * (F.h - F.chrome) / F.w) / box.w);
+        w = siteWidth();
+        h = Math.round(w * (box.h * (F.h - F.chrome) / F.h) / box.w);
       }
       var r = await fetch("/shot?url=" + encodeURIComponent(full(S.url)) + "&w=" + w + "&h=" + h + (whole ? "&full=1" : ""));
       if (!r.ok) throw new Error(await r.text());
@@ -713,7 +774,7 @@
       site.style.pointerEvents = "none";   // no hover states while the camera is on
       var w = work.clientWidth, h = work.clientHeight;
       // as big as fits: the window by its own shape, the phone by the phone's
-      var fw = mobile() ? Math.min(w, h * PH.vw / PH.vh) : Math.min(w, h * F.w / F.h);
+      var fw = mobile() ? Math.min(w, h * PH.vw / PH.vh) : Math.min(w, h * F.w * wide() / F.h);
       var fh = sizeFrame(fw);
       // square corners: the window and the phone round the picture themselves when
       // it is composed, and rounded corners caught here would show inside the screen
@@ -773,14 +834,15 @@
       if (pic) {
         compose(c, o, pic, pic.naturalWidth, pic.naturalHeight, 0, picY);
       } else {
-        var im = null;
-        try { im = await serverShot(); } catch (e) { im = null; }
-        if (im) {
+        // the site exactly as it is on screen (the slide showing, how far it has
+        // scrolled): this tab's own picture. The dev server's fresh photo of the
+        // site is only the fallback when the screen can't be taken
+        var stream = null;
+        try { stream = await grabStream(); } catch (e) { stream = null; }
+        if (!stream) {
+          var im = await serverShot();
           compose(c, o, im, im.naturalWidth, im.naturalHeight);
         } else {
-          // no local renderer (page served from somewhere else): ask the browser
-          // for this tab's own picture instead
-          var stream = await grabStream();
           var track = stream.getVideoTracks()[0];
           try {
             bigFrame();
@@ -840,7 +902,7 @@
         if (track) track.stop();
         rec = null;
         if (track) smallFrame();
-        saveBtn.textContent = "Baixar";
+        saveBtn.textContent = idle();
         saveBtn.classList.remove("rec");
         send(new Blob(chunks, { type: mime.type }), mime.ext);
       };
@@ -885,7 +947,7 @@
             picY = 0;                            // back to the top and round again
             restUntil = now + HOLD;
           } else {
-            var siteW = mobile() ? MOB_W : SITE_W;
+            var siteW = siteWidth();
             picY = Math.min(max, picY + (now - last) * 0.16 * (pic.naturalWidth / siteW));
             if (picY >= max) restUntil = now + HOLD;
           }
@@ -962,6 +1024,7 @@
       S.device = d;
       $("dDesk").classList.toggle("on", d === "desktop");
       $("dMob").classList.toggle("on", d === "mobile");
+      $("sizeGrp").style.display = d === "mobile" ? "none" : "";
       unroll();
       keep();
       site.removeAttribute("data-src");    // the site must lay out again at the new width
@@ -980,6 +1043,12 @@
       keep(); layout();
     }
     $("url").addEventListener("change", loadUrl);
+    $("shown").value = S.shown || "";
+    $("shown").addEventListener("input", function () {
+      S.shown = this.value;
+      keep();
+      drawUrl(parseFloat(frame.style.width));
+    });
     $("url").addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
 
     function setBg(v) {
@@ -994,10 +1063,34 @@
     $("bgText").value = S.bg;
     setBg(S.bg);
 
+    // the Safari window's width, as a share of the picture; it stays centred
+    delete S.frame;                         // the earlier slider, which sized the whole window
+    $("fw").value = S.wide || 100;
+    $("fwOut").textContent = $("fw").value + "%";
+    $("sizeGrp").style.display = mobile() ? "none" : "";
+    $("fw").oninput = function () {
+      S.wide = +this.value;
+      $("fwOut").textContent = this.value + "%";
+      if (!rec && !document.body.classList.contains("cap")) layout(true);
+    };
+    $("fw").onchange = function () { keep(); layout(); };
     $("out").value = S.out;
     $("out").onchange = function () { S.out = this.value; keep(); layout(); };
-    $("fmt").value = S.fmt;
-    $("fmt").onchange = function () { S.fmt = this.value; keep(); };
+    // print or video; a print remembers its own file type
+    if (S.fmt !== "vid") S.pic = S.fmt;
+    function setKind(k) {
+      S.fmt = k === "vid" ? "vid" : (S.pic || "jpg");
+      $("cPic").classList.toggle("on", S.fmt !== "vid");
+      $("cVid").classList.toggle("on", S.fmt === "vid");
+      $("fmtGrp").style.display = S.fmt === "vid" ? "none" : "";
+      if (!rec) saveBtn.textContent = S.fmt === "vid" ? "Gravar" : "Baixar";
+      keep();
+    }
+    $("cPic").onclick = function () { setKind("pic"); };
+    $("cVid").onclick = function () { setKind("vid"); };
+    $("fmt").value = S.pic || "jpg";
+    $("fmt").onchange = function () { S.pic = S.fmt = this.value; keep(); };
+    setKind(S.fmt === "vid" ? "vid" : "pic");
 
     // a print can also be pasted or dropped in, and then it is used instead of the site
     function usePrint(file) {
