@@ -185,8 +185,9 @@
   }
   .to-top:hover, .to-top:focus-visible { background: #111; border-color: #111; color: #fff; }
   .to-top svg { display: block; }
-  /* the empty Webflow block after the grid shares the intro's 340px top margin */
-  .section + .div-block-7:empty { display: none; }
+  /* the empty Webflow block after the grid shares the intro's 340px top margin.
+     (not ".section + ...": the "Up" button sits between the two now) */
+  .div-block-7:empty { display: none; }
 
   /* no cursor-follow button on touch devices */
   @media (hover: none) {
