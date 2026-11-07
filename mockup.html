@@ -119,7 +119,7 @@
     .frame img.chrome { display: block; width: 100%; height: auto; pointer-events: none; }
     /* the phone is a frame with a see-through screen, so it sits over the site */
     .frame img.phone { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
-    .frame img[hidden] { display: none; }        /* beats the rules above */
+    .frame img[hidden], .urlbox[hidden] { display: none; }        /* beats the rules above */
     .vp { position: absolute; left: 0; width: 100%; overflow: hidden; background: #fff; }
     .vp iframe { border: 0; display: block; }
     .vp img.shot { display: block; width: 100%; will-change: transform; }
@@ -183,17 +183,22 @@
       <button id="dMob" type="button">Mobile</button>
     </div>
 
+    <div class="seg">
+      <button id="vMock" type="button">Mockup</button>
+      <button id="vScreen" type="button">Tela</button>
+    </div>
+
     <div class="grp">
       <label for="url">Site</label>
       <input id="url" type="text" placeholder="https://www.embya.com.br/" spellcheck="false">
     </div>
 
-    <div class="grp">
+    <div class="grp" id="shownGrp">
       <label for="shown">Endereço na barra</label>
       <input id="shown" type="text" placeholder="o mesmo do site" spellcheck="false">
     </div>
 
-    <div class="grp">
+    <div class="grp" id="bgGrp">
       <label for="bgText">Fundo</label>
       <div class="row">
         <input id="bgText" type="text" spellcheck="false">
@@ -201,7 +206,7 @@
       </div>
     </div>
 
-    <div class="grp">
+    <div class="grp" id="outGrp">
       <label for="out">Tamanho</label>
       <select id="out">
         <option value="2000x1125">2000 × 1125</option>
@@ -267,7 +272,7 @@
     // Only the width changes; the height stays. The site gets the extra width too,
     // as a wider browser window would give it.
     function wide() {
-      if (mobile()) return 1;
+      if (mobile() || screen()) return 1;
       var o = outSize(), base = o.w * FRAME;
       return Math.max(0.76, Math.min((S.wide || 100) / 100, o.w * 0.98 / base));
     }
@@ -343,6 +348,14 @@
       r: PH.sr / PH.vw
     };
     function mobile() { return S.device === "mobile"; }
+    // "Tela": the site alone, edge to edge — no window, no phone, no margins
+    function screen() { return S.view === "screen"; }
+    // the screen's own shape (width / height): the picture's on a computer, the
+    // phone's screen on a phone
+    function screenRatio() {
+      if (mobile()) return (SCR.w * PH.vw) / (SCR.h * PH.vh);
+      var p = S.out.split("x"); return +p[0] / +p[1];
+    }
 
     var $ = function (id) { return document.getElementById(id); };
     var stage = $("stage"), frame = $("frame"), vp = $("vp"), urlbox = $("urlbox"),
@@ -380,7 +393,11 @@
       return SB;
     }
 
-    function outSize() { var p = S.out.split("x"); return { w: +p[0], h: +p[1] }; }
+    function outSize() {
+      // a phone's screen comes out at an iPhone's own resolution (3x)
+      if (screen() && mobile()) return { w: MOB_W * 3, h: Math.round(MOB_W * 3 / screenRatio()) };
+      var p = S.out.split("x"); return { w: +p[0], h: +p[1] };
+    }
     // what the address bar says: the address typed for it, or else the site's own
     function barText() {
       var t = (S.shown || "").trim();
@@ -396,7 +413,22 @@
     // sizes the frame (and the site inside it) for a given frame width
     function sizeFrame(fw) {
       var fh, top, siteW;
-      if (mobile()) {
+      if (screen()) {
+        fh = fw / screenRatio();
+        top = 0;
+        siteW = mobile() ? MOB_W : SITE_W;
+        frame.style.width = fw + "px";
+        frame.style.height = fh + "px";
+        phone.hidden = true;
+        chrome.hidden = true;
+        urlbox.hidden = true;
+        vp.style.left = "0px";
+        vp.style.width = "100%";
+        vp.style.top = "0px";
+        vp.style.height = fh + "px";
+        vp.style.borderRadius = "0";
+        vp.style.background = "#fff";
+      } else if (mobile()) {
         fh = fw * PH.vh / PH.vw;
         top = fh * SCR.y;
         siteW = MOB_W;
@@ -441,12 +473,13 @@
         // zoom, not transform: the site stays clickable and still lays out at its
         // own width. The frame is widened by the scrollbar so that bar is clipped
         // out of sight, leaving exactly the width the saved picture uses.
-        var k = (mobile() ? fw * SCR.w : fw) / siteW;
+        var inPhone = mobile() && !screen();
+        var k = (inPhone ? fw * SCR.w : fw) / siteW;
         site.style.width = (siteW + scrollbar()) + "px";
         site.style.zoom = k;
-        site.style.marginTop = mobile() ? MOB_STATUS + "px" : "0";
-        seen = (mobile() ? fh * SCR.h : fh - top) / k;   // visible height, in site pixels
-        if (mobile()) seen -= MOB_STATUS;
+        site.style.marginTop = inPhone ? MOB_STATUS + "px" : "0";
+        seen = (inPhone ? fh * SCR.h : fh - top) / k;   // visible height, in site pixels
+        if (inPhone) seen -= MOB_STATUS;
         if (rolling && !proxied) {
           // while rolling, the frame holds the whole page and glides upwards
           tall = Math.max(seen * 6, 4000);
@@ -463,6 +496,7 @@
 
     // the frame ships with "figma.com" drawn as vectors, so we repaint that slice
     function drawUrl(fw) {
+      if (screen()) { urlbox.hidden = true; return; }
       var d = barText();
       if (!d) { urlbox.hidden = true; return; }
       urlbox.hidden = false;
@@ -482,6 +516,7 @@
 
     // how big the frame is on the picture: the window by width, the phone by height
     function frameBox(o) {
+      if (screen()) return { w: o.w, h: o.h };
       if (mobile()) {
         var h = o.h * MOB_FILL;
         return { w: h * PH.vw / PH.vh, h: h };
@@ -512,6 +547,7 @@
     // the window's screen, in stage pixels, and the white band under the island
     function vpBox() {
       var fw = parseFloat(frame.style.width) || 0;
+      if (screen()) return { w: fw, h: fw / screenRatio(), band: 0 };
       if (mobile()) {
         var w = fw * SCR.w;
         return { w: w, h: fw * PH.vh / PH.vw * SCR.h, band: w * (MOB_STATUS / MOB_W) };
@@ -645,6 +681,17 @@
       var fw = box.w, fh = box.h;
       var fx = (o.w - fw) / 2, fy = (o.h - fh) / 2, sx = fh / F.h, shift = F.w * (wide() - 1) / 2;
 
+      if (screen()) {
+        // the site alone, filling the picture's width from the top
+        c.fillStyle = "#fff";
+        c.fillRect(0, 0, o.w, o.h);
+        if (src && srcW && srcH) {
+          var qw = srcW - trim * 2, qh = srcH - trim;
+          c.drawImage(src, trim, 0, qw, qh, 0, -offY * (o.w / qw), o.w, Math.max(o.w * qh / qw, o.h));
+        }
+        return;
+      }
+
       c.fillStyle = S.bg;
       c.fillRect(0, 0, o.w, o.h);
 
@@ -730,7 +777,10 @@
     // `whole` asks for the full length of the page, not just the first screen
     async function serverShot(whole) {
       var o = outSize(), box = frameBox(o), w, h;
-      if (mobile()) {
+      if (screen()) {
+        w = mobile() ? MOB_W : SITE_W;
+        h = Math.round(w * o.h / o.w);
+      } else if (mobile()) {
         w = MOB_W;
         h = Math.round(MOB_W * (box.h * SCR.h) / (box.w * SCR.w));
       } else {
@@ -774,12 +824,13 @@
       site.style.pointerEvents = "none";   // no hover states while the camera is on
       var w = work.clientWidth, h = work.clientHeight;
       // as big as fits: the window by its own shape, the phone by the phone's
-      var fw = mobile() ? Math.min(w, h * PH.vw / PH.vh) : Math.min(w, h * F.w * wide() / F.h);
+      var fw = screen() ? Math.min(w, h * screenRatio())
+        : mobile() ? Math.min(w, h * PH.vw / PH.vh) : Math.min(w, h * F.w * wide() / F.h);
       var fh = sizeFrame(fw);
       // square corners: the window and the phone round the picture themselves when
       // it is composed, and rounded corners caught here would show inside the screen
       vp.style.borderRadius = "0";
-      if (mobile()) {
+      if (mobile() && !screen()) {
         // the capture must hold the site alone. The phone is drawn over the screen
         // (it would come out twice, island and all) and the white band under the
         // island is added again when the picture is composed, so drop both here.
@@ -1024,13 +1075,33 @@
       S.device = d;
       $("dDesk").classList.toggle("on", d === "desktop");
       $("dMob").classList.toggle("on", d === "mobile");
-      $("sizeGrp").style.display = d === "mobile" ? "none" : "";
+      controls();
       unroll();
       keep();
       site.removeAttribute("data-src");    // the site must lay out again at the new width
       site.src = "about:blank";
       layout();
     }
+    // which controls make sense: no window or background on a bare screen, and a
+    // phone's screen has its own size
+    function controls() {
+      var sc = screen();
+      $("vMock").classList.toggle("on", !sc);
+      $("vScreen").classList.toggle("on", sc);
+      $("shownGrp").style.display = sc ? "none" : "";
+      $("bgGrp").style.display = sc ? "none" : "";
+      $("outGrp").style.display = sc && mobile() ? "none" : "";
+      $("sizeGrp").style.display = sc || mobile() ? "none" : "";
+    }
+    function setView(v) {
+      S.view = v;
+      controls();
+      unroll();
+      keep();
+      layout();
+    }
+    $("vMock").onclick = function () { setView("mock"); };
+    $("vScreen").onclick = function () { setView("screen"); };
     $("dDesk").onclick = function () { setDevice("desktop"); };
     $("dMob").onclick = function () { setDevice("mobile"); };
 
@@ -1067,7 +1138,7 @@
     delete S.frame;                         // the earlier slider, which sized the whole window
     $("fw").value = S.wide || 100;
     $("fwOut").textContent = $("fw").value + "%";
-    $("sizeGrp").style.display = mobile() ? "none" : "";
+    controls();
     $("fw").oninput = function () {
       S.wide = +this.value;
       $("fwOut").textContent = this.value + "%";
