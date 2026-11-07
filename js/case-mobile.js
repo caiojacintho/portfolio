@@ -102,8 +102,16 @@
     });
     document.body.appendChild(viewer);
   }
+  // what the viewer steps through: the carousel's pictures, then the cover, so
+  // going on from the last one comes to the cover before starting over
+  function frames() {
+    var list = Array.prototype.slice.call(vTrack.querySelectorAll(".case-m-slide"));
+    var cover = document.querySelector(".case-m-cover");
+    if (cover && cover.querySelector("img, video")) list.push(cover);
+    return list;
+  }
   function show(i) {
-    var slides = vTrack.querySelectorAll(".case-m-slide");
+    var slides = frames();
     vIndex = (i + slides.length) % slides.length;
     var slide = slides[vIndex], stage = viewer.querySelector(".case-viewer-stage");
     stage.textContent = "";
@@ -258,6 +266,11 @@
       shape(slide, m);
     });
     if (!track.children.length) track.classList.add("case-m-empty");
+    // the cover opens in the viewer too, as the last of the carousel's pictures
+    cover.addEventListener("click", function (e) {
+      e.preventDefault(); e.stopPropagation();
+      view(track, track.querySelectorAll(".case-m-slide").length);
+    }, true);
     dragging(track);
     // blocks left with no picture and no text step aside
     Array.prototype.forEach.call(main.children, function (c) {
@@ -280,6 +293,31 @@
   function sync() {
     if (mq.matches) build(); else unbuild();
     root.classList.remove("case-m-wait");
+    rolling();
+  }
+
+  // Videos play on their own as they come into view. Moving a video in the page
+  // (as the layout above does) pauses it, and iPhones then show a play button on it
+  // until it is told to play again; a lazily loaded clip waits for its first view.
+  var watch = null;
+  function play(v) {
+    if (!v.paused) return;
+    if (v.dataset.lazyVideo && !v.dataset.loaded) return;   // the page's own loader starts it
+    v.muted = true; v.playsInline = true;
+    var p = v.play && v.play(); if (p && p.catch) p.catch(function () {});
+  }
+  function rolling() {
+    var vids = document.querySelectorAll(".case-media video");
+    if (!vids.length) return;
+    if (!watch && "IntersectionObserver" in window) {
+      watch = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) play(e.target); });
+      }, { rootMargin: "200px 0px", threshold: 0.01 });
+    }
+    Array.prototype.forEach.call(vids, function (v) {
+      if (!watch) { play(v); return; }
+      watch.unobserve(v); watch.observe(v);   // looked at afresh where it now sits
+    });
   }
 
   // the "Next project" pill rolls its label to a copy of itself on hover (the copy

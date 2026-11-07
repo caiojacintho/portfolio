@@ -1,3 +1,9 @@
+/* iPhones draw a play button over a muted clip that has not started yet (or was
+   paused by being moved in the page): the clips play on their own, so never show it */
+video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+video::-webkit-media-controls-overlay-play-button { display: none !important; }
+video::-webkit-media-controls-panel { display: none !important; }
+
 /* Card -> project-page transition (cross-document view transitions; browsers
    without them simply navigate as before). The clicked card and its twin on the
    project page share the name "hero", so the picture glides up into place. */
@@ -80,6 +86,7 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
   .m-built .case-side .case-sub,
   .m-built .case-side .case-ext { order: 2; }
   .m-built .case-m-cover { order: 3; margin-top: 40px; height: 60vh; }
+  .m-built .case-m-cover { cursor: pointer; }   /* it opens in the viewer (js/case-mobile.js) */
   .m-built .case-facts { order: 4; }
   .m-built .case-m-carousel { order: 5; }
   .m-built .case-nav { order: 8; margin-top: 40px; }
@@ -109,6 +116,7 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
   [data-wf-page="dataviz"] .m-built .case-m-slide,
   [data-wf-page="habitacao"] .m-built .case-m-slide,
   [data-wf-page="observatorio"] .m-built .case-m-slide,
+  [data-wf-page="entreatos"] .m-built .case-m-slide,
   [data-wf-page="playground"] .m-built .case-m-slide { height: 47.25vw; max-width: 84vw; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's

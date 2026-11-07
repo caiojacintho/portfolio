@@ -25,6 +25,7 @@
     "Data visualization": "Visualização de dados",
     "Housing Game": "Jogo da Habitação",
     "Digital Government Observatory": "Observatório de Governo Digital",
+    "Entre Atos Institute": "Instituto Entre Atos",
     "Architecture": "Arquitetura",
     // case pages — the link to the next project
     "Next project": "Próximo projeto",
@@ -56,6 +57,7 @@
     "Healthtech": "Healthtech",
     "Public sector, housing": "Setor público, habitação",
     "Public sector, digital government": "Setor público, governo digital",
+    "Nonprofit, careers": "ONG, carreiras",
     "Public sector, data journalism": "Setor público, jornalismo de dados",
     // contribution
     "Award-winning entries in national competitions": "Projetos premiados em concursos nacionais",
@@ -82,6 +84,8 @@
     "Product design, UI design, Presentation design": "Design de produto, UI design, Design de apresentação",
     "Data storytelling, Data visualization, Interactive design, Motion design": "Narrativa de dados, Visualização de dados, Design interativo, Motion design",
     // case pages — sidebar descriptions
+    "The first Brazilian institute dedicated to turning a career pause into a recognised part of a professional path. Almost two million qualified professionals are out of the job market in Brazil, and the institute works pro bono with them and with the companies that hire them.":
+      "O primeiro instituto brasileiro dedicado a transformar a pausa de carreira em parte reconhecida de uma trajetória profissional. Quase 2 milhões de profissionais qualificados estão fora do mercado no Brasil, e o instituto atua pro bono com eles e com as empresas que contratam.",
     "An open-data platform that tracks how Brazil's federal government, states and capitals are doing on the National Digital Government Strategy, with a comparative ranking, indicators for each of its ten objectives and downloadable data from official sources.":
       "Uma plataforma de dados abertos que acompanha o desempenho do governo federal, dos estados e das capitais na Estratégia Nacional de Governo Digital, com ranking comparativo, indicadores para cada um dos dez objetivos e dados para download com fontes oficiais.",
     "A participatory game made for FDTE (Fundação para o Desenvolvimento Tecnológico da Engenharia) and Bahia's state housing plan. Residents pick the cards that show how they live today and the home they want, bringing their own voices into the plan.":
