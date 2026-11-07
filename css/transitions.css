@@ -108,6 +108,31 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
      sideways (--ph-x) so the phone lands in the middle. */
   .m-built .case-m-cover,
   .m-built .case-m-slide { width: 100%; height: auto; aspect-ratio: var(--r, 16 / 9); }
+  /* the cover is a square, the same box the featured grid's card is
+     (js/cover-shape.js: COVER_R), so the picture does not resize between the pages.
+     Its picture spans the square's full width, centred on the grey, the way a clip
+     already does here — nothing is cropped, and every browser-window mockup comes
+     out the same size. */
+  .m-built .case-m-cover { aspect-ratio: 1 / 1; }
+  .m-built .case-m-cover img,
+  .m-built .case-m-cover video.case-video { width: calc(100% * var(--cover-zoom, 1)) !important; height: auto !important; object-fit: cover !important; }
+  .m-built .case-m-cover > img,
+  .m-built .case-m-cover > video.case-video { top: 50%; left: 50%; right: auto; bottom: auto; transform: translate(-50%, -50%); }
+  /* except where the artwork floats in a lot of empty space — a logo, a slide, a
+     drawing with wide margins. Marked data-cover-fill in the page's markup, it
+     grows until its height matches the square's and is cropped at the sides;
+     --cover-zoom trims that back, 1 being the square's full height. The featured
+     grid reads the same two marks, so the card still matches. */
+  .m-built .case-m-cover [data-cover-fill] > video,
+  .m-built .case-m-cover video[data-cover-fill],
+  .m-built .case-m-cover img[data-cover-fill] {
+    position: absolute !important;
+    top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important;
+    width: auto !important; height: calc(100% * var(--cover-zoom, 1)) !important;
+    max-width: none !important;   /* Webflow clamps every picture to its box */
+    transform: translate(-50%, -50%) !important;
+    object-fit: cover !important; clip-path: none;
+  }
   .case-m-frame[data-sorted="phone"] img,
   .case-m-frame[data-sorted="phone"] video { object-position: var(--ph-x, 50%) 50%; }
 

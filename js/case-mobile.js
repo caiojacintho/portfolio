@@ -181,71 +181,20 @@
     t.classList.remove("is-dragging");
   });
 
-  // A phone mockup: a phone standing on a plain light background — the background
-  // reaches both edges, and across the picture's whole height only a narrow band
-  // (the phone, under 35% of the width) breaks it, edged by the phone's near-black
-  // frame, standing in the middle.
-  // Five rows are read, not one, so a single dark thing on a pale page — a photo in
-  // a browser window, say — cannot pass for a phone; and four of the five must agree,
-  // so a phone whose top or bottom is cropped still counts.
-  // Tolerant of the small noise some browsers (Safari's fingerprinting protection) add
-  // to pixels read back from a canvas: most edge samples, not all, must match the
-  // background, rows are averaged, and an edge needs a run of pixels, not one.
-  // Returns where the phone is — { f: its share of the width, c: its centre — or null.
-  function phoneBand(src, w, h) {
-    try {
-      var W = 200, H = Math.max(3, Math.round(W * h / w));
-      var c = document.createElement("canvas"); c.width = W; c.height = H;
-      var x = c.getContext("2d"); x.drawImage(src, 0, 0, W, H);
-      var d = x.getImageData(0, 0, W, H).data;
-      var L = function (px, py) { var i = (py * W + px) * 4; return (d[i] + d[i + 1] + d[i + 2]) / 3; };
-      var edge = [], st = Math.max(1, Math.round(H / 12));
-      for (var y = 0; y < H; y += st) edge.push(L(1, y), L(2, y), L(W - 2, y), L(W - 3, y));
-      var bg = edge.slice().sort(function (a, b) { return a - b; })[Math.floor(edge.length / 2)];
-      if (bg < 200) return null;
-      if (edge.filter(function (v) { return Math.abs(v - bg) < 14; }).length < edge.length * .8) return null;
-      // the band the phone makes on one row of the picture
-      function at(py) {
-        py = Math.min(H - 2, Math.max(1, py));
-        var row = function (px) { return (L(px, py - 1) + L(px, py) + L(px, py + 1)) / 3; };
-        var off = function (px) { return Math.abs(row(px) - bg) > 25; };
-        var l = -1, r = -1, xx;
-        for (xx = 0; xx < W - 2; xx++) if (off(xx) && off(xx + 1) && off(xx + 2)) { l = xx; break; }
-        for (xx = W - 1; xx > 1; xx--) if (off(xx) && off(xx - 1) && off(xx - 2)) { r = xx; break; }
-        if (l < 0 || r <= l) return null;
-        if ((r - l + 1) / W >= .35) return null;
-        if (Math.min(row(l + 1), row(l + 2), row(r - 1), row(r - 2)) >= 40) return null;   // the near-black frame
-        return { f: (r - l + 1) / W, c: ((l + r) / 2) / W };
-      }
-      var found = [.2, .35, .5, .65, .8].map(function (p) { return at(Math.round(H * p)); })
-        .filter(function (b) { return b; });
-      if (found.length < 4) return null;
-      var mid = function (key) {
-        var v = found.map(function (b) { return b[key]; }).sort(function (a, b) { return a - b; });
-        return v[Math.floor(v.length / 2)];
-      };
-      var band = { f: mid("f"), c: mid("c") };
-      if (Math.abs(band.c - .5) > .12) return null;   // a phone mockup stands in the middle
-      return band;
-    } catch (e) { return null; }   // from another site, it cannot be read: not a phone
-  }
-  function isPhone(src, w, h) { return !!phoneBand(src, w, h); }
+  // the shape of a cover and of every picture under it: js/cover-shape.js works it
+  // out, and the featured grid asks the very same question of the very same code,
+  // so a card there and the cover here come out the same box
+  function isPhone(src, w, h) { return !!(window.coverShape && window.coverShape.phoneBand(src, w, h)); }
 
-  // the phone in a mockup, as a share of its card's width — the same in every one
-  var PHONE_W = .5;
-  // any picture that is not a phone mockup shows whole at the page's full width
+  // a cover takes the shape js/cover-shape.js gives it; anything that is not a
+  // phone mockup simply shows whole at the page’s full width
   function sort(slide, src, w, h) {
-    var band = phoneBand(src, w, h);
-    slide.dataset.sorted = band ? "phone" : "wide";
-    if (!band) { slide.classList.add("is-wide"); return; }
-    // The phone fills a different slice of each mockup, so a card at the picture's
-    // own shape would show it a different size every time. Give the card the shape
-    // that blows the picture up until the phone is always PHONE_W of the card's
-    // width, and slide the picture across so the phone lands in the middle. The
-    // picture's height fits the card exactly; its plain sides are what gets cropped.
-    var zoom = PHONE_W / band.f;
-    slide.style.setProperty("--r", ((w / h) / zoom).toFixed(4));
-    slide.style.setProperty("--ph-x", (100 * (.5 - band.c * zoom) / (1 - zoom)).toFixed(2) + "%");
+    var s = window.coverShape && window.coverShape.shapeOf(src, w, h);
+    if (!s) return;
+    slide.dataset.sorted = s.phone ? "phone" : "wide";
+    if (!s.phone) { slide.classList.add("is-wide"); return; }
+    slide.style.setProperty("--r", s.r.toFixed(4));
+    slide.style.setProperty("--ph-x", s.x.toFixed(2) + "%");
   }
 
   function shape(slide, m) {
