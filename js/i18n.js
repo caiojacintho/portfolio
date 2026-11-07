@@ -50,6 +50,7 @@
     "Public sector, data": "Setor público, dados",
     "Landscape architecture": "Arquitetura paisagística",
     "Public sector": "Setor público",
+    "Public sector, finance": "Setor público, finanças",
     "Public and private sector": "Setor público e privado",
     "Public sector, economic development": "Setor público, desenvolvimento econômico",
     "Public sector, technology": "Setor público, tecnologia",
