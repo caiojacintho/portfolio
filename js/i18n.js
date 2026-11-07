@@ -18,8 +18,8 @@
     // work — intro (split across <strong> + text) and section labels
     "A Brazilian multiform designer working at the intersection of design, data and communication.":
       "Designer brasileiro multiforme, atuando na interseção entre design, dados e comunicação.",
-    "Design partner to Brazilian startups, helping them raise more than R$100 million.":
-      "Parceiro de design de startups brasileiras, ajudando-as a captar mais de R$ 100 milhões.",
+    "Design partner to Brazilian startups that have raised more than R$100 million.":
+      "Parceiro de design de startups brasileiras que já captaram mais de R$ 100 milhões.",
     "Let's talk": "Vamos conversar",
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
