@@ -24,6 +24,7 @@
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
     "Housing Game": "Jogo da Habitação",
+    "Cidados Portal": "Portal Cidados",
     "Digital Government Observatory": "Observatório de Governo Digital",
     // "Between Acts Institute" is left out on purpose: the name stays in English in Portuguese too
     "Architecture": "Arquitetura",
@@ -62,6 +63,8 @@
     "Public sector, housing": "Setor público, habitação",
     "Public sector, digital government": "Setor público, governo digital",
     "Nonprofit, careers": "ONG, carreiras",
+    "Research, urban studies, storytelling, data visualization": "Pesquisa, estudos urbanos, narrativas, visualização de dados",
+    "Research, urban studies": "Pesquisa, estudos urbanos",
     "Public sector, data journalism": "Setor público, jornalismo de dados",
     // contribution
     "Award-winning entries in national competitions": "Projetos premiados em concursos nacionais",
@@ -88,6 +91,8 @@
     "Product design, UI design, Presentation design": "Design de produto, UI design, Design de apresentação",
     "Data storytelling, Data visualization, Interactive design, Motion design": "Narrativa de dados, Visualização de dados, Design interativo, Motion design",
     // case pages — sidebar descriptions
+    "Created by Insper's Center for City Studies – Arq.Futuro Lab, the Cidados Portal presents the center's studies and research through data-driven narratives, bringing science closer to the public debate to support evidence-based urban policy.":
+      "Criado pelo Centro de Estudos das Cidades – Laboratório Arq.Futuro do Insper, o Portal Cidados apresenta os estudos e pesquisas do centro por meio de narrativas baseadas em dados, aproximando a ciência do debate público para apoiar políticas urbanas baseadas em evidências.",
     "The first Brazilian institute dedicated to turning a career pause into a recognised part of a professional path. Almost two million qualified professionals are out of the job market in Brazil, and the institute works pro bono with them and with the companies that hire them.":
       "O primeiro instituto brasileiro dedicado a transformar a pausa de carreira em parte reconhecida de uma trajetória profissional. Quase 2 milhões de profissionais qualificados estão fora do mercado no Brasil, e o instituto atua pro bono com eles e com as empresas que contratam.",
     "An open-data platform that tracks how Brazil's federal government, states and capitals are doing on the National Digital Government Strategy, with a comparative ranking, indicators for each of its ten objectives and downloadable data from official sources.":

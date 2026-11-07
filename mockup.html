@@ -120,7 +120,7 @@
     /* the phone is a frame with a see-through screen, so it sits over the site */
     .frame img.phone { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
     .frame img[hidden], .urlbox[hidden] { display: none; }        /* beats the rules above */
-    .vp { position: absolute; left: 0; width: 100%; overflow: hidden; background: #fff; }
+    .vp { position: absolute; left: 0; width: 100%; overflow: hidden; background: #fff; isolation: isolate; }
     .vp iframe { border: 0; display: block; }
     .vp img.shot { display: block; width: 100%; will-change: transform; }
     .urlbox {
@@ -171,7 +171,16 @@
     /* while a picture or a video is taken, no pointer over the work area (what gets filmed;
        the controls on the left keep theirs): Chrome draws
        the mouse into a tab capture even when asked not to */
+    /* While a picture or a video is taken the real pointer never shows over the work
+       area: Chrome draws it into a tab capture whatever it is asked. In its place you
+       see a drawn pointer that follows the mouse. Only the site's own element is filmed
+       (Element Capture), and the drawn pointer sits outside it, so it never reaches the
+       video. The site stays clickable when it is opened through the dev server (then its
+       own pointer can be hidden too); otherwise clicks are off while filming. */
     body.cap #work, body.cap #work * { cursor: none !important; }
+    .fake-cursor { position: fixed; left: 0; top: 0; z-index: 2147483647; width: 18px; height: 26px;
+      pointer-events: none; display: none; will-change: transform; }
+    body.cap-draw .fake-cursor.on { display: block; }
   </style>
 </head>
 <body>
@@ -256,6 +265,7 @@
   </main>
   <div class="flag" id="flag">Gravando — clique em "Parar e salvar"</div>
 
+  <svg class="fake-cursor" id="fakeCursor" viewBox="0 0 18 26" aria-hidden="true"><path d="M1.5 1.5v19.2l4.6-4.4 3.1 7.4 3.3-1.4-3.1-7.2h6.4z" fill="#000" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
   <script>
   (function () {
     "use strict";
@@ -379,6 +389,7 @@
       return proxied ? "/site?url=" + encodeURIComponent(full(S.url)) : full(S.url);
     }
     var rec = null;           // MediaRecorder, while a video is being taken
+    var LOCAL_PROXY = false;  // the dev server answers: sites can be opened through it
     var rolling = false, at = 0, tall = 0, seen = 0, tick = null;   // the gentle scroll
 
     // width the browser gives a scrollbar, so the site's own bar can be clipped away
@@ -597,15 +608,17 @@
       var known = frameCache[url];
       var ask = known !== undefined ? Promise.resolve({ frameable: known }) :
         fetch("/frameable?url=" + encodeURIComponent(url))
-          .then(function (r) { return r.ok ? r.json() : { frameable: true }; })
+          .then(function (r) { if (r.ok) LOCAL_PROXY = true; return r.ok ? r.json() : { frameable: true }; })
           .catch(function () { return { frameable: true }; });
       ask.then(function (d) {
         frameCache[url] = d.frameable;
         if (tok !== probeTok) return;
-        proxied = !d.frameable;
+        // through the dev server whenever it is there: the page is then ours to reach
+        // (its own pointer can be hidden while filming, and it scrolls for real)
+        proxied = !d.frameable || LOCAL_PROXY;
         layout(true);
         if (proxied) {
-          note("Este site bloqueia moldura — abrindo pelo servidor local…");
+          if (!d.frameable) note("Este site bloqueia moldura — abrindo pelo servidor local…");
           whenFramed(tok);
         }
       });
@@ -637,7 +650,9 @@
             /couldn.t load|application error|client-side exception|something went wrong|page not found|404/i.test(text);
           ok = !!b && b.children.length > 0 && text.length > 0 && !crashed;
         } catch (e) {}
-        if (ok) note(""); else takeShot(tok);
+        if (ok) note("");
+        else if (frameCache[full(S.url)]) { proxied = false; layout(true); }   // the site frames fine as it is
+        else takeShot(tok);
       }, 2500);
     }
 
@@ -806,12 +821,65 @@
       });
     }
 
+    // only the site's element is filmed. Element Capture (restrictTo) leaves out
+    // whatever is drawn over it, so the pointer you see while recording stays out of the
+    // video; where it is missing, the older crop is used and the pointer is hidden
+    function siteDoc() { try { return site.contentDocument || null; } catch (e) { return null; } }
+    var fake = null;
+    function pointAt(x, y) {
+      if (!fake) fake = $("fakeCursor");
+      var r = work.getBoundingClientRect();
+      fake.classList.toggle("on", x >= r.left && x <= r.right && y >= r.top && y <= r.bottom);
+      fake.style.transform = "translate(" + (x - 1.5) + "px," + (y - 1.5) + "px)";
+    }
+    // a move inside the site, in the site's own pixels: back to the page's
+    function inSite(e) {
+      var r = site.getBoundingClientRect(), k = r.width / (site.clientWidth || r.width);
+      pointAt(r.left + e.clientX * k, r.top + e.clientY * k);
+    }
+    document.addEventListener("pointermove", function (e) { pointAt(e.clientX, e.clientY); }, { passive: true });
+    // a click inside the site that opens another of its pages: the new page hides its
+    // pointer too (one that left the dev server can't be reached: clicks stop instead)
+    site.addEventListener("load", function () {
+      if (!document.body.classList.contains("cap-live")) return;
+      var doc = siteDoc();
+      if (!doc) { site.style.pointerEvents = "none"; return; }
+      var st = doc.createElement("style"); st.id = "__nocursor";
+      st.textContent = "html, html * { cursor: none !important; }";
+      (doc.head || doc.documentElement).appendChild(st);
+      doc.addEventListener("pointermove", inSite, true);
+    });
+
+    // The site's own page, when it came through the dev server: its pointer is hidden
+    // and it stays clickable while it is filmed. Returns whether that worked.
+    function liveSite() {
+      var doc = siteDoc();
+      if (!doc || !doc.documentElement) return false;
+      var st = doc.getElementById("__nocursor");
+      if (!st) { st = doc.createElement("style"); st.id = "__nocursor"; (doc.head || doc.documentElement).appendChild(st); }
+      st.textContent = "html, html * { cursor: none !important; }";
+      doc.removeEventListener("pointermove", inSite, true);
+      doc.addEventListener("pointermove", inSite, true);
+      document.body.classList.add("cap-live");
+      site.style.pointerEvents = "";
+      return true;
+    }
     async function cropToSite(track) {
       try { await track.applyConstraints({ cursor: "never" }); } catch (e) {}
-      if (window.CropTarget && track.cropTo) {
-        try { await track.cropTo(await CropTarget.fromElement(vp)); return true; } catch (e) {}
+      var done = false, restricted = false;
+      if (window.RestrictionTarget && track.restrictTo) {
+        try { await track.restrictTo(await RestrictionTarget.fromElement(vp)); done = restricted = true; } catch (e) {}
       }
-      return false;
+      if (!done && window.CropTarget && track.cropTo) {
+        try { await track.cropTo(await CropTarget.fromElement(vp)); done = true; } catch (e) {}
+      }
+      // the drawn pointer only where it is left out of the picture
+      document.body.classList.toggle("cap-draw", restricted);
+      // clicks work whenever the site's own page can be reached, restricted or not
+      var live = !pic && liveSite();
+      $("flag").textContent = live ? 'Gravando — clique em "Parar e salvar"'
+        : 'Gravando — este site não abriu pelo servidor local, então os cliques ficam desligados';
+      return done;
     }
 
     // a few source pixels to drop on each side (the capture's own black rim)
@@ -844,6 +912,12 @@
       return fw;
     }
     function smallFrame() {
+      document.body.classList.remove("cap-live", "cap-draw");
+      var doc = siteDoc();
+      if (doc) {
+        var st = doc.getElementById("__nocursor"); if (st) st.remove();
+        doc.removeEventListener("pointermove", inSite, true);
+      }
       document.body.classList.remove("cap");
       site.style.pointerEvents = "";
       phone.style.visibility = "";
