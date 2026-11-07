@@ -309,6 +309,22 @@
   document.addEventListener("langchange", labels);
   document.addEventListener("DOMContentLoaded", labels);
 
+  // Storytelling and Data visualization: every piece that opens a live story or chart
+  // gets a small arrow button in its bottom-right corner, inside the picture
+  document.addEventListener("DOMContentLoaded", function () {
+    var page = root.getAttribute("data-wf-page");
+    if (page !== "storytelling" && page !== "dataviz") return;
+    var ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+    Array.prototype.forEach.call(document.querySelectorAll('.case-media a[href^="http"]'), function (a) {
+      if (a.closest(".case-nav") || a.querySelector(".case-go")) return;
+      if (!a.querySelector("img, video, .w-background-video")) return;
+      a.classList.add("case-ext-link");
+      var b = document.createElement("span");
+      b.className = "case-go"; b.innerHTML = ICON + ICON;   // the twin for the hover
+      a.appendChild(b);
+    });
+  });
+
   // pagereveal comes before the first frame, after hero-transition.js's own handler
   if ("onpagereveal" in window) window.addEventListener("pagereveal", sync);
   else document.addEventListener("DOMContentLoaded", sync);
