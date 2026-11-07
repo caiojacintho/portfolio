@@ -85,7 +85,7 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
   .m-built .case-title { order: 1; }
   .m-built .case-side .case-sub,
   .m-built .case-side .case-ext { order: 2; }
-  .m-built .case-m-cover { order: 3; margin-top: 40px; height: 60vh; }
+  .m-built .case-m-cover { order: 3; margin-top: 40px; }
   .m-built .case-m-cover { cursor: pointer; }   /* it opens in the viewer (js/case-mobile.js) */
   .m-built .case-facts { order: 4; }
   .m-built .case-m-carousel { order: 5; }
@@ -100,14 +100,16 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
 
   /* the pictures stack, one under the other, down the page */
   .m-built .case-m-carousel { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 104px 0 0; }
-  /* each one the page's full width, as tall as its own proportions make it
-     (--r, set by js/case-mobile.js; 16:9 until the picture has loaded) */
+  /* the cover and every picture under it: the page's full width, as tall as its own
+     proportions make it (--r, set by js/case-mobile.js; 16:9 until it has loaded).
+     For a phone mockup — a phone standing on a plain background — js/case-mobile.js
+     puts a taller shape in --r instead, the one that blows the picture up until the
+     phone is half the card wide, the same in every mockup on the site, and shifts it
+     sideways (--ph-x) so the phone lands in the middle. */
+  .m-built .case-m-cover,
   .m-built .case-m-slide { width: 100%; height: auto; aspect-ratio: var(--r, 16 / 9); }
-  /* except a phone mockup — a phone standing on a plain background. Shown whole
-     it would be a stamp in a field of grey, so it keeps a tall card, as wide as
-     every other picture, and the background is cropped away above and below
-     until the phone fills it. (sorted by js/case-mobile.js once it has loaded) */
-  .m-built .case-m-slide[data-sorted="phone"] { height: 120vw; }
+  .case-m-frame[data-sorted="phone"] img,
+  .case-m-frame[data-sorted="phone"] video { object-position: var(--ph-x, 50%) 50%; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
      background videos (parked at z-index:-100) still paint over the grey. */
@@ -138,8 +140,8 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
    EN/PT by js/case-mobile.js) rolls in from underneath. */
 .case-nav { justify-content: flex-start; }
 @media screen and (min-width: 861px) { .case-nav { justify-content: flex-end; } }   /* desktop: at the right */
-.case-nav .case-nav-link { background: #111; color: #fff; border-radius: 999px; padding: 14px 22px; overflow: hidden; transition: background-color .2s ease; }
-.case-nav .case-nav-link:hover { background: #2a2a2a; color: #fff; }
+.case-nav .case-nav-link { background: transparent; color: #111; border: 1px solid #e3e3df; border-radius: 999px; padding: 13px 21px; overflow: hidden; transition: background-color .2s ease, color .2s ease; }
+.case-nav .case-nav-link:hover { background: #111; border-color: #111; color: #fff; }
 .case-nav .case-nav-name { position: relative; display: inline-block; overflow: visible; font-family: "DM Sans", sans-serif; font-size: 15px; font-weight: 500; line-height: 1; text-transform: none; transition: transform .5s cubic-bezier(.65, 0, .35, 1); }
 .case-nav .case-nav-name::after { content: attr(data-label); position: absolute; left: 0; top: 2em; white-space: nowrap; }
 .case-nav .case-nav-link:hover .case-nav-name,
@@ -178,18 +180,6 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
 .case-viewer-stage { overflow: hidden; }
 .case-viewer-stage img[src*="68ade5a3c3123ce060052a1d_2102"],
 .case-viewer-stage img[src*="68ade3b1e60beed1c7076be2_2099"] { transform: scale(1.9); }
-/* Rivio: its cover is a wide 16:9 slide clip, so on phones the cover card is a square
-   (a little taller than the clip) instead of the tall 60vh crop */
-@media screen and (max-width: 860px) {
-  [data-wf-page="rivio"] .m-built .case-m-cover { height: auto; aspect-ratio: 1 / 1; }
-}
-/* Storytelling and Data visualization: the cover card takes its picture's own shape (--r, from
-   js/case-mobile.js) instead of the 60vh crop */
-@media screen and (max-width: 860px) {
-  [data-wf-page="storytelling"] .m-built .case-m-cover,
-  [data-wf-page="observatorio"] .m-built .case-m-cover,
-  [data-wf-page="dataviz"] .m-built .case-m-cover { height: auto; aspect-ratio: var(--r, 16 / 9); }
-}
 
 /* project pages: a Webflow background video has no height of its own (its clip is laid
    over it), so it takes the clip's 16:9 shape unless a rule gives it a height */

@@ -25,8 +25,10 @@
     "Data visualization": "Visualização de dados",
     "Housing Game": "Jogo da Habitação",
     "Digital Government Observatory": "Observatório de Governo Digital",
-    "Entre Atos Institute": "Instituto Entre Atos",
+    // "Between Acts Institute" is left out on purpose: the name stays in English in Portuguese too
     "Architecture": "Arquitetura",
+    // home — back to the top, under the last project
+    "Up": "Topo",
     // case pages — the link to the next project
     "Next project": "Próximo projeto",
     // case pages — Storytelling's first paragraph
@@ -48,6 +50,7 @@
     "Public sector, data": "Setor público, dados",
     "Landscape architecture": "Arquitetura paisagística",
     "Public sector": "Setor público",
+    "Public and private sector": "Setor público e privado",
     "Public sector, economic development": "Setor público, desenvolvimento econômico",
     "Public sector, technology": "Setor público, tecnologia",
     "Public sector, education and employment": "Setor público, educação e emprego",
