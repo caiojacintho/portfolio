@@ -100,16 +100,16 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
   /* one height for every slide, each as wide as its picture (--r, set by
      js/case-mobile.js; 16:9 until the picture has loaded). A phone mockup stays a
      narrow card (80vw); any other picture, GIF or clip (.is-wide, sorted by the script)
-     may run up to 120vw. A wider one is trimmed at its sides. */
+     may run up to 84vw, so the next one always peeks in. A wider one is trimmed at its sides. */
   .m-built .case-m-slide { flex: 0 0 auto; height: 120vw; width: auto; max-width: 80vw; aspect-ratio: var(--r, 16 / 9); }
-  .m-built .case-m-slide.is-wide { max-width: 120vw; }
+  .m-built .case-m-slide.is-wide { max-width: 84vw; }
   /* Storytelling, Data visualization and Playground: wide recordings and charts, so a lower
-     carousel lets them run wider (a 2:1 piece fills about 120vw) */
+     carousel lets them run wider (47.25vw tall: a 16:9 piece fills the 84vw cap whole) */
   [data-wf-page="storytelling"] .m-built .case-m-slide,
   [data-wf-page="dataviz"] .m-built .case-m-slide,
   [data-wf-page="habitacao"] .m-built .case-m-slide,
   [data-wf-page="observatorio"] .m-built .case-m-slide,
-  [data-wf-page="playground"] .m-built .case-m-slide { height: 56vw; max-width: 120vw; }
+  [data-wf-page="playground"] .m-built .case-m-slide { height: 47.25vw; max-width: 84vw; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
      background videos (parked at z-index:-100) still paint over the grey. */
