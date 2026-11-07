@@ -125,6 +125,7 @@
         if (m && +m[2] > bw) { bw = +m[2]; best = m[1]; }
       });
       media = el("img"); media.src = best || img.currentSrc || img.src; media.alt = img.alt || "";
+      if (img.hasAttribute("data-phone")) media.setAttribute("data-phone", img.getAttribute("data-phone"));
     }
     else if (vid) {
       media = el("video");

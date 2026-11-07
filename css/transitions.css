@@ -205,6 +205,14 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
 .case-viewer-stage { overflow: hidden; }
 .case-viewer-stage img[src*="68ade5a3c3123ce060052a1d_2102"],
 .case-viewer-stage img[src*="68ade3b1e60beed1c7076be2_2099"] { transform: scale(1.9); }
+/* phones: on the page too, these two pictures (a small screen in a lot of grey)
+   are blown up inside their card, so the screen runs wider */
+.m-built .case-m-slide img[src*="68ade5a3c3123ce060052a1d_2102"],
+.m-built .case-m-slide img[src*="68ade3b1e60beed1c7076be2_2099"] { transform: scale(1.7); }
+/* the dashboard one stands in a taller card, its screen a little less blown up
+   so it still fits the width */
+.m-built .case-m-slide:has(img[src*="68ade3b1e60beed1c7076be2_2099"]) { aspect-ratio: 4 / 3; }
+.m-built .case-m-slide img[src*="68ade3b1e60beed1c7076be2_2099"] { transform: scale(1.3); }
 
 /* project pages: a Webflow background video has no height of its own (its clip is laid
    over it), so it takes the clip's 16:9 shape unless a rule gives it a height */

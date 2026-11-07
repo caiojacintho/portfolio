@@ -30,6 +30,13 @@
   // background, rows are averaged, and an edge needs a run of pixels, not one.
   // Returns where the phone is — { f: its share of the width, c: its centre } — or null.
   function phoneBand(src, w, h) {
+    // Only a picture marked in the page is a phone mockup (data-phone="share,centre",
+    // measured once with the reading below). Reading pixels back from a canvas gave
+    // iPhones a different answer from Chrome (Safari adds noise to them), so the same
+    // page came out with a different layout on each. A new phone mockup needs the mark.
+    var mark = src && src.getAttribute && src.getAttribute("data-phone");
+    if (mark) { var p = mark.split(","); return { f: parseFloat(p[0]) || .22, c: parseFloat(p[1]) || .5 }; }
+    if (!(src && src.__measure)) return null;   // the reading itself, kept for measuring new ones
     try {
       var W = 200, H = Math.max(3, Math.round(W * h / w));
       var c = document.createElement("canvas"); c.width = W; c.height = H;
