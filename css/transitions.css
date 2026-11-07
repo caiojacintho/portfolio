@@ -104,10 +104,10 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
      (--r, set by js/case-mobile.js; 16:9 until the picture has loaded) */
   .m-built .case-m-slide { width: 100%; height: auto; aspect-ratio: var(--r, 16 / 9); }
   /* except a phone mockup — a phone standing on a plain background. Shown whole
-     it would be a stamp in a field of grey, so it keeps the tall, narrower card
-     that crops that background away at the sides and leaves the phone large.
-     (sorted by js/case-mobile.js once the picture has loaded) */
-  .m-built .case-m-slide[data-sorted="phone"] { width: auto; max-width: 80vw; height: 120vw; }
+     it would be a stamp in a field of grey, so it keeps a tall card, as wide as
+     every other picture, and the background is cropped away above and below
+     until the phone fills it. (sorted by js/case-mobile.js once it has loaded) */
+  .m-built .case-m-slide[data-sorted="phone"] { height: 120vw; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
      background videos (parked at z-index:-100) still paint over the grey. */
