@@ -98,26 +98,16 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
   .m-built .case-side .case-sub { font-family: "DM Sans", sans-serif; font-size: 15px; line-height: 1.5; color: #9a9a94; max-width: none; margin: 10px 0 0; }
   .m-built .case-side .case-ext { align-self: flex-start; margin-top: 24px; font-size: 15px; }
 
-  /* carousel: runs to the screen's edges and scrolls freely (no snapping) */
-  .m-built .case-m-carousel { display: flex; gap: 12px; overflow-x: auto; margin: 104px -12px 0; padding: 0 12px; scrollbar-width: none; overscroll-behavior-x: contain; }
-  .m-built .case-m-carousel::-webkit-scrollbar { display: none; }
-  /* a mouse drags it too (js/case-mobile.js) */
-  @media (hover: hover) { .m-built .case-m-carousel { cursor: grab; } }
-  .m-built .case-m-carousel.is-dragging { cursor: grabbing; user-select: none; }
-  /* one height for every slide, each as wide as its picture (--r, set by
-     js/case-mobile.js; 16:9 until the picture has loaded). A phone mockup stays a
-     narrow card (80vw); any other picture, GIF or clip (.is-wide, sorted by the script)
-     may run up to 84vw, so the next one always peeks in. A wider one is trimmed at its sides. */
-  .m-built .case-m-slide { flex: 0 0 auto; height: 120vw; width: auto; max-width: 80vw; aspect-ratio: var(--r, 16 / 9); }
-  .m-built .case-m-slide.is-wide { max-width: 84vw; }
-  /* Storytelling, Data visualization and Playground: wide recordings and charts, so a lower
-     carousel lets them run wider (47.25vw tall: a 16:9 piece fills the 84vw cap whole) */
-  [data-wf-page="storytelling"] .m-built .case-m-slide,
-  [data-wf-page="dataviz"] .m-built .case-m-slide,
-  [data-wf-page="habitacao"] .m-built .case-m-slide,
-  [data-wf-page="observatorio"] .m-built .case-m-slide,
-  [data-wf-page="entreatos"] .m-built .case-m-slide,
-  [data-wf-page="playground"] .m-built .case-m-slide { height: 47.25vw; max-width: 84vw; }
+  /* the pictures stack, one under the other, down the page */
+  .m-built .case-m-carousel { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 104px 0 0; }
+  /* each one the page's full width, as tall as its own proportions make it
+     (--r, set by js/case-mobile.js; 16:9 until the picture has loaded) */
+  .m-built .case-m-slide { width: 100%; height: auto; aspect-ratio: var(--r, 16 / 9); }
+  /* except a phone mockup — a phone standing on a plain background. Shown whole
+     it would be a stamp in a field of grey, so it keeps the tall, narrower card
+     that crops that background away at the sides and leaves the phone large.
+     (sorted by js/case-mobile.js once the picture has loaded) */
+  .m-built .case-m-slide[data-sorted="phone"] { width: auto; max-width: 80vw; height: 120vw; }
 
   /* cover and slides: a grey card the picture fills. Isolated, so Webflow's
      background videos (parked at z-index:-100) still paint over the grey. */

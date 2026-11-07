@@ -1,6 +1,6 @@
 /* Phones (up to 860px): every project page takes the same order — the title, a
-   cover picture, the text about the project in a larger type, the other pictures
-   in a sideways carousel, then the facts (industry, contribution, year, skills).
+   cover picture, the text about the project in a larger type, the facts (industry,
+   contribution, year, skills), then the other pictures stacked down the page.
    The page's own markup is the desktop one (sidebar + stacked media); this script
    rearranges it before the first frame and puts it back on a wider screen.
    Loaded in <head> after js/hero-transition.js: that script may first move the
@@ -34,14 +34,15 @@
     return c;
   }
 
-  // a mouse can drag the carousel too (a finger already scrolls it natively). It
-  // stops wherever it is let go; a drag never counts as a click on a picture that
-  // is a link.
+  // The pictures stack down the page, so there is nothing to drag sideways; the
+  // drag is kept for any track that does scroll across, and never counts as a
+  // click on a picture that is a link.
   var drag = null;
   function dragging(track) {
     track.addEventListener("dragstart", function (e) { e.preventDefault(); });
     track.addEventListener("pointerdown", function (e) {
       if (e.pointerType !== "mouse" || e.button !== 0) return;
+      if (track.scrollWidth <= track.clientWidth) return;
       drag = { track: track, x: e.clientX, left: track.scrollLeft, moved: false };
     });
     track.addEventListener("click", function (e) {
@@ -212,7 +213,8 @@
       return dark < 40;   // the phone's near-black frame
     } catch (e) { return false; }   // from another site, it cannot be read: not a phone
   }
-  // a phone mockup keeps the narrow card; any other picture may run up to 120vw
+  // a phone mockup keeps the narrow, tall card; any other picture shows whole at
+  // the page's full width
   function sort(slide, src, w, h) {
     var phone = isPhone(src, w, h);
     slide.dataset.sorted = phone ? "phone" : "wide";
