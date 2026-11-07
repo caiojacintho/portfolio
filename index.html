@@ -145,10 +145,16 @@
     /* Storytelling: the stadium animation shows whole, a little smaller than the
        card, on the same grey as every other card */
     .section .div-block .media-wrap:has(> img[src*="effectsResult"]) { background: #F2F2F2; border-radius: 16px; }
-    .section .div-block .media-wrap > img[src*="effectsResult"] { object-fit: contain !important; padding: 0 9%; box-sizing: border-box; }
+    .section .div-block .media-wrap:has(> img[src*="effectsResult"]) { position: relative; }
+    /* sized to the animation itself (not letterboxed), so its own corners can be rounded */
+    .section .div-block .media-wrap > img[src*="effectsResult"] { position: absolute !important; top: 50%; left: 50%; width: 82% !important; height: auto !important; aspect-ratio: 900 / 448; max-width: none; transform: translate(-50%, -50%); object-fit: fill !important; padding: 0; border-radius: 12px !important; }
     /* Rivio: the slide clip a touch smaller, on the grey its own frame already has */
     .section .div-block .w-background-video[data-poster-url*="rivio9"] { background: #efefef; border-radius: 16px; overflow: hidden; }
     .section .div-block .w-background-video[data-poster-url*="rivio9"] > video { scale: .93; z-index: 0; }
+    /* the slide always sits in the same box of the clip (25.4% / 25.5% in from its top and
+       sides, measured on every frame); with the clip covering the square card that is
+       6.3% in from the card's sides, so the slide itself gets rounded corners */
+    .section .div-block .w-background-video[data-poster-url*="rivio9"] > video { clip-path: inset(25.4% 6.3% 25.6% 6.3% round 13px); }
     /* site mockups: the browser-window picture shows whole, on its own grey */
     .section .div-block .media-wrap:has(> img[src*="observatorio-1"]),
     .section .div-block .media-wrap:has(> img[src*="habitacao-2"]),
