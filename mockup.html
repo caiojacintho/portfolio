@@ -166,6 +166,10 @@
       white-space: nowrap;
     }
     .note[hidden] { display: none; }
+    /* while a picture or a video is taken, no pointer over the work area (what gets filmed;
+       the controls on the left keep theirs): Chrome draws
+       the mouse into a tab capture even when asked not to */
+    body.cap #work, body.cap #work * { cursor: none !important; }
   </style>
 </head>
 <body>
