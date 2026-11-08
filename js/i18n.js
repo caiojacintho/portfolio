@@ -53,6 +53,7 @@
     "Public sector": "Setor público",
     "Public sector, finance": "Setor público, finanças",
     "Public and private sector": "Setor público e privado",
+    "Data journalism": "Jornalismo de dados",
     "Public sector, Private sector, Data journalism": "Setor público, Setor privado, Jornalismo de dados",
     "Public sector, Finance": "Setor público, Finanças",
     "Public sector, economic development": "Setor público, desenvolvimento econômico",
