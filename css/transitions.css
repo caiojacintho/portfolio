@@ -3,6 +3,11 @@
 video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 video::-webkit-media-controls-overlay-play-button { display: none !important; }
 video::-webkit-media-controls-panel { display: none !important; }
+/* the whole native control layer, not just its parts: newer iPhones draw their play
+   button from it even when the parts above are hidden */
+video::-webkit-media-controls { display: none !important; }
+video::-webkit-media-controls-enclosure { display: none !important; }
+video::-webkit-media-controls-play-button { display: none !important; }
 
 /* Card -> project-page transition (cross-document view transitions; browsers
    without them simply navigate as before). The clicked card and its twin on the

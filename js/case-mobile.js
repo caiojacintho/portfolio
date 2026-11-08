@@ -285,6 +285,14 @@
     v.muted = true; v.playsInline = true;
     var p = v.play && v.play(); if (p && p.catch) p.catch(function () {});
   }
+  // an iPhone in Low Power Mode refuses to start a clip on its own: the first touch
+  // anywhere on the page counts as the go-ahead for every clip on screen
+  document.addEventListener("touchstart", function () {
+    Array.prototype.forEach.call(document.querySelectorAll(".case-media video"), function (v) {
+      var r = v.getBoundingClientRect();
+      if (r.bottom > -200 && r.top < innerHeight + 200) play(v);
+    });
+  }, { passive: true });
   function rolling() {
     var vids = document.querySelectorAll(".case-media video");
     if (!vids.length) return;
