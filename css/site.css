@@ -3572,7 +3572,7 @@ figcaption {
   }
 
   .navigation {
-    padding: 0 30px;
+    padding: 0 12px;   /* the same 12px gutter as the page below */
   }
 
   .menu-button {
@@ -3850,7 +3850,7 @@ figcaption {
   }
 
   .navigation {
-    padding: 20px 30px;
+    padding: 20px 12px;   /* the same 12px gutter as the page below */
   }
 
   .work-experience-grid {

@@ -189,6 +189,10 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
 .case-viewer.is-open { opacity: 1; visibility: visible; transition: opacity .25s ease; }
 .case-viewer-stage { position: absolute; inset: 64px 12px 104px; }
 .case-viewer-stage img, .case-viewer-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+/* a clip is not letterboxed (contain draws a hairline where its frame meets the empty
+   area, on phones): it sits at its own shape across the width, centred, its 1px rim
+   trimmed. A clip taller than the stage still fits by height (max-height). */
+.case-viewer-stage video:not(.is-phone) { inset: auto; left: 50%; top: 50%; width: auto; height: auto; max-width: 100%; max-height: 100%; transform: translate(-50%, -50%); object-fit: fill; clip-path: inset(1px); }
 /* a phone mockup fills the stage (its plain background trimmed at the sides), so the
    phone itself shows large */
 .case-viewer-stage .is-phone { object-fit: cover; border-radius: 16px; }
@@ -244,3 +248,16 @@ html.case-viewer-open, html.case-viewer-open body { overflow: hidden; }
    a touch larger inside its card, so the card is all picture */
 .case-media .w-background-video:has(source[data-src*="transportehabitacao"]) { overflow: hidden; }
 .case-media .w-background-video:has(source[data-src*="transportehabitacao"]) > video { transform: scale(1.04); }
+
+/* Arriving from a card: the clicked picture glides into place first; the other
+   pictures of the page wait out of sight, then rise in one after another
+   (js/hero-transition.js sets media-wait, then media-in with a stagger) */
+html.media-wait .case-media > :not(:first-child),
+html.media-wait .case-media .case-m-carousel > * { opacity: 0; transform: translateY(32px); }
+html.media-in .case-media > :not(:first-child),
+html.media-in .case-media .case-m-carousel > * {
+  transition: opacity .7s ease var(--in-d, 0s), transform .9s cubic-bezier(.2, .7, .2, 1) var(--in-d, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.media-wait .case-media > :not(:first-child), html.media-wait .case-media .case-m-carousel > * { opacity: 1; transform: none; }
+}

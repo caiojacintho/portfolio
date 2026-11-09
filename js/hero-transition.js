@@ -183,12 +183,25 @@
       if (note && keyOf(hero) === note.key) root.classList.add("vt-same");   // see css/transitions.css
       hero.style.viewTransitionName = "hero";
       if (pair) pair.style.viewTransitionName = "hero-2";
+      // the rest of the pictures wait out of sight while the clicked one glides in,
+      // then rise in one after another (css/transitions.css: media-wait / media-in)
+      if (note) root.classList.add("media-wait");
       var unname = function () {
         hero.style.viewTransitionName = "";
         if (pair) pair.style.viewTransitionName = "";
         root.classList.remove("vt-same");
+        if (!root.classList.contains("media-wait")) return;
+        var main = document.querySelector(".case-media"), n = 0;
+        if (main) Array.prototype.forEach.call(main.children, function (c, i) {
+          if (i === 0) return;
+          c.style.setProperty("--in-d", Math.min(n++, 6) * 0.09 + "s");
+        });
+        root.classList.add("media-in");
+        requestAnimationFrame(function () { requestAnimationFrame(function () { root.classList.remove("media-wait"); }); });
+        setTimeout(function () { root.classList.remove("media-in"); }, 1800);
       };
       e.viewTransition.finished.then(unname, unname);
+      setTimeout(function () { if (root.classList.contains("media-wait")) unname(); }, 3000);   // never left hidden
     });
   } else {
     // no view transitions here: still open the page on the picture that was clicked
