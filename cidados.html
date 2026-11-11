@@ -74,6 +74,16 @@
     /* Webflow's w-inline-block shrinks to the image's natural width; a linked card
        must still span the column */
     .case-media .div-block > a { display: block; width: 100%; }
+    /* a paired row: the clip and the logo lockup share one box, side by side.
+       The clip is all but square and the lockup is 16:9, so a square box is what
+       lets the two stand the same height — the clip keeps nearly all of itself
+       and the lockup crops in from the sides, where only empty field is lost. */
+    @media screen and (min-width: 768px) {
+      .case-media .div-block.par.logos img.image,
+      .case-media .div-block.par.logos video.case-video {
+        width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 16px;
+      }
+    }
     @media screen and (max-width: 860px) {
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
@@ -121,8 +131,14 @@
 
     <main class="case-media">
       <div class="div-block case-hero unica"><video class="case-video" src="videos/cidados-video1.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
+      <div class="div-block unica"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par logos">
+        <video class="case-video" src="videos/cidados-video2.mp4" autoplay loop muted playsinline preload="metadata"></video>
+        <img src="images/cidados-5.png" loading="lazy" alt="" class="image"/>
+      </div>
       <div class="div-block unica"><img src="images/cidados-1.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/cidados-2.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/></div>
 
       <!-- previous / next project, same order as the Featured grid -->
       <nav class="case-nav" aria-label="Project navigation">
