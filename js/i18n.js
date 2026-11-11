@@ -16,8 +16,8 @@
     "About": "Sobre",
     "Work": "Projetos",
     // work — intro (split across <strong> + text) and section labels
-    "A Brazilian multiform designer working at the intersection of design, data and communication.":
-      "Designer brasileiro multiforme, atuando na interseção entre design, dados e comunicação.",
+    "Brazilian designer working on brands, websites and data narratives for startups and governments.":
+      "Designer brasileiro, criando marcas, sites e narrativas de dados para startups e governos.",
     "Design partner to Brazilian startups that have raised more than R$100 million.":
       "Parceiro de design de startups brasileiras que já captaram mais de R$ 100 milhões.",
     "Let's talk": "Vamos conversar",
