@@ -74,6 +74,25 @@
     .case-media .w-background-video { aspect-ratio: var(--ratio, 16 / 9); }
     .case-media .w-background-video > video { object-fit: fill; inset: 0; }
     .case-media .div-block img.image { height: auto; object-fit: contain; }
+    /* On a phone these clips are wide bands barely 170px tall, too short to read.
+       Each card takes a 3:2 box and the clip grows to fill it: height first, width
+       following its own ratio, centred, so it crops in from the sides rather than
+       sitting letterboxed. Nothing is stretched — the clip keeps its proportions
+       and the card's overflow trims the overhang. */
+    @media screen and (max-width: 859px) {
+      .m-built .case-m-slide {
+        aspect-ratio: 3 / 2 !important;
+        background: #F2F2F2; border-radius: 16px; overflow: hidden;
+      }
+      .m-built .case-m-slide .w-background-video {
+        position: absolute !important; inset: 0 !important; height: 100% !important;
+        display: flex !important; align-items: center; justify-content: center;
+      }
+      .m-built .case-m-slide .w-background-video > video {
+        position: static !important; width: auto !important; max-width: none !important;
+        height: 100% !important; object-fit: cover !important; flex: none;
+      }
+    }
     @media screen and (max-width: 860px) {
       .case-wrap { grid-template-columns: 1fr; margin-top: 260px; position: relative; }
       .case-side { position: static; }
