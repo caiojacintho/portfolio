@@ -24,6 +24,7 @@
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
     "Housing Game": "Jogo da Habitação",
+    "G20 in Rio": "G20 no Rio",
     "Cidados Portal": "Portal Cidados",
     "Digital Government Observatory": "Observatório de Governo Digital",
     // "Between Acts Institute" is left out on purpose: the name stays in English in Portuguese too
@@ -53,6 +54,7 @@
     "Public sector": "Setor público",
     "Public sector, finance": "Setor público, finanças",
     "Public and private sector": "Setor público e privado",
+    "Public sector, International events": "Setor público, Eventos internacionais",
     "Data journalism": "Jornalismo de dados",
     "Public sector, Private sector, Data journalism": "Setor público, Setor privado, Jornalismo de dados",
     "Public sector, Finance": "Setor público, Finanças",
@@ -103,6 +105,8 @@
     "Product design, UI design, Presentation design": "Design de produto, UI design, Design de apresentação",
     "Data storytelling, Data visualization, Interactive design, Motion design": "Narrativa de dados, Visualização de dados, Design interativo, Motion design",
     // case pages — sidebar descriptions
+    "The City of Rio's official site for the G20 Leaders' Summit, held in Rio on November 18 and 19, 2024. It brought together the summit's program, news, press materials and a guide to the city for delegations and visitors, serving as Rio's digital front door while it hosted the world's largest economies.":
+      "O site oficial da Prefeitura do Rio para a Cúpula de Líderes do G20, realizada no Rio em 18 e 19 de novembro de 2024. Reunia a programação da cúpula, notícias, materiais para a imprensa e um guia da cidade para delegações e visitantes, servindo como a porta de entrada digital do Rio enquanto recebia as maiores economias do mundo.",
     "Created by Insper's Center for City Studies – Arq.Futuro Lab, the Cidados Portal presents the center's studies and research through data-driven narratives, bringing science closer to the public debate to support evidence-based urban policy.":
       "Criado pelo Centro de Estudos das Cidades – Laboratório Arq.Futuro do Insper, o Portal Cidados apresenta os estudos e pesquisas do centro por meio de narrativas baseadas em dados, aproximando a ciência do debate público para apoiar políticas urbanas baseadas em evidências.",
     "The first Brazilian institute dedicated to turning a career pause into a recognised part of a professional path. Almost two million qualified professionals are out of the job market in Brazil, and the institute works pro bono with them and with the companies that hire them.":
