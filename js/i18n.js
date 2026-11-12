@@ -18,8 +18,8 @@
     // work — intro (split across <strong> + text) and section labels
     "Brazilian designer working on brands, websites and storytelling for startups and governments.":
       "Designer brasileiro, criando marcas, sites e narrativas para startups e governos.",
-    "Design that helped startups raise more than R$100 million.":
-      "Design que ajudou startups a captar mais de R$ 100 milhões.",
+    "Design partner to startups that have raised more than R$100 million.":
+      "Parceiro de design de startups que já captaram mais de R$ 100 milhões.",
     "Let's talk": "Vamos conversar",
     "Storytelling": "Narrativas",
     "Data visualization": "Visualização de dados",
