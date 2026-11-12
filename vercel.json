@@ -6,6 +6,7 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/prefrio.html", "destination": "/", "permanent": true },
     { "source": "/oportunidades.html", "destination": "/", "permanent": true },
     { "source": "/playground.html", "destination": "/", "permanent": true }
