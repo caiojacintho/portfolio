@@ -1,0 +1,14 @@
+# Pages kept in the repo but not published on the live site
+mentions.html
+revolusolar.html
+entreatos.html
+
+# Local-only files (a .vercelignore replaces .gitignore for CLI deploys, so repeat them here)
+server.mjs
+.claude/
+.env*
+mentions*.csv
+mentions.xlsx
+node_modules/
+.DS_Store
+Thumbs.db

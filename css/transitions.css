@@ -70,7 +70,8 @@ html.text-wait .case-side .case-facts { visibility: hidden; }
 .ti-line { display: block; }
 
 /* Serif: Source Serif 4 on the project titles and the home intro */
-.case-wrap .case-side h1 { font-family: "Source Serif 4", Georgia, serif; font-weight: 400; letter-spacing: -.015em; }
+/* same face, weight and colour as the "Caio Jacintho" brand in the header */
+.case-wrap .case-side h1 { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; color: #1a1b1f; letter-spacing: -.015em; }
 .div-block-9 > p.paragraph, .div-block-9 > p.paragraph strong { font-family: "Source Serif 4", Georgia, serif; letter-spacing: -.01em; }
 
 /* Phones: every project page in one column — title, the text, cover, facts, carousel.
