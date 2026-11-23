@@ -63,6 +63,18 @@
     .case-media { display: flex; flex-flow: column; gap: 12px; min-width: 0; }
     /* the site mockup clip runs full width at its own ratio, so nothing is cropped */
     .case-media .case-video { display: block; width: 100%; height: auto; aspect-ratio: 2000 / 1124; border-radius: 16px; background: #F2F2F2; }
+    /* the carousel clip: smaller, centred on a grey card of the same shape as the
+       others, with room above and below */
+    /* the seminar billboard: a lower card, the sign kept in view */
+    .case-media .div-block.crop-43 > img { aspect-ratio: 4 / 3 !important; height: auto !important; object-fit: cover !important; object-position: 50% 72%; }
+    /* the iPad on the chair: a lower card, the tablet kept in view */
+    .case-media .div-block.crop-ipad > img { aspect-ratio: 4 / 3 !important; height: auto !important; object-fit: cover !important; object-position: 50% 30%; }
+    /* two pictures of different shapes side by side: one height, each cropped to it */
+    .case-media .div-block.pair-even > img { aspect-ratio: 4 / 5 !important; height: auto !important; object-fit: cover !important; align-self: start; }
+    @media screen and (min-width: 861px) {
+      .case-media .div-block.sq-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 2000 / 1124; background: #F2F2F2; border-radius: 16px; padding: 7% 0; box-sizing: border-box; }
+      .case-media .div-block.sq-card > .case-video { width: auto; height: 100%; aspect-ratio: 1 / 1; border-radius: 12px; }
+    }
     /* on phones the clip sits whole, at its own 16:9, in a square card of its grey.
        Not object-fit:contain: iOS Safari paints a black hairline where a letterboxed
        clip meets the grey. The 1px clip hides any edge it still rounds into view. */
@@ -131,14 +143,11 @@
 
     <main class="case-media">
       <div class="div-block case-hero unica"><video class="case-video" src="videos/cidados-video1.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
-      <div class="div-block unica"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/></div>
-      <div class="div-block dupla par logos">
-        <video class="case-video" src="videos/cidados-video2.mp4" autoplay loop muted playsinline preload="metadata"></video>
-        <img src="images/cidados-5.png" loading="lazy" alt="" class="image"/>
-      </div>
-      <div class="div-block unica"><img src="images/cidados-1.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par pair-even"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-mobile.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica crop-ipad"><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica sq-card"><video class="case-video" src="videos/cidados-carrossel.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
+      <div class="div-block unica crop-43"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><img src="images/cidados-2.jpg" loading="lazy" alt="" class="image"/></div>
-      <div class="div-block unica"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/></div>
 
       <!-- previous / next project, same order as the Featured grid -->
       <nav class="case-nav" aria-label="Project navigation">
