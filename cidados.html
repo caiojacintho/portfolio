@@ -69,11 +69,17 @@
     .case-media .div-block.crop-43 > img { aspect-ratio: 4 / 3 !important; height: auto !important; object-fit: cover !important; object-position: 50% 72%; }
     /* the iPad on the chair: a lower card, the tablet kept in view */
     .case-media .div-block.crop-ipad > img { aspect-ratio: 4 / 3 !important; height: auto !important; object-fit: cover !important; object-position: 50% 30%; }
+    /* phones: the cropped pictures keep their crop, so the card is only as tall as the picture */
+    .m-built .case-m-slide:has(.crop-ipad) { aspect-ratio: 4 / 3 !important; }
+    /* the seminar sign stands a little taller on phones */
+    .m-built .case-m-slide:has(.crop-43) { aspect-ratio: 1 / 1 !important; }
+    .m-built .case-m-slide .crop-43 > img { aspect-ratio: 1 / 1 !important; }
     /* two pictures of different shapes side by side: one height, each cropped to it */
     .case-media .div-block.pair-even > img { aspect-ratio: 4 / 5 !important; height: auto !important; object-fit: cover !important; align-self: start; }
     @media screen and (min-width: 861px) {
       .case-media .div-block.sq-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 2000 / 1124; background: #F2F2F2; border-radius: 16px; padding: 7% 0; box-sizing: border-box; }
       .case-media .div-block.sq-card > .case-video { width: auto; height: 100%; aspect-ratio: 1 / 1; border-radius: 12px; }
+      .case-media .div-block.sq-card.wide-card > .case-video { aspect-ratio: 191 / 100; }
     }
     /* on phones the clip sits whole, at its own 16:9, in a square card of its grey.
        Not object-fit:contain: iOS Safari paints a black hairline where a letterboxed
@@ -144,6 +150,7 @@
     <main class="case-media">
       <div class="div-block case-hero unica"><video class="case-video" src="videos/cidados-video1.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
       <div class="div-block dupla par pair-even"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-mobile.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica sq-card"><video class="case-video" src="videos/cidados-mapa.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
       <div class="div-block unica crop-ipad"><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica sq-card"><video class="case-video" src="videos/cidados-carrossel.mp4" autoplay loop muted playsinline preload="metadata"></video></div>
       <div class="div-block unica crop-43"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/></div>
