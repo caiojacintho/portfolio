@@ -83,9 +83,10 @@
       .case-media .div-block.sq-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 2000 / 1124; background: #F2F2F2; border-radius: 16px; padding: 7% 0; box-sizing: border-box; }
       .case-media .div-block.sq-card > .case-video { width: auto; height: 100%; aspect-ratio: 1 / 1; border-radius: 12px; }
       .case-media .div-block.sq-card.wide-card > .case-video { aspect-ratio: 191 / 100; }
-      /* two clips side by side in square grey cards, each shown whole */
+      /* a picture and a clip side by side in square cards */
       .case-media .div-block.pair-fit { grid-template-columns: 1fr 1fr; align-items: start; }
-      .case-media .div-block.pair-fit > img { aspect-ratio: 1 / 1 !important; height: auto !important; object-fit: contain !important; background: #F2F2F2; }
+      .case-media .div-block.pair-fit > img { aspect-ratio: 1 / 1 !important; height: auto !important; object-fit: cover !important; object-position: 50% 60%; }
+      .case-media .div-block.pair-even > .case-video { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: contain; background: #F2F2F2; border-radius: 16px; align-self: start; }
       .case-media .div-block.pair-fit > .case-video { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #F2F2F2; }
     }
     /* on phones the clip sits whole, at its own 16:9, in a square card of its grey.
@@ -156,11 +157,11 @@
 
     <main class="case-media">
       <div class="div-block case-hero unica sq-card"><video class="case-video" src="videos/cidados-mapa.mp4" poster="images/cidados-mapa-poster.jpg" autoplay loop muted playsinline preload="metadata"></video></div>
-      <div class="div-block dupla par pair-even"><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-mobile.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par pair-even"><img src="images/cidados-mobile.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/></div>
       <div class="div-block unica"><video class="case-video" data-lazy-video poster="images/cidados-video1-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-video1.mp4" type="video/mp4"></video></div>
-      <div class="div-block dupla par pair-even"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block dupla par pair-even"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/><video class="case-video logo-clip" data-lazy-video poster="images/cidados-logo-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-logo.mp4" type="video/mp4"></video></div>
       <div class="div-block unica sq-card"><video class="case-video" data-lazy-video poster="images/cidados-carrossel-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-carrossel.mp4" type="video/mp4"></video></div>
-      <div class="div-block dupla par pair-fit"><video class="case-video logo-clip" data-lazy-video poster="images/cidados-logo-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-logo.mp4" type="video/mp4"></video><video class="case-video" data-lazy-video poster="images/cidados-equipe-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-equipe.mp4" type="video/mp4"></video></div>
+      <div class="div-block dupla par pair-fit"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/><video class="case-video" data-lazy-video poster="images/cidados-equipe-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-equipe.mp4" type="video/mp4"></video></div>
 
       <!-- previous / next project, same order as the Featured grid -->
       <nav class="case-nav" aria-label="Project navigation">
