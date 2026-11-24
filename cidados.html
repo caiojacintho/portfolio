@@ -71,6 +71,9 @@
     .case-media .div-block.crop-ipad > img { aspect-ratio: 4 / 3 !important; height: auto !important; object-fit: cover !important; object-position: 50% 30%; }
     /* phones: the cropped pictures keep their crop, so the card is only as tall as the picture */
     /* on phones the logo clip stands in a square grey card, shown whole */
+    /* on phones the site recording stands taller (4:3), its plain grey sides trimmed */
+    .m-built .case-m-slide:has(.site-clip) { aspect-ratio: 4 / 3 !important; }
+    .m-built .case-m-slide video.site-clip { height: 100% !important; object-fit: cover !important; }
     .m-built .case-m-slide:has(.logo-clip) { aspect-ratio: 1 / 1 !important; }
     .m-built .case-m-slide video.logo-clip { height: 100% !important; object-fit: contain !important; background: #F2F2F2 !important; }
     .m-built .case-m-slide:has(.crop-ipad) { aspect-ratio: 4 / 3 !important; }
@@ -156,9 +159,9 @@
     </aside>
 
     <main class="case-media">
-      <div class="div-block case-hero unica sq-card"><video class="case-video" src="videos/cidados-mapa.mp4" poster="images/cidados-mapa-poster.jpg" autoplay loop muted playsinline preload="metadata"></video></div>
-      <div class="div-block dupla par pair-even"><img src="images/cidados-mobile.jpg" loading="lazy" alt="" class="image"/><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/></div>
-      <div class="div-block unica"><video class="case-video" data-lazy-video poster="images/cidados-video1-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-video1.mp4" type="video/mp4"></video></div>
+      <div class="div-block case-hero unica"><img src="images/cidados-mobile.jpg" alt="" class="image"/></div>
+      <div class="div-block dupla par pair-even"><video class="case-video" data-lazy-video poster="images/cidados-mapa-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-mapa.mp4" type="video/mp4"></video><img src="images/cidados-ipad-1.jpg" loading="lazy" alt="" class="image"/></div>
+      <div class="div-block unica"><video class="case-video site-clip" data-lazy-video poster="images/cidados-video1-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-video1.mp4" type="video/mp4"></video></div>
       <div class="div-block dupla par pair-even"><img src="images/cidados-3.jpg" loading="lazy" alt="" class="image"/><video class="case-video logo-clip" data-lazy-video poster="images/cidados-logo-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-logo.mp4" type="video/mp4"></video></div>
       <div class="div-block unica sq-card"><video class="case-video" data-lazy-video poster="images/cidados-carrossel-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-carrossel.mp4" type="video/mp4"></video></div>
       <div class="div-block dupla par pair-fit"><img src="images/cidados-4.jpg" loading="lazy" alt="" class="image"/><video class="case-video" data-lazy-video poster="images/cidados-equipe-poster.jpg" loop muted playsinline preload="none"><source data-src="videos/cidados-equipe.mp4" type="video/mp4"></video></div>
