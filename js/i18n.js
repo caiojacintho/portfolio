@@ -122,8 +122,8 @@
       "Olá, meu nome é Caio. Sou de Campinas, Brasil, e me formei em Arquitetura e Urbanismo pela Universidade de São Paulo em 2016. Desde então, construí minha carreira em torno da concepção e do desenvolvimento de produtos digitais.",
     "I started out in architectural visualization, where I learned how to translate complex ideas into clear and compelling visual experiences. Over time, this evolved into a broader focus on digital product design, combining storytelling, data, and technology to create tools that improve how people interact with information and services.":
       "Comecei na visualização arquitetônica, onde aprendi a traduzir ideias complexas em experiências visuais claras e envolventes. Com o tempo, isso evoluiu para um foco mais amplo em design de produtos digitais, combinando narrativa, dados e tecnologia para criar ferramentas que melhoram a forma como as pessoas interagem com informações e serviços.",
-    "I am currently Head of Design at IplanRio, the municipal technology company of Rio de Janeiro City Hall, where I lead a multidisciplinary team of designers, developers, and content creators. My work spans from defining design systems and user experiences to building platforms, apps, dashboards, and data-driven stories that connect citizens with public services.":
-      "Atualmente sou Head de Design na IplanRio, a empresa municipal de tecnologia da Prefeitura do Rio de Janeiro, onde lidero um time multidisciplinar de designers, desenvolvedores e criadores de conteúdo. Meu trabalho vai da definição de design systems e experiências do usuário à construção de plataformas, aplicativos, dashboards e histórias baseadas em dados que conectam os cidadãos aos serviços públicos.",
+    "I am currently Head of Product Design at IplanRio, the municipal technology company of Rio de Janeiro City Hall, where I lead a multidisciplinary team of designers, developers, and content creators. My work spans from defining design systems and user experiences to building platforms, apps, dashboards, and data-driven stories that connect citizens with public services.":
+      "Atualmente sou Head de Design de Produto na IplanRio, a empresa municipal de tecnologia da Prefeitura do Rio de Janeiro, onde lidero um time multidisciplinar de designers, desenvolvedores e criadores de conteúdo. Meu trabalho vai da definição de design systems e experiências do usuário à construção de plataformas, aplicativos, dashboards e histórias baseadas em dados que conectam os cidadãos aos serviços públicos.",
     // about — section headers
     "Partner companies": "Empresas parceiras",
     "Experience": "Experiência",
@@ -131,11 +131,13 @@
     "Special thanks": "Agradecimentos especiais",
     // about — experience entries
     "Head of Design": "Head de Design",
+    "Head of Product Design": "Head de Design de Produto",
+    "IplanRio at Rio de Janeiro City Hall": "IplanRio na Prefeitura do Rio de Janeiro",
     "Iplanrio at Rio de Janeiro City Hall": "IplanRio na Prefeitura do Rio de Janeiro",
     "Product Designer": "Designer de Produto",
     "Data Office at Rio de Janeiro City Hall": "Escritório de Dados da Prefeitura do Rio de Janeiro",
     "Designer UI": "Designer de UI",
-    "Graphic Design & Archtect": "Design Gráfico e Arquitetura",
+    "Graphic Design & Architect": "Design Gráfico e Arquitetura",
     "Multiple": "Diversos",
     "Executive Coordinator": "Coordenador Executivo",
     "Portal Cidados at Insper": "Portal Cidados no Insper",
