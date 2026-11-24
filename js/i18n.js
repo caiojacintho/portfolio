@@ -125,6 +125,7 @@
     "I am currently Head of Design at IplanRio, the municipal technology company of Rio de Janeiro City Hall, where I lead a multidisciplinary team of designers, developers, and content creators. My work spans from defining design systems and user experiences to building platforms, apps, dashboards, and data-driven stories that connect citizens with public services.":
       "Atualmente sou Head de Design na IplanRio, a empresa municipal de tecnologia da Prefeitura do Rio de Janeiro, onde lidero um time multidisciplinar de designers, desenvolvedores e criadores de conteúdo. Meu trabalho vai da definição de design systems e experiências do usuário à construção de plataformas, aplicativos, dashboards e histórias baseadas em dados que conectam os cidadãos aos serviços públicos.",
     // about — section headers
+    "Partner companies": "Empresas parceiras",
     "Experience": "Experiência",
     "Education": "Formação",
     "Special thanks": "Agradecimentos especiais",
@@ -136,6 +137,8 @@
     "Designer UI": "Designer de UI",
     "Graphic Design & Archtect": "Design Gráfico e Arquitetura",
     "Multiple": "Diversos",
+    "Executive Coordinator": "Coordenador Executivo",
+    "Portal Cidados at Insper": "Portal Cidados no Insper",
     // about — education entries
     "Bachelor’s Degree in Architecture and Urbanism": "Bacharelado em Arquitetura e Urbanismo",
     "Spanish B2 Level Certificate": "Certificado de Espanhol Nível B2",
