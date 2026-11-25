@@ -2588,20 +2588,20 @@ figcaption {
 
 .work-image.cc-work-1 {
   border-radius: var(--round);
-  background-image: url("https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a263d5e0edb92947025675_1.png");
+  background-image: url("../images/site-1.png");
   background-size: cover;
   height: 600px;
   margin-bottom: 0;
 }
 
 .work-image.cc-work-1._1 {
-  background-image: url("https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a264145b3e4272bae4c509_3.png");
+  background-image: url("../images/site-3.png");
   height: 1000px;
 }
 
 .work-image.cc-work-2 {
   border-radius: var(--round);
-  background-image: url("https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a263e396016e8a58db8f22_2.png");
+  background-image: url("../images/site-2.png");
   background-size: cover;
   height: 600px;
   margin-bottom: 0;
@@ -2609,14 +2609,14 @@ figcaption {
 
 .work-image.cc-work-4 {
   border-radius: var(--round);
-  background-image: url("https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2615b8b73ca5020d094ad_portfolio%203%20-%20wide.svg");
+  background-image: url("../images/site-portfolio-3-wide.svg");
   background-size: cover;
   height: 600px;
 }
 
 .work-image.cc-work-3 {
   border-radius: var(--round);
-  background-image: url("https://cdn.prod.website-files.com/68a2615b8b73ca5020d09452/68a2615b8b73ca5020d094ab_portfolio%204%20-%20wide.svg");
+  background-image: url("../images/site-portfolio-4-wide.svg");
   background-size: cover;
   height: 600px;
 }
