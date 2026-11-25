@@ -41,7 +41,7 @@
     var note = null;
     try { note = JSON.parse(sessionStorage.getItem(KEY) || "null"); sessionStorage.removeItem(KEY); } catch (e) {}
     if (!note || Date.now() - note.t > 15000) return null;
-    var here = location.pathname.split("/").pop() || "index.html";
+    var here = (location.pathname.split("/").pop() || "index").replace(/[.]html$/, "");
     return note.page === here ? note : null;
   }
 
@@ -132,7 +132,7 @@
   }
   var leaving = null, leavingPair = null;
   function toGrid(url) {
-    try { return (new URL(url, location.href).pathname.split("/").pop() || "index.html") === "index.html"; }
+    try { return (new URL(url, location.href).pathname.split("/").pop() || "index").replace(/[.]html$/, "") === "index"; }
     catch (err) { return false; }
   }
   function leaveNote() {
@@ -141,7 +141,7 @@
     if (!leaving) return;
     try {
       sessionStorage.setItem("hero-to-grid", JSON.stringify({
-        page: location.pathname.split("/").pop(), key: keyOf(leaving),
+        page: location.pathname.split("/").pop().replace(/[.]html$/, ""), key: keyOf(leaving),
         pair: leavingPair ? keyOf(leavingPair) : "", t: Date.now()
       }));
     } catch (err) {}
