@@ -206,6 +206,16 @@
     .card-link .view-more { display: none !important; }
   }
 
+  /* desktop: the Architecture gif sits on the grey at the size and place of the
+     browser window in the Embyá clip beside it (70% wide, centred). */
+  @media screen and (min-width: 768px) {
+    .section .div-block .media-wrap:has(> img[src*="effectsresult"]) { background: #F2F2F2; position: relative; }
+    .section .div-block .media-wrap > img[src*="effectsresult"] {
+      position: absolute; left: 15%; top: 28.75%; width: 70%; height: 42.5%;
+      object-fit: cover; border-radius: 6px;
+    }
+  }
+
   /* mobile: taller card images + uniform 12px rhythm — the gap between any two
      images equals the page's lateral padding exactly. */
   @media screen and (max-width: 767px) {
